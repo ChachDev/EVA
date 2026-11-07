@@ -137,14 +137,14 @@
     "version": 1,
     "target_operator": null,
     "versions": {
-      "model": "fixture",
+      "model": "human-authored-demo",
       "prompt": "fixture",
       "code": "fixture",
       "baseline_variant": "fixture",
       "components": [],
-      "checklist": "fixture",
+      "checklist": "7c5f6793a57ce278bb9e27bc224786c7cb10c5d2a78a1ac301673df6ae0dbfc7",
       "rules": {},
-      "transcript": "fixture"
+      "transcript": "0df606ac8800e727ea6f533855f073b16d35011126291f755cc6632d44b720f5"
     },
     "source": {},
     "language": "RU",

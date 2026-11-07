@@ -13,7 +13,7 @@ from sqlalchemy.engine import Connection, URL, make_url
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.pool import StaticPool
 
-from .models import checklist_versions, conversations as conversation_rows, evaluation_inputs, evaluations
+from .models import audit_runs, checklist_versions, conversations as conversation_rows, evaluation_inputs, evaluations
 
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
@@ -206,7 +206,24 @@ class EvaluationStore:
             return {"group_id": group_id, "total": len(prepared), "inserted": 0, "unchanged": len(prepared)}
         return {"group_id": group_id, "total": len(prepared), "inserted": inserted, "unchanged": unchanged}
 
-    def create(self, record: dict, request_snapshot: dict | None = None) -> None:
+    def initialize_audit(self):
+        audit_runs.create(self.engine, checkfirst=True)
+
+    def save_shadow(self, evaluation_id: str, payload: dict):
+        with self._write_connection() as connection:
+            connection.execute(audit_runs.update().where(audit_runs.c.evaluation_id == evaluation_id)
+                               .values(payload=_document(payload)))
+
+    def get_audit(self, evaluation_id: str) -> dict | None:
+        from sqlalchemy import inspect
+        if not inspect(self.engine).has_table(audit_runs.name):
+            return None
+        with self.engine.connect() as connection:
+            body = connection.execute(select(audit_runs.c.payload).where(
+                audit_runs.c.evaluation_id == evaluation_id)).scalar_one_or_none()
+        return json.loads(body) if body else None
+
+    def create(self, record: dict, request_snapshot: dict | None = None, audit: dict | None = None) -> None:
         payload = _document(record)
         snapshot = _document(request_snapshot) if request_snapshot is not None else None
         original = record.get("original", {})
@@ -218,6 +235,8 @@ class EvaluationStore:
                     checklist_id=original.get("checklist_id"),
                     checklist_version=original.get("checklist_version"),
                 ))
+                if audit is not None:
+                    connection.execute(insert(audit_runs).values(evaluation_id=record["id"],payload=_document(audit)))
                 if snapshot is not None:
                     connection.execute(insert(evaluation_inputs).values(
                         evaluation_id=record["id"], request_payload=snapshot, content_hash=_digest(snapshot),

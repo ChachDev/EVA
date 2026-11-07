@@ -35,6 +35,7 @@
             "type": "string",
             "minLength": 1
           },
+          "depends_on": {"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},
           "section_id": {
             "type": [
               "string",

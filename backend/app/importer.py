@@ -91,7 +91,7 @@ def _voice_instant(timestamp: str) -> datetime:
     return instant
 
 
-def _conversation(record: object, contracts: Contracts) -> dict:
+def _conversation(record: object, contracts: Contracts, *, manual: bool = False) -> dict:
     source = _object(record, _RECORD_FIELDS, "conversation record")
     identifier = _nonempty_string(source["conversation_id"], "conversation identifier")
     channel = source["channel"]
@@ -107,14 +107,20 @@ def _conversation(record: object, contracts: Contracts) -> dict:
     messages: list[dict] = []
     previous_instant: datetime | None = None
     for index, value in enumerate(transcript, start=1):
-        message = _object(value, _MESSAGE_FIELDS, "transcript message")
-        timestamp = _nonempty_string(message["timestamp"], "message timestamp")
+        message = value if manual else _object(value, _MESSAGE_FIELDS, "transcript message")
+        timestamp = message.get("timestamp")
+        if timestamp is not None or not manual:
+            timestamp = _nonempty_string(timestamp, "message timestamp")
         text = _nonempty_string(message["text"], "message text")
         speaker = message["speaker"]
-        if type(speaker) is not str or speaker not in _SPEAKERS:
+        if type(speaker) is not str or (speaker not in _SPEAKERS and not (manual and speaker == "unknown")):
             raise DatasetImportError("Unsupported transcript speaker.")
+        if message.get("event") and speaker != "system":
+            raise DatasetImportError("Identity event requires a system source.")
         offset: int | None = None
-        if channel == "agent chat":
+        if timestamp is None:
+            offset = None
+        elif channel == "agent chat":
             offset = _chat_offset(timestamp)
         else:
             instant = _voice_instant(timestamp)
@@ -128,8 +134,13 @@ def _conversation(record: object, contracts: Contracts) -> dict:
             "speaker": speaker,
             "text": text,
             "timestamp": timestamp,
-            "offset_seconds": offset,
+            "offset_seconds": message.get("offset_seconds", offset) if manual else offset,
+            **({k: message[k] for k in ("speaker_id","end_seconds","language","quality","event") if k in message} if manual else {}),
         })
+        end = messages[-1].get("end_seconds")
+        start = messages[-1]["offset_seconds"]
+        if end is not None and (start is None or end < start):
+            raise DatasetImportError("Invalid source fragment boundaries.")
 
     conversation = {
         "id": identifier,
@@ -152,6 +163,7 @@ def normalize_dataset(
     payload: object,
     contracts: Contracts,
     expected_group: str | None = None,
+    *, manual: bool = False,
 ) -> NormalizedDataset:
     """Validate the whole envelope and return independent raw/normalized copies.
 
@@ -180,7 +192,7 @@ def normalize_dataset(
     conversations: list[dict] = []
     identifiers: set[str] = set()
     for record in records:
-        conversation = _conversation(record, contracts)
+        conversation = _conversation(record, contracts, manual=manual)
         if conversation["id"] in identifiers:
             raise DatasetImportError("Dataset conversation identifiers must be unique.")
         identifiers.add(conversation["id"])

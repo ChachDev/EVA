@@ -25,6 +25,13 @@ evaluation_inputs = Table(
     Column("content_hash", Text, nullable=False),
 )
 
+# Optional companion data. No change to legacy evaluation JSON or migration head.
+audit_runs = Table(
+    "eva_audit_runs", metadata,
+    Column("evaluation_id", Text, ForeignKey("evaluations.id"), primary_key=True),
+    Column("payload", Text, nullable=False),
+)
+
 conversations = Table(
     "conversations", metadata,
     Column("id", Text, primary_key=True),

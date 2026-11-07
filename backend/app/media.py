@@ -367,7 +367,7 @@ class MediaService:
             messages.append({"id": f"m{index:04d}",
                              "speaker": roles[index - 1] if roles is not None else segment["speaker"],
                              "text": segment["text"], "timestamp": f"{seconds // 60:02d}:{seconds % 60:02d}",
-                             "offset_seconds": segment["start_seconds"]})
+                             "offset_seconds": segment["start_seconds"], "end_seconds": segment["end_seconds"]})
         audio_url = (self.base_url + f"/api/v1/audio-assets/{row['asset_id']}/content") if self.base_url else None
         conversation = {"id": identifier, "channel": "voice_call", "language": row["language"],
                         "messages": messages, "audio_url": audio_url}

@@ -52,6 +52,8 @@ class Settings:
     asr_url: str | None = field(default_factory=lambda: os.getenv("ASR_URL") or None)
     asr_timeout_seconds: float = field(default_factory=lambda: float(os.getenv("ASR_TIMEOUT_SECONDS", "300")))
     reviewer_id: str = field(default_factory=lambda: os.getenv("REVIEWER_ID", "local-reviewer"))
+    audit_mode: str = field(default_factory=lambda: os.getenv("EVA_AUDIT_MODE", "baseline"))
+    audit_review: bool = field(default_factory=lambda: _environment_bool("EVA_AUDIT_REVIEW","true"))
     cors_origins: tuple[str, ...] = field(default_factory=lambda: tuple(
         origin.strip() for origin in os.getenv(
             "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
@@ -101,6 +103,8 @@ class Settings:
             raise ValueError("ASR_TIMEOUT_SECONDS must be positive and at most 3600.")
         if not isinstance(self.media_root, Path) or not self.media_root.resolve().is_relative_to((BACKEND_ROOT / "data").resolve()):
             raise ValueError("MEDIA_ROOT must be inside backend/data.")
+        if self.audit_mode not in {"baseline", "shadow", "experiment"}:
+            raise ValueError("EVA_AUDIT_MODE must be baseline, shadow or experiment.")
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}", self.reviewer_id):
             raise ValueError("REVIEWER_ID must be a simple local reviewer identifier.")
         for origin in self.cors_origins:

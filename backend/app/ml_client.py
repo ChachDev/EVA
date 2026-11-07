@@ -106,6 +106,9 @@ class MLClient:
             raise MLInvalidResponse("ML returned an unexpected HTTP status.")
         return result
 
+    async def audit(self, request: dict) -> dict:
+        return await self._request_json("POST", "/v1/audit", request)
+
     async def evaluate(self, request: dict) -> dict:
         return await self._request_json("POST", "/v1/evaluate", request)
 

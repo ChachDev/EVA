@@ -72,6 +72,14 @@ class WorkflowService:
         try:
             self.contracts.validate("checklist", checklist)
             ids = [item["id"] for item in criteria]
+            dependencies={item["id"]:set(item.get("depends_on",[])) for item in criteria}
+            if any(not deps <= set(ids) for deps in dependencies.values()):
+                raise WorkflowInvalid("Unknown prerequisite criterion.")
+            resolved=set()
+            while len(resolved)<len(dependencies):
+                ready={key for key,deps in dependencies.items() if deps<=resolved} - resolved
+                if not ready: raise WorkflowInvalid("Cyclic criterion dependencies.")
+                resolved.update(ready)
             if len(ids) != len(set(ids)):
                 raise WorkflowInvalid("Checklist criterion identities must be unique.")
         except ContractError:
