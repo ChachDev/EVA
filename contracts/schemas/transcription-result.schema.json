@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/transcription-result.schema.json",
+  "title": "transcription-result",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "audio_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "language": {
+      "enum": [
+        "RU",
+        "KZ",
+        "EN"
+      ]
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "speaker": {
+            "enum": [
+              "client",
+              "operator",
+              "unknown"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 65536
+          },
+          "start_seconds": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3600
+          },
+          "end_seconds": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3600
+          }
+        },
+        "required": [
+          "speaker",
+          "text",
+          "start_seconds",
+          "end_seconds"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 10000
+    }
+  },
+  "required": [
+    "schema_version",
+    "audio_sha256",
+    "language",
+    "provider",
+    "model",
+    "segments"
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "items": [
+    {
+      "id": "demo-eval-001",
+      "status": "completed",
+      "created_at": "2026-11-07T00:00:00Z",
+      "original": {
+        "schema_version": "1.0.0",
+        "conversation_id": "demo-ru-001",
+        "checklist_id": "freedom-cqa",
+        "checklist_version": 1,
+        "provider": "fixture",
+        "model": "human-authored-demo",
+        "criteria": [
+          {
+            "criterion_id": "contact",
+            "status": "scored",
+            "value": true,
+            "reason": "Приветствие и представление в первом ответе.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "needs",
+            "status": "scored",
+            "value": null,
+            "reason": "Общий вопрос уже сформулирован полностью.",
+            "evidence": [
+              {
+                "kind": "not_applicable",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "identity",
+            "status": "scored",
+            "value": null,
+            "reason": "Запрос об общих тарифах не требует проверки личности.",
+            "evidence": [
+              {
+                "kind": "not_applicable",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "consultation",
+            "status": "scored",
+            "value": 20,
+            "reason": "В учебном примере указан следующий шаг; это демонстрационная ручная разметка, не проверка реальных тарифов.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "empathy",
+            "status": "scored",
+            "value": true,
+            "reason": "Ответ вежливый, недовольства в переписке нет.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "dialogue",
+            "status": "scored",
+            "value": 10,
+            "reason": "Ответы последовательны, явного ожидания нет.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "closing",
+            "status": "scored",
+            "value": true,
+            "reason": "Предложена дальнейшая помощь и есть прощание.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0004"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "gross_errors",
+            "status": "scored",
+            "value": false,
+            "reason": "В учебном примере ни одно из трёх нарушений не отмечено.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002",
+                  "m0003",
+                  "m0004"
+                ]
+              }
+            ]
+          }
+        ],
+        "warnings": [
+          "Синтетический пример с ручной разметкой. Не результат работы ML и не DEV-набор организаторов."
+        ]
+      },
+      "scoring": {
+        "status": "complete",
+        "total": 100,
+        "applicable_weight": 65,
+        "has_gross_error": false,
+        "sections": [
+          {
+            "section_id": "opening",
+            "score": 100
+          },
+          {
+            "section_id": "resolution",
+            "score": 100
+          },
+          {
+            "section_id": "communication",
+            "score": 100
+          },
+          {
+            "section_id": "violations",
+            "score": null
+          }
+        ],
+        "criteria": [
+          {
+            "criterion_id": "contact",
+            "points": 15.38,
+            "effective_weight": 15.38
+          },
+          {
+            "criterion_id": "needs",
+            "points": null,
+            "effective_weight": null
+          },
+          {
+            "criterion_id": "identity",
+            "points": null,
+            "effective_weight": null
+          },
+          {
+            "criterion_id": "consultation",
+            "points": 30.77,
+            "effective_weight": 30.77
+          },
+          {
+            "criterion_id": "empathy",
+            "points": 23.08,
+            "effective_weight": 23.08
+          },
+          {
+            "criterion_id": "dialogue",
+            "points": 23.08,
+            "effective_weight": 23.08
+          },
+          {
+            "criterion_id": "closing",
+            "points": 7.69,
+            "effective_weight": 7.69
+          },
+          {
+            "criterion_id": "gross_errors",
+            "points": 0,
+            "effective_weight": 0
+          }
+        ]
+      }
+    }
+  ],
+  "next_cursor": null
+}

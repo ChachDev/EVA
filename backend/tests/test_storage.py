@@ -34,9 +34,11 @@ def test_initialize_migrates_and_is_idempotent(store):
     store.initialize()
     assert set(inspect(store.engine).get_table_names()) == {
         "alembic_version", "evaluations", "evaluation_inputs", "conversations", "checklist_versions",
+        "review_cases", "appeals", "review_decisions", "operation_receipts",
+        "media_assets", "transcription_jobs", "transcription_reviews",
     }
     with store.engine.connect() as connection:
-        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0001_storage"
+        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0003_media"
         assert connection.exec_driver_sql("PRAGMA journal_mode").scalar_one() == "delete"
 
 

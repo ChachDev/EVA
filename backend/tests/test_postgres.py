@@ -15,6 +15,8 @@ from sqlalchemy.exc import IntegrityError
 from app.config import Settings
 from app.main import create_app
 from app.storage import EvaluationStore, StorageConflict
+from app.media import MediaService, MediaConflict
+from app.workflows import WorkflowService, WorkflowConflict
 
 
 pytestmark = pytest.mark.postgres
@@ -53,7 +55,7 @@ def test_postgres_migrations_are_idempotent(postgres_store):
         inspect(postgres_store.engine).get_table_names()
     )
     with postgres_store.engine.connect() as connection:
-        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0001_storage"
+        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0003_media"
 
 
 def test_postgres_competing_migrators_are_serialized(postgres_url, postgres_store):
@@ -153,3 +155,149 @@ def test_postgres_snapshot_failure_rolls_back_evaluation(postgres_store, contrac
         event.remove(postgres_store.engine, "before_cursor_execute", fail_snapshot)
     assert postgres_store.get(record["id"]) is None
     assert postgres_store.get_snapshot(record["id"]) is None
+
+
+def test_postgres_identical_concurrent_imports_are_idempotent(postgres_store, request_data):
+    conversation = deepcopy(request_data["conversation"])
+    conversation["id"] = unique_id()
+    barrier = Barrier(2)
+
+    def attempt(_index):
+        barrier.wait(timeout=5)
+        return postgres_store.import_conversations("synthetic-pg", [conversation])
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        results = list(executor.map(attempt, [0, 1]))
+    assert sum(row["inserted"] for row in results) == 1
+    assert sum(row["unchanged"] for row in results) == 1
+    assert postgres_store.get_conversation(conversation["id"]) == conversation
+
+
+def test_postgres_review_conflicts_replays_and_restart(postgres_url, postgres_store, contracts, request_data):
+    record = contracts.example("evaluation-record")
+    record["id"] = unique_id()
+    postgres_store.create(record, request_data)
+    workflow = WorkflowService(postgres_store, contracts)
+    barrier = Barrier(2)
+    appeal_operations = [str(uuid4()), str(uuid4())]
+
+    def appeal(index):
+        barrier.wait(timeout=5)
+        try:
+            return workflow.create_appeal(record["id"], operation_id=appeal_operations[index],
+                                         expected_revision=0, criterion_id="contact",
+                                         reason="Synthetic appeal", message_ids=["m0001"])
+        except WorkflowConflict:
+            return None
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        attempts = list(executor.map(appeal, [0, 1]))
+    cases = [case for case in attempts if case is not None]
+    assert len(cases) == 1
+    appealed = cases[0]
+    assert appealed["revision"] == 1
+    appeal_id = appealed["appeals"][0]["id"]
+    override = deepcopy(record["original"]["criteria"][0])
+    override.update(value=False, reason="Synthetic reviewer correction",
+                    evidence=[{"kind": "message", "message_ids": ["m0001"]}])
+    decision_operations = [str(uuid4()), str(uuid4())]
+    barrier = Barrier(2)
+
+    def decide(index):
+        barrier.wait(timeout=5)
+        try:
+            return workflow.decide_appeal(appeal_id, operation_id=decision_operations[index],
+                                         expected_revision=1, decision="accepted",
+                                         reason="Synthetic decision", override=override)
+        except WorkflowConflict:
+            return None
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        attempts = list(executor.map(decide, [0, 1]))
+    assert sum(case is not None for case in attempts) == 1
+    winner = next(index for index, case in enumerate(attempts) if case is not None)
+    final = attempts[winner]
+    contracts.validate("review-case", final)
+    assert final["revision"] == 2
+    assert final["original"] == record
+    assert final["final"]["scoring"]["total"] < record["scoring"]["total"]
+    assert workflow.decide_appeal(appeal_id, operation_id=decision_operations[winner],
+                                 expected_revision=1, decision="accepted",
+                                 reason="Synthetic decision", override=override) == final
+    restarted = EvaluationStore(postgres_url)
+    try:
+        assert WorkflowService(restarted, contracts).get_review_case(record["id"]) == final
+        assert restarted.get_snapshot(record["id"]) == request_data
+    finally:
+        restarted.close()
+
+
+def test_postgres_concurrent_checklist_versions_have_one_winner(postgres_store, contracts, request_data):
+    checklist = deepcopy(request_data["checklist"])
+    checklist["id"] = unique_id()
+    postgres_store.seed_checklist(checklist)
+    workflow = WorkflowService(postgres_store, contracts)
+    barrier = Barrier(2)
+
+    def publish(index):
+        barrier.wait(timeout=5)
+        try:
+            return workflow.publish_checklist(checklist["id"], base_version=1,
+                                              name=f"Synthetic version {index}", criteria=checklist["criteria"])
+        except WorkflowConflict:
+            return None
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        results = list(executor.map(publish, [0, 1]))
+    winners = [item for item in results if item is not None]
+    assert len(winners) == 1
+    assert winners[0]["version"] == 2
+    assert postgres_store.get_checklist(checklist["id"], 1) == checklist
+
+
+def test_postgres_audio_lease_review_and_restart(postgres_url, postgres_store, contracts, tmp_path):
+    import io
+    import wave
+
+    data = io.BytesIO()
+    with wave.open(data, "wb") as audio:
+        audio.setnchannels(1)
+        audio.setsampwidth(2)
+        audio.setframerate(8000)
+        audio.writeframes(b"\x00\x00" * 8000)
+    media = MediaService(postgres_store, tmp_path / "audio")
+    asset = media.upload(data.getvalue(), "audio/wav", str(uuid4()))
+    job = media.create_job(asset["id"], "RU", str(uuid4()))
+    barrier = Barrier(2)
+
+    def claim(_index):
+        barrier.wait(timeout=5)
+        return media.claim_job(job["id"])
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        claims = list(executor.map(claim, [0, 1]))
+    leases = [item for item in claims if item is not None]
+    assert len(leases) == 1
+    transcript = {"schema_version": "1.0.0", "audio_sha256": asset["sha256"], "language": "RU",
+                  "provider": "test-local", "model": "synthetic-response",
+                  "segments": [{"speaker": "unknown", "text": "Synthetic utterance",
+                                "start_seconds": 0.0, "end_seconds": 0.9}]}
+    with pytest.raises(MediaConflict):
+        media.complete_job(job["id"], str(uuid4()), transcript)
+    pending = media.complete_job(job["id"], leases[0]["lease_token"], transcript)
+    assert pending["status"] == "needs_review"
+    assert pending["conversation_id"] is None
+    operation = str(uuid4())
+    completed = media.review_job(job["id"], ["operator"], operation)
+    contracts.validate("transcription-job", completed)
+    assert completed["result"] == transcript
+    assert completed["status"] == "completed"
+    assert media.review_job(job["id"], ["operator"], operation) == completed
+    restarted = EvaluationStore(postgres_url)
+    try:
+        assert MediaService(restarted, tmp_path / "audio").get_job(job["id"]) == completed
+        conversation = restarted.get_conversation(completed["conversation_id"])
+        contracts.validate("conversation", conversation)
+        assert conversation["messages"][0]["speaker"] == "operator"
+    finally:
+        restarted.close()

@@ -1,0 +1,21 @@
+{
+  "operation_id": "00000000-0000-4000-8000-000000000001",
+  "expected_revision": 1,
+  "decision": "accepted",
+  "reason": "Synthetic review decision.",
+  "override": {
+    "criterion_id": "contact",
+    "status": "scored",
+    "value": false,
+    "reason": "Synthetic reviewer decision for this example.",
+    "evidence": [
+      {
+        "kind": "message",
+        "message_ids": [
+          "m0001",
+          "m0002"
+        ]
+      }
+    ]
+  }
+}

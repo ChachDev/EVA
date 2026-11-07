@@ -1,0 +1,9 @@
+{
+  "operation_id": "00000000-0000-4000-8000-000000000001",
+  "expected_revision": 0,
+  "criterion_id": "contact",
+  "reason": "Synthetic appeal for the demonstration.",
+  "message_ids": [
+    "m0001"
+  ]
+}

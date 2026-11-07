@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/appeal-create.schema.json",
+  "title": "appeal-create",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "operation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "expected_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "criterion_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "message_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "maxItems": 10000,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "operation_id",
+    "expected_revision",
+    "criterion_id",
+    "reason",
+    "message_ids"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/audio-asset.schema.json",
+  "title": "audio-asset",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "content_type": {
+      "enum": [
+        "audio/wav",
+        "audio/mpeg",
+        "audio/flac",
+        "audio/ogg"
+      ]
+    },
+    "size_bytes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "duration_seconds": {
+      "anyOf": [
+        {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 3600
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "id",
+    "content_type",
+    "size_bytes",
+    "sha256",
+    "duration_seconds",
+    "created_at"
+  ]
+}

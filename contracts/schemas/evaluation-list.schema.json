@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/evaluation-list.schema.json",
+  "title": "evaluation-list",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "https://eva.local/schemas/evaluation-record.schema.json"
+      },
+      "minItems": 0,
+      "maxItems": 100
+    },
+    "next_cursor": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "items",
+    "next_cursor"
+  ]
+}
