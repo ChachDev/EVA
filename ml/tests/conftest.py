@@ -20,6 +20,7 @@ def contracts():
 
 
 @pytest.fixture
-def client():
+def client(monkeypatch):
+    monkeypatch.setenv("EVA_ML_PROVIDER","stub")
     with TestClient(app) as test_client:
         yield test_client
