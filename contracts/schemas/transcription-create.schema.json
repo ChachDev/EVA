@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/transcription-create.schema.json",
+  "title": "transcription-create",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "language": {
+      "enum": [
+        "RU",
+        "KZ",
+        "EN"
+      ]
+    },
+    "operation_id": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "required": [
+    "asset_id",
+    "language",
+    "operation_id"
+  ]
+}

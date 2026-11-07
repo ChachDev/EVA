@@ -13,7 +13,7 @@ from starlette.concurrency import run_in_threadpool
 
 from eva_ml import stub
 from eva_ml.contracts import ContractError, Contracts
-from eva_ml.engine import EngineError, loaded_engine
+from eva_ml.engine import ContextLimitError, EngineError, loaded_engine
 from eva_ml.issai import ISSAIProvider, InvalidDecision
 
 
@@ -80,6 +80,8 @@ def evaluate(request: Request, payload: Annotated[Any, Body()]) -> Any:
     try:
         result = request.app.state.provider.evaluate(payload)
         contracts.validate_response(payload, result)
+    except ContextLimitError:
+        return JSONResponse(status_code=422, content={"error": "context_limit_exceeded"})
     except EngineError:
         return JSONResponse(status_code=503, content={"error": "local_engine_unavailable"})
     except (ContractError, InvalidDecision):

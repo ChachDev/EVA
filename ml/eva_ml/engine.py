@@ -13,9 +13,14 @@ import urllib.request
 
 DEFAULT_ENGINE = "D:/EVA-ML/runtime/b12186/llama-server.exe"
 DEFAULT_WEIGHTS = "D:/EVA-ML/models/Qwen3.5-9B-Kazakh.Q5_K_M.gguf"
+CONTEXT_TOKENS = 16384
 
 
 class EngineError(RuntimeError):
+    pass
+
+
+class ContextLimitError(EngineError):
     pass
 
 
@@ -36,6 +41,16 @@ class LocalEngine:
         try:
             with self.client.open(req, timeout=timeout) as reply:
                 return json.load(reply)
+        except urllib.error.HTTPError as error:
+            if error.code == 400:
+                try:
+                    detail = json.loads(error.read(8192))
+                except (OSError, ValueError):
+                    detail = None
+                fields = detail.get("error") if isinstance(detail, dict) else None
+                if isinstance(fields, dict) and fields.get("type") == "exceed_context_size_error":
+                    raise ContextLimitError("Input exceeds local model context") from error
+            raise EngineError("Local inference request failed") from error
         except (OSError, ValueError) as error:
             raise EngineError("Local inference request failed") from error
 
@@ -50,7 +65,7 @@ def loaded_engine():
     worker = LocalEngine(port, weights.stem)
     args = [str(executable), "-m", str(weights), "--alias", worker.model, "--host", "127.0.0.1",
             "--port", str(port), "--offline", "--no-webui", "--jinja", "--reasoning", "off",
-            "-c", "8192", "-np", "1", "-ngl", "99", "--load-mode", "none"]
+            "-c", str(CONTEXT_TOKENS), "-np", "1", "-ngl", "99", "--load-mode", "none"]
     started = time.monotonic()
     proc = subprocess.Popen(args, cwd=executable.parent, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),

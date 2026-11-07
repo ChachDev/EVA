@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/appeal-decision.schema.json",
+  "title": "appeal-decision",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "operation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "expected_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "decision": {
+      "enum": [
+        "accepted",
+        "rejected"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "override": {
+      "$ref": "https://eva.local/schemas/evaluation-response.schema.json#/properties/criteria/items"
+    }
+  },
+  "required": [
+    "operation_id",
+    "expected_revision",
+    "decision",
+    "reason"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "accepted"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "override"
+        ],
+        "properties": {
+          "override": {
+            "allOf": [
+              {
+                "$ref": "https://eva.local/schemas/evaluation-response.schema.json#/properties/criteria/items"
+              },
+              {
+                "properties": {
+                  "status": {
+                    "const": "scored"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "override"
+          ]
+        }
+      }
+    }
+  ]
+}

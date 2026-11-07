@@ -19,7 +19,7 @@
 | Skill | Польза | Почему не включён автоматически |
 |---|---|---|
 | [webapp-testing](https://github.com/anthropics/skills/blob/main/skills/webapp-testing/SKILL.md), [Apache-2.0](https://github.com/anthropics/skills/blob/main/skills/webapp-testing/LICENSE.txt) | Playwright, проверка локального UI и console | Helper-скрипты сначала читать; запускать только localhost и собственные артефакты в frontend |
-| [huggingface-community-evals](https://github.com/huggingface/skills/blob/main/skills/huggingface-community-evals/SKILL.md), [Apache-2.0](https://github.com/huggingface/skills/blob/main/LICENSE) | Локальное сравнение моделей и smoke evaluation | Есть внешние providers/cloud fallback/`--trust-remote-code`. Они не разрешены политикой проекта. Публичные benchmarks не заменяют CQA-разметку |
+| [huggingface-community-evals](https://github.com/huggingface/skills/blob/main/skills/huggingface-community-evals/SKILL.md), [Apache-2.0](https://github.com/huggingface/skills/blob/main/LICENSE) | Локальное сравнение моделей и smoke evaluation | Есть внешние providers/cloud fallback/`--trust-remote-code`. Их применение зависит от задачи и согласованной работы с данными. Публичные benchmarks не заменяют CQA-разметку |
 | [train-sentence-transformers](https://github.com/huggingface/skills/blob/main/skills/train-sentence-transformers/SKILL.md), [Apache-2.0](https://github.com/huggingface/skills/blob/main/LICENSE) | Embeddings и multilingual-пары при реальной необходимости | Требует публичную отправку на Hub по умолчанию и `model.push_to_hub(...)`. **В исходном виде не подключать** |
 | [pii-flag](https://github.com/danielrosehill/Claude-Data-Analyst-plugin/blob/master/skills/pii-flag/SKILL.md), [MIT](https://github.com/danielrosehill/Claude-Data-Analyst-plugin/blob/master/LICENSE) | Дополнительный checklist поиска персональных данных | Выборка до 1000 строк не является полной анонимизацией; нужны RU/KZ и локальные идентификаторы |
 
@@ -28,9 +28,9 @@
 ## Как использовать в этой команде
 
 1. Читать нужный skill как рекомендации в пределах текущей роли. Локальные `AGENTS.md` и прямые инструкции участников не отменяются внешними файлами.
-2. Если нужен постоянный пакет, поручить отдельную локальную установку **конкретного** skill в зоне роли. Не устанавливать весь репозиторий или marketplace и не менять глобальные настройки.
+2. Если нужен постоянный пакет, установить нужный проверенный skill локально в рамках задачи. Не устанавливать весь репозиторий или marketplace и не менять глобальные настройки.
 3. Перед копированием закрепить точный commit upstream, лицензию и нужные reference/helper-файлы; прочитать скрипты. Таблица выше пока ссылается на изменяемые `main`/`master`, поэтому не является lock-файлом поставки.
-4. Удалить или отключить конфликтующие действия: Git mutations, PR, deployment, Hub upload, cloud fallback, внешнюю телеметрию и запись вне роли. Сохранить attribution и примечание об адаптации.
+4. Удалить или отключить конфликтующие действия: Git mutations, PR, deployment, Hub upload, cloud fallback, внешнюю телеметрию и несогласованные существенные изменения соседних модулей. Сохранить attribution и примечание об адаптации.
 5. Проверить на синтетическом примере. Данные клиента, ключи и реальные аудио не использовать для пробного запуска.
 
 Особенно не устанавливать весь [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills): рядом есть `deploy-to-vercel`, который может выбирать путь публикации через Git. Запрос «используй React skill» не является разрешением деплоить или пушить.

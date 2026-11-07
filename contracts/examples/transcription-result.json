@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "audio_sha256": "56d4af65701c26df20bd4021eda95b6e830348ce3a746086079fe89285548dc9",
+  "language": "RU",
+  "provider": "fixture",
+  "model": "synthetic-example",
+  "segments": [
+    {
+      "speaker": "unknown",
+      "text": "Synthetic transcript fixture; no recognition was performed.",
+      "start_seconds": 0.0,
+      "end_seconds": 0.9
+    }
+  ]
+}

@@ -16,6 +16,8 @@ from .config import BACKEND_ROOT, Settings
 from .contracts import ContractError, Contracts, validate_request_semantics
 from .importer import DatasetImportError, normalize_dataset
 from .storage import EvaluationStore, StorageConflict
+from .diagnostics import collect_diagnostics
+from .ml_client import MLClient
 
 
 MAX_INPUT_BYTES = 10 * 1024 * 1024
@@ -56,6 +58,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="EVA backend local data commands")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("db-upgrade", help="Apply versioned database migrations")
+    commands.add_parser("doctor", help="Check database and ML readiness without changing data")
+    commands.add_parser("audit-data", help="Validate stored conversations and checklists; print counts only")
     commands.add_parser("seed-demo", help="Explicitly load the synthetic conversation and checklist")
     checklist = commands.add_parser("seed-checklist", help="Store an immutable checklist version")
     checklist.add_argument("--file", type=Path, help="Local checklist JSON; defaults to canonical example")
@@ -70,6 +74,37 @@ def main(argv: list[str] | None = None) -> int:
     try:
         settings = Settings()
         contracts = Contracts(settings.contracts_dir)
+        if args.command == "doctor":
+            store = EvaluationStore(settings.effective_database_url)
+
+            async def diagnose():
+                async with httpx.AsyncClient(base_url=settings.ml_url, trust_env=False,
+                                             follow_redirects=False, timeout=2) as client:
+                    return await collect_diagnostics(settings, store, MLClient(client))
+
+            summary = asyncio.run(diagnose())
+            print(json.dumps(summary, ensure_ascii=False))
+            return 0 if summary["status"] == "ready" else 2
+        if args.command == "audit-data":
+            store = EvaluationStore(settings.effective_database_url)
+            conversations = store.list_conversations()
+            checklists = store.list_checklists()
+            channels, languages = {}, {}
+            messages = audio_links = 0
+            for conversation in conversations:
+                contracts.validate("conversation", conversation)
+                validate_request_semantics({"conversation": conversation, "checklist": {"criteria": []}})
+                channels[conversation["channel"]] = channels.get(conversation["channel"], 0) + 1
+                languages[conversation["language"]] = languages.get(conversation["language"], 0) + 1
+                messages += len(conversation["messages"])
+                audio_links += conversation["audio_url"] is not None
+            for checklist in checklists:
+                contracts.validate("checklist", checklist)
+                validate_request_semantics({"conversation": {"messages": []}, "checklist": checklist})
+            print(json.dumps({"valid": True, "conversations": len(conversations), "messages": messages,
+                              "channels": channels, "languages": languages, "audio_links": audio_links,
+                              "checklist_versions": len(checklists)}, ensure_ascii=False))
+            return 0
         # Validate before opening a write transaction or applying migrations.
         normalized = None
         checklist_data = None

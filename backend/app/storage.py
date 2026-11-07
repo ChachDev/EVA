@@ -56,7 +56,11 @@ class EvaluationStore:
             if self.path is None:
                 engine_options["poolclass"] = StaticPool
         else:
-            engine_options["connect_args"] = {"connect_timeout": 5}
+            engine_options.update(pool_timeout=5, pool_size=5, max_overflow=5)
+            engine_options["connect_args"] = {
+                "connect_timeout": 5,
+                "options": "-c statement_timeout=15000 -c lock_timeout=5000",
+            }
         self.engine = create_engine(url, **engine_options)
         if self.engine.dialect.name == "sqlite":
             # Explicit BEGIN makes DDL and DML transactional on supported Python versions.
@@ -126,6 +130,12 @@ class EvaluationStore:
             )).scalar_one_or_none()
         return json.loads(payload) if payload is not None else None
 
+    def has_checklist(self, checklist_id: str) -> bool:
+        with self.engine.connect() as connection:
+            return bool(connection.execute(select(checklist_versions.c.checklist_id).where(
+                checklist_versions.c.checklist_id == checklist_id,
+            ).limit(1)).first())
+
     def seed_checklist(self, checklist: dict) -> None:
         payload = _document(checklist)
         content_hash = _digest(payload)
@@ -181,16 +191,32 @@ class EvaluationStore:
                         connection.execute(insert(conversation_rows), item)
                         inserted += 1
         except IntegrityError:
-            raise StorageConflict("The import conflicts with a concurrent write.") from None
+            # The failed transaction has rolled back. A competing identical import
+            # may now own every identity; accept only the complete committed batch.
+            with self.engine.connect() as connection:
+                for item in prepared:
+                    existing = connection.execute(select(
+                        conversation_rows.c.group_id, conversation_rows.c.content_hash,
+                        conversation_rows.c.raw_payload,
+                    ).where(conversation_rows.c.id == item["id"])).mappings().one_or_none()
+                    if (existing is None or existing["group_id"] != item["group_id"]
+                            or existing["content_hash"] != item["content_hash"]
+                            or existing["raw_payload"] != item["raw_payload"]):
+                        raise StorageConflict("The import conflicts with a concurrent write.") from None
+            return {"group_id": group_id, "total": len(prepared), "inserted": 0, "unchanged": len(prepared)}
         return {"group_id": group_id, "total": len(prepared), "inserted": inserted, "unchanged": unchanged}
 
     def create(self, record: dict, request_snapshot: dict | None = None) -> None:
         payload = _document(record)
         snapshot = _document(request_snapshot) if request_snapshot is not None else None
+        original = record.get("original", {})
         try:
             with self._write_connection() as connection:
                 connection.execute(insert(evaluations).values(
                     id=record["id"], created_at=record["created_at"], payload=payload,
+                    conversation_id=original.get("conversation_id"),
+                    checklist_id=original.get("checklist_id"),
+                    checklist_version=original.get("checklist_version"),
                 ))
                 if snapshot is not None:
                     connection.execute(insert(evaluation_inputs).values(

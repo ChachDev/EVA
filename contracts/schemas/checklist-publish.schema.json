@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/checklist-publish.schema.json",
+  "title": "checklist-publish",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "base_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "$ref": "https://eva.local/schemas/checklist.schema.json#/properties/criteria/items"
+      },
+      "minItems": 1,
+      "maxItems": 100
+    }
+  },
+  "required": [
+    "base_version",
+    "name",
+    "criteria"
+  ]
+}

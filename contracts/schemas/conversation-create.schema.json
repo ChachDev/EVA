@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/conversation-create.schema.json",
+  "title": "conversation-create",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "operation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "channel": {
+      "enum": [
+        "agent_chat",
+        "voice_call"
+      ]
+    },
+    "language": {
+      "enum": [
+        "RU",
+        "KZ",
+        "EN"
+      ]
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "speaker": {
+            "enum": [
+              "client",
+              "operator",
+              "bot",
+              "system"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100000
+          }
+        },
+        "required": [
+          "timestamp",
+          "speaker",
+          "text"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 10000
+    }
+  },
+  "required": [
+    "operation_id",
+    "channel",
+    "language",
+    "messages"
+  ]
+}

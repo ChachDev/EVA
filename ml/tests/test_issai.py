@@ -7,6 +7,7 @@ import pytest
 
 from eva_ml import app as service
 from eva_ml.engine import EngineError
+from eva_ml.issai import InvalidDecision, resolve_evidence
 
 
 class Inference:
@@ -67,3 +68,78 @@ def test_provider_failure_never_returns_a_score(monkeypatch, evaluation_request,
 
     response = evaluate(monkeypatch,request,BrokenEngine({}))
     assert response.status_code == expected and "criteria" not in response.json()
+
+
+def test_evidence_representation_preserves_real_ids_and_order():
+    ids = {"m0001", "m0014", "custom"}
+    assert resolve_evidence(["m014", ",", "custom", "m0001"], ids) == ["m0014", "custom", "m0001"]
+    assert resolve_evidence([","], {","}) == [","]  # exact contract IDs take precedence
+    assert resolve_evidence(["m01"], {"m01", "m0001"}) == ["m01"]
+
+
+@pytest.mark.parametrize("references,choices", [
+    ([","], {"m0001"}), (["m19"], {"m0001"}), (["m1"], {"m01","m001"}),
+    (["m0001", "invented"], {"m0001"}), (["m0001-m0010"], {"m0001","m0010"}),
+])
+def test_bad_evidence_cannot_acquire_an_arbitrary_source(references, choices):
+    with pytest.raises(InvalidDecision):
+        resolve_evidence(references, choices)
+
+
+def test_rendered_context_overflow_has_its_own_http_error(monkeypatch, evaluation_request):
+    import io
+    from urllib.error import HTTPError
+    from eva_ml.engine import LocalEngine
+
+    class Rejected:
+        def open(self, req, timeout):
+            raise HTTPError(req.full_url, 400, "Bad request", {}, io.BytesIO(
+                b'{"error":{"type":"exceed_context_size_error","n_prompt_tokens":21000,"n_ctx":16384}}'))
+
+    class OverflowOnEvaluation(Inference):
+        def request(self, route, payload):
+            if payload["max_tokens"] == 1:
+                return {"choices":[{"finish_reason":"length"}]}
+            engine = LocalEngine(1, self.model)
+            engine.client = Rejected()
+            return engine.request(route, payload)
+
+    response = evaluate(monkeypatch, evaluation_request, OverflowOnEvaluation({}))
+    assert response.status_code == 422
+    assert response.json() == {"error": "context_limit_exceeded"}
+
+
+@pytest.mark.parametrize("change_facts", [False, True])
+def test_evidence_selection_is_bounded_to_original_decisions(monkeypatch, evaluation_request, change_facts):
+    request = deepcopy(evaluation_request)
+    request["checklist"]["criteria"] = [c for c in request["checklist"]["criteria"] if c["id"] in ("contact", "needs")]
+    ids = [m["id"] for m in request["conversation"]["messages"]]
+    first = {"contact":{"facts":["yes","yes"],"evidence":[ids[0]]},
+             "needs":{"facts":["no","no","unknown"],"evidence":[","]}}
+    calls = []
+
+    class SelectReference(Inference):
+        def request(self, route, payload):
+            if payload["max_tokens"] == 1:
+                return {"choices":[{"finish_reason":"length"}]}
+            calls.append(payload)
+            rows = deepcopy(first)
+            if len(calls) == 2:
+                schema = payload["response_format"]["json_schema"]["schema"]["properties"]
+                assert schema["contact"] == {"const": first["contact"]}
+                assert schema["needs"]["properties"]["facts"]["const"] == first["needs"]["facts"]
+                assert schema["needs"]["properties"]["evidence"]["items"]["enum"] == ids
+                assert {k:v for k,v in calls[0].items() if k!="response_format"} == {
+                    k:v for k,v in payload.items() if k!="response_format"}
+                rows["needs"]["evidence"] = [ids[-1]]
+                if change_facts:
+                    rows["needs"]["facts"][0] = "yes"
+            return {"choices":[{"finish_reason":"stop","message":{"content":json.dumps(rows)}}]}
+
+    response = evaluate(monkeypatch, request, SelectReference({}))
+    assert len(calls) == 2
+    if change_facts:
+        assert response.status_code == 500 and "criteria" not in response.json()
+    else:
+        assert response.status_code == 200
+        assert response.json()["criteria"][1]["evidence"][0]["message_ids"] == [ids[-1]]

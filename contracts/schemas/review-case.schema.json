@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/review-case.schema.json",
+  "title": "review-case",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "evaluation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "review_status": {
+      "enum": [
+        "pending",
+        "appealed",
+        "resolved"
+      ]
+    },
+    "snapshot_available": {
+      "type": "boolean"
+    },
+    "original": {
+      "$ref": "https://eva.local/schemas/evaluation-record.schema.json"
+    },
+    "final": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "https://eva.local/schemas/evaluation-response.schema.json#/properties/criteria/items"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "scoring": {
+          "$ref": "https://eva.local/schemas/score-summary.schema.json"
+        }
+      },
+      "required": [
+        "criteria",
+        "scoring"
+      ]
+    },
+    "appeals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "message_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "maxItems": 10000,
+            "uniqueItems": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "accepted",
+              "rejected"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "evaluation_id",
+          "criterion_id",
+          "reason",
+          "message_ids",
+          "created_at",
+          "status"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 10000
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "appeal_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "decision": {
+            "enum": [
+              "accepted",
+              "rejected"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "override": {
+            "anyOf": [
+              {
+                "$ref": "https://eva.local/schemas/evaluation-response.schema.json#/properties/criteria/items"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reviewer_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "appeal_id",
+          "evaluation_id",
+          "decision",
+          "reason",
+          "override",
+          "reviewer_id",
+          "created_at"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 10000
+    }
+  },
+  "required": [
+    "evaluation_id",
+    "revision",
+    "review_status",
+    "snapshot_available",
+    "original",
+    "final",
+    "appeals",
+    "decisions"
+  ]
+}

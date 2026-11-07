@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/transcription-review.schema.json",
+  "title": "transcription-review",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "operation_id": {"type": "string", "format": "uuid"},
+    "roles": {"type": "array", "minItems": 1, "maxItems": 10000, "items": {"enum": ["client", "operator"]}}
+  },
+  "required": ["operation_id", "roles"]
+}

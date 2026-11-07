@@ -9,9 +9,9 @@ EVA/
   frontend/          Mansur: UI, API adapter, собственные dependencies/tests
   backend/           Chach: HTTP, persistence, imports, deterministic scoring
   ml/                norerade: inference, prompts, evidence, quality evaluation
-  contracts/         READ ONLY для ролей: schemas + synthetic examples
-  docs/              READ ONLY для ролей: требования, план, правила, skills
-  tools/             READ ONLY для ролей: локальные проверки контрактов/границ
+  contracts/         Общие файлы: schemas + synthetic examples
+  docs/              Общие файлы: требования, план, правила, skills
+  tools/             Общие файлы: локальные проверки контрактов/границ
   AGENTS.md          Общие обязательные правила
 ```
 
