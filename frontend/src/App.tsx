@@ -79,9 +79,9 @@ export function App() {
   return (
     <div className="app-frame">
       <header className="topbar">
-        <div className="brand" aria-label="EVA — контроль качества">
+        <div className="brand" aria-label="EVA — Expert Virtual Auditor">
           <svg viewBox="0 0 30 24" aria-hidden="true"><path d="M2 4h10M2 12h7M2 20h10M17 4l5 16 6-16" /></svg>
-          <strong>EVA</strong><span>Контроль качества</span>
+          <strong>EVA</strong><span>Expert Virtual Auditor</span>
         </div>
         <span className="connection"><span aria-hidden="true" className="status-dot" />{connection}</span>
       </header>
