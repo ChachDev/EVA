@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/audit-export.schema.json",
+  "title": "EVA Review export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "evaluation_id",
+    "review",
+    "snapshot",
+    "audit",
+    "history",
+    "can_derive"
+  ],
+  "properties": {
+    "format": {
+      "const": "eva.review.v1"
+    },
+    "evaluation_id": {
+      "$ref": "https://eva.local/schemas/review-case.schema.json#/properties/evaluation_id"
+    },
+    "review": {
+      "$ref": "https://eva.local/schemas/review-case.schema.json"
+    },
+    "snapshot": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "https://eva.local/schemas/evaluation-request.schema.json"
+        }
+      ]
+    },
+    "audit": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "shadow",
+                "experiment",
+                "derived"
+              ]
+            },
+            "candidate": {
+              "$ref": "https://eva.local/schemas/audit-bundle.schema.json"
+            },
+            "scoring": {
+              "$ref": "https://eva.local/schemas/score-summary.schema.json"
+            },
+            "parent": {
+              "$ref": "https://eva.local/schemas/review-case.schema.json#/properties/evaluation_id"
+            },
+            "status": {
+              "enum": [
+                "pending",
+                "completed",
+                "failed"
+              ]
+            },
+            "changes": {
+              "type": "object"
+            },
+            "lineage": {
+              "type": "object"
+            },
+            "review_projection": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "criterion_id",
+          "decision_id",
+          "source",
+          "author",
+          "created_at",
+          "checklist_version",
+          "before",
+          "after",
+          "reason",
+          "appeal_message_ids",
+          "evaluation_id"
+        ],
+        "properties": {
+          "criterion_id": {
+            "type": "string"
+          },
+          "decision_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source": {
+            "const": "reviewer"
+          },
+          "author": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "checklist_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "before": {
+            "$ref": "https://eva.local/schemas/evaluation-response.schema.json#/properties/criteria/items"
+          },
+          "after": {
+            "$ref": "https://eva.local/schemas/evaluation-response.schema.json#/properties/criteria/items"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "appeal_message_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evaluation_id": {
+            "$ref": "https://eva.local/schemas/review-case.schema.json#/properties/evaluation_id"
+          }
+        }
+      }
+    },
+    "can_derive": {
+      "type": "boolean"
+    }
+  }
+}

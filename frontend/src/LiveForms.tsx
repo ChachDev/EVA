@@ -19,6 +19,9 @@ export function ImportDialog({ onClose, onSaved }: { onClose: () => void; onSave
   const [text, setText] = useState('');
   const [language, setLanguage] = useState<Conversation['language']>('RU');
   const [channel, setChannel] = useState<Conversation['channel']>('agent_chat');
+  const [operator,setOperator]=useState('');
+  const [lostStart,setLostStart]=useState(false);
+  const [lostEnd,setLostEnd]=useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const operation = useOperation();
@@ -28,13 +31,19 @@ export function ImportDialog({ onClose, onSaved }: { onClose: () => void; onSave
     e.preventDefault(); if (busy) return;
     setError(''); setBusy(true);
     try {
-      const payload = { channel, language, messages: parseTranscript(text, channel) };
+      const envelope = text.trim().startsWith('{') ? JSON.parse(text) : null;
+      const source={...envelope?.source,...(operator.trim()?{target_operator_id:operator.trim()}:{}),
+        ...(lostStart?{complete_start:false}:{}),...(lostEnd?{complete_end:false}:{})};
+      const payload = { channel, language, messages: parseTranscript(text, channel), ...(Object.keys(source).length?{source}:{}) };
       const request: ConversationCreate = { ...payload, operation_id: operation(payload) };
       onSaved(await api.createConversation(request));
     } catch (error) { setError(errorText(error)); } finally { setBusy(false); }
   }
   return <Modal title="Добавить переписку" onClose={() => !busy && onClose()} wide>
     <form onSubmit={submit} className="live-form">
+      <details><summary>Оператор и полнота записи</summary><label className="form-label">ID оцениваемого оператора<input value={operator} onChange={e=>setOperator(e.target.value)}/></label>
+        <label><input type="checkbox" checked={lostStart} onChange={e=>setLostStart(e.target.checked)}/> Утрачено начало</label>
+        <label><input type="checkbox" checked={lostEnd} onChange={e=>setLostEnd(e.target.checked)}/> Утрачен конец</label></details>
       <p className="modal-description">Диалог сохранится на сервере. Оценку можно запустить после проверки реплик и выбора чек-листа.</p>
       <div className="live-fields"><label className="form-label">Язык<select value={language} disabled={busy} onChange={e => setLanguage(e.target.value as Conversation['language'])}>{['RU','KZ','EN'].map(l => <option key={l}>{l}</option>)}</select></label>
       <label className="form-label">Канал<select value={channel} disabled={busy} onChange={e => setChannel(e.target.value as Conversation['channel'])}><option value="agent_chat">Чат поддержки</option><option value="voice_call">Готовый транскрипт звонка</option></select></label></div>
@@ -75,6 +84,7 @@ export function ChecklistEditor({ checklist, onSaved }: { checklist: Checklist; 
       <label className="form-label">Инструкция оценки<textarea required rows={3} value={c.instruction} onChange={e => patch(i, { instruction: e.target.value })}/></label>
       <div className="live-fields"><label className="form-label">Тип<select value={c.type} onChange={e => { const type = e.target.value as typeof c.type; setScaleTexts(values => values.map((v, j) => i === j ? type === 'scale' ? '0, 1' : '' : v)); patch(i, { type, scale: type === 'scale' ? [0, 1] : [], ...(type === 'flag' ? { weight: 0, allow_na: false, na_condition: null } : {}) }); }}><option value="boolean">Да / нет</option><option value="scale">Шкала</option><option value="flag">Грубая ошибка</option></select></label>
       <label className="form-label">Вес<input type="number" min="0" step="any" required value={c.weight} disabled={c.type === 'flag'} onChange={e => patch(i, { weight: Number(e.target.value) })}/></label>
+      <label className="form-label">Зависит от критериев<select multiple value={c.depends_on ?? []} onChange={e=>patch(i,{depends_on:Array.from(e.target.selectedOptions,o=>o.value)})}>{draft.criteria.filter(other=>other.id!==c.id).map(other=><option key={other.id} value={other.id}>{other.title || other.id}</option>)}</select></label>
       <label className="form-label">Раздел<input value={c.section_id ?? ''} onChange={e => patch(i, { section_id: e.target.value || null })}/></label></div>
       {c.type === 'scale' && <label className="form-label">Допустимые ступени через запятую<input required value={scaleTexts[i] ?? ''} onChange={e => { const text = e.target.value; setScaleTexts(values => values.map((v, j) => i === j ? text : v)); patch(i, { scale: text.split(',').map(v => v.trim() ? Number(v.trim()) : NaN) }); }}/></label>}
       <label className="live-checkbox"><input type="checkbox" checked={c.allow_na} disabled={c.type === 'flag'} onChange={e => patch(i, { allow_na: e.target.checked, na_condition: e.target.checked ? '' : null })}/>Допускать N/A</label>

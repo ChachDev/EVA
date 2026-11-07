@@ -61,7 +61,7 @@ function jsonBody(payload: unknown): string {
 export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
   const baseUrl = (options.baseUrl ?? (environment.VITE_API_URL || DEFAULT_API_URL)).replace(/\/+$/, '');
   const fetcher = options.fetch ?? globalThis.fetch.bind(globalThis);
-  const timeoutMs = options.timeoutMs ?? 30_000;
+  const timeoutMs = options.timeoutMs ?? Number(environment.VITE_API_TIMEOUT_MS || 30_000);
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('API timeout must be positive.');
 
   async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -127,6 +127,8 @@ export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
     getConversation: id => request('/api/v1/conversations/' + pathId(id)),
     createConversation: payload => post('/api/v1/conversations', payload),
     evaluate: payload => post('/api/v1/evaluations', payload),
+    auditExport: id => request('/api/v1/evaluations/'+pathId(id)+'/audit'),
+    deriveVersion: (id,version) => post('/api/v1/evaluations/'+pathId(id)+'/versions/'+version,{}),
     getEvaluationPage,
     getEvaluations: async conversationId => {
       const items: Evaluation[] = [];

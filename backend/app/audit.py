@@ -102,9 +102,11 @@ def install(app, contracts, store, settings):
         if not settings.audit_review: raise HTTPException(404,"EVA Review disabled.")
         case=app.state.workflow.get_review_case(eid)
         snapshot=store.get_snapshot(eid)
-        return {"format":"eva.review.v1","evaluation_id":eid,"snapshot":snapshot,
+        document={"format":"eva.review.v1","evaluation_id":eid,"snapshot":snapshot,
                 "review":case,"history":review_history(case),"audit":store.get_audit(eid),
                 "can_derive":snapshot is not None and settings.audit_mode!="baseline"}
+        contracts.validate("audit-export",document)
+        return document
 
     @app.post("/api/v1/evaluations/{eid}/versions/{version}",status_code=201)
     async def derive(eid:str,version:int, options:dict=Body(...)) -> dict:

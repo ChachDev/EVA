@@ -2,7 +2,7 @@ import type { ConversationCreate } from './api/types';
 
 const roles: Record<string, ConversationCreate['messages'][number]['speaker']> = {
   client: 'client', клиент: 'client', operator: 'operator', оператор: 'operator',
-  bot: 'bot', бот: 'bot', system: 'system', система: 'system',
+  bot: 'bot', бот: 'bot', system: 'system', система: 'system', unknown: 'unknown', неизвестно: 'unknown',
 };
 
 /** Preserve supplied roles and time; never invent alternating speakers or timestamps. */
@@ -35,24 +35,25 @@ export function parseTranscript(raw: string, channel?: ConversationCreate['chann
     const role = m.speaker ?? m.role;
     const key = typeof role === 'string' ? role.toLowerCase().trim() : '';
     const speaker = Object.hasOwn(roles, key) ? roles[key] : undefined;
-    const timestamp = m.timestamp ?? m.time;
+    const timestamp = m.timestamp === null ? null : m.timestamp ?? m.time;
     if (!speaker) throw new Error(`Реплика ${i + 1}: укажите client, operator, bot или system.`);
-    if (typeof timestamp !== 'string' || !timestamp.trim() || timestamp.length > 128) {
+    if (timestamp !== null && (typeof timestamp !== 'string' || !timestamp.trim() || timestamp.length > 128)) {
       throw new Error(`Реплика ${i + 1}: нужна исходная метка времени.`);
     }
-    const chatTime = /^[0-9]{2,}:[0-5][0-9]$/.test(timestamp);
-    const iso = timestamp.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})[Tt]([0-9]{2}):([0-9]{2})(?::([0-9]{2})(?:[.,][0-9]+)?)?(?:[Zz]|[+-](?:[01][0-9]|2[0-3]):?[0-5][0-9])$/);
+    const chatTime = timestamp === null || /^[0-9]{2,}:[0-5][0-9]$/.test(timestamp);
+    const iso = timestamp?.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})[Tt]([0-9]{2}):([0-9]{2})(?::([0-9]{2})(?:[.,][0-9]+)?)?(?:[Zz]|[+-](?:[01][0-9]|2[0-3]):?[0-5][0-9])$/);
     const year = Number(iso?.[1]), month = Number(iso?.[2]), day = Number(iso?.[3]);
     const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
     const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     const voiceTime = !!iso && year >= 1 && month >= 1 && month <= 12 && day >= 1 && day <= days[month - 1] && Number(iso[4]) < 24 && Number(iso[5]) < 60 && Number(iso[6] ?? 0) < 60;
-    if (channel === 'agent_chat' ? !chatTime : channel === 'voice_call' ? !voiceTime : !chatTime && !voiceTime) {
+    if (timestamp !== null && (channel === 'agent_chat' ? !chatTime : channel === 'voice_call' ? !voiceTime : !chatTime && !voiceTime)) {
       throw new Error(`Реплика ${i + 1}: для чата нужно MM:SS, для звонка — корректное ISO-время с часовым поясом.`);
     }
     if (typeof m.text !== 'string' || !m.text.trim() || m.text.length > 100000) {
       throw new Error(`Реплика ${i + 1}: текст пуст или превышает 100 000 символов.`);
     }
-    return { timestamp, speaker, text: m.text };
+    const extra = Object.fromEntries(['speaker_id','event','language','quality','offset_seconds','end_seconds'].filter(k => k in m).map(k => [k,m[k]]));
+    return { timestamp, speaker, text: m.text, ...extra };
   });
 }
 

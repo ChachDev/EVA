@@ -30,6 +30,7 @@ _OPERATIONS = {
     ("/api/v1/evaluations", "get"): (None, 200, "evaluation-list", False, (422, 503)),
     ("/api/v1/evaluations", "post"): ("evaluation-create", 201, "evaluation-record", False, (404, 409, 422, 502, 503)),
     ("/api/v1/evaluations/{evaluation_id}", "get"): (None, 200, "evaluation-record", False, (404, 503)),
+    ("/api/v1/evaluations/{eid}/audit", "get"): (None, 200, "audit-export", False, (404, 422, 503)),
     ("/api/v1/evaluations/{evaluation_id}/snapshot", "get"): (None, 200, "evaluation-request", False, (404, 409, 422, 503)),
     ("/api/v1/review-cases/{evaluation_id}", "get"): (None, 200, "review-case", False, (404, 422, 503)),
     ("/api/v1/evaluations/{evaluation_id}/appeals", "post"): ("appeal-create", 201, "review-case", False, (404, 409, 422, 503)),

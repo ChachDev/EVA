@@ -3,6 +3,7 @@ import {
   AlertTriangle, ArrowRight, Check, ChevronDown, Clock, FileText,
   GitPullRequest, Headphones, Info, MessageSquare, Minus, ShieldCheck,
 } from "lucide-react";
+import AuditReview from './AuditReview';
 import type { Checklist, Conversation, Evaluation, EvaluationResponse, ReviewCase } from "./api/types";
 
 export type LiveDetailProps = {
@@ -19,14 +20,14 @@ export type LiveDetailProps = {
 
 type Criterion = Checklist["criteria"][number];
 type Result = EvaluationResponse["criteria"][number];
-const speakers = { operator: "Оператор", client: "Клиент", system: "Система", bot: "Бот" };
+const speakers = { operator: "Оператор", client: "Клиент", system: "Система", bot: "Бот", unknown: "Роль неизвестна" };
 const evidenceKinds = {
   message: "Основание", missing_action: "Участок ожидаемого действия",
   not_applicable: "Основание неприменимости", uncertain: "Контекст для ручной проверки",
 };
 const formatNumber = (value: number | null) => value === null ? "—" : value.toLocaleString("ru-RU", { maximumFractionDigits: 2 });
 const messageAnchor = (conversationId: string, messageId: string) => `live-message-${encodeURIComponent(conversationId)}-${encodeURIComponent(messageId)}`;
-const timeLabel = (value: string) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value) ? value.slice(11, 19) : value;
+const timeLabel = (value: string | null) => value === null ? "Время не указано" : /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value) ? value.slice(11, 19) : value;
 
 function resultLabel(result: Result | undefined, criterion: Criterion): string {
   if (!result) return "Не оценён";
@@ -102,7 +103,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
     <div className="page-heading detail-heading">
       <div><div className="eyebrow">{conversation.id} <span className="language-tag">{conversation.language}</span></div>
         <h1>{conversation.channel === "voice_call" ? "Разбор звонка" : "Разбор диалога"}</h1>
-        <p>{conversation.channel === "voice_call" ? "Звонок" : "Чат"}<span>·</span>Оператор не указан</p>
+        <p>{conversation.channel === "voice_call" ? "Звонок" : "Чат"}<span>·</span>{conversation.source?.target_operator_id ?? 'Оператор не указан'}</p>
       </div>
       <button className="button primary" disabled={busy || !canEvaluate} onClick={onEvaluate}>
         {busy ? <Clock aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}
@@ -149,7 +150,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
           {conversation.channel === "voice_call" ? <Headphones aria-hidden="true" /> : <MessageSquare aria-hidden="true" />}</div>
         {conversation.channel === "voice_call" && <div className="audio-empty"><Headphones aria-hidden="true" /><div>
           <strong>{savedAudio ? "Аудиозапись доступна по ссылке" : "Аудиозапись недоступна"}</strong>
-          <span>{savedAudio ? "Запись откроется только по вашему нажатию. Переход к точному фрагменту пока недоступен." : "Для просмотра и оценки используется сохранённая расшифровка."}</span>
+          <span>{savedAudio ? "Запись откроется по нажатию. Для реплик с привязкой ко времени доступна ссылка на фрагмент." : "Для просмотра и оценки используется сохранённая расшифровка."}</span>
           {savedAudio && <a className="button secondary small" href={savedAudio} target="_blank" rel="noopener noreferrer">Открыть запись <ArrowRight aria-hidden="true" /></a>}
         </div></div>}
         <div className="transcript-controls"><div className="segmented" role="group" aria-label="Показываемые реплики">
@@ -159,15 +160,17 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
         <div className="transcript-body">{conversation.messages.map(message => transcriptTab === "operator" && message.speaker !== "operator" ? null :
           <article id={messageAnchor(conversation.id, message.id)} tabIndex={-1} key={message.id}
             className={`message ${message.speaker}${highlighted.has(message.id) ? " highlighted" : ""}`}>
-            <div className="message-meta"><span>{speakers[message.speaker]}</span><time title={message.timestamp}>{timeLabel(message.timestamp)}</time></div>
+            <div className="message-meta"><span>{speakers[message.speaker]}</span><time title={message.timestamp ?? undefined}>{timeLabel(message.timestamp)}</time></div>
             <div className="message-bubble">{message.text}</div>
+            {savedAudio && conversation.channel === 'voice_call' && message.offset_seconds !== null && <a className="evidence-link" target="_blank" rel="noopener noreferrer" href={savedAudio.split('#')[0]+'#t='+message.offset_seconds+(message.end_seconds!=null?','+message.end_seconds:'')}>Открыть фрагмент с {formatNumber(message.offset_seconds)} с</a>}
             {highlighted.has(message.id) && <span className="evidence-caption"><Check aria-hidden="true" />{message.id} · основание оценки</span>}
           </article>)}</div>
         <div className="transcript-footer"><span className="status-dot" />Конец сохранённого транскрипта<span>{conversation.messages.length} реплик</span></div>
       </section>
       <section className="panel criteria-panel">
-        <div className="panel-heading"><div><h2>Оценка по критериям</h2><p>От решения — к исходной реплике</p></div><span className="count-badge">{criteria.length}</span></div>
+        <div className="panel-heading"><div><h2>EVA Score · критерии</h2><p>От решения — к исходной реплике</p></div><span className="count-badge">{criteria.length}</span></div>
         {!currentEvaluation && <div className="pending-notice"><Info aria-hidden="true" /><h3>Оценка ещё не выполнена</h3><p>Выберите версию чек-листа и запустите проверку. При недоступности модели результат не подменяется демонстрационными баллами.</p></div>}
+        {currentEvaluation && currentReview && <AuditReview evaluation={currentEvaluation} review={currentReview} jump={jump} />}
         <div className="criteria-list">{criteria.map(criterion => {
           const row = results.get(criterion.id);
           const contribution = contributions.get(criterion.id);
@@ -189,9 +192,10 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
               </span><ChevronDown className={open ? "rotated" : ""} aria-hidden="true" />
             </button>
             {open && <div className="criterion-detail">
-              <p>{row?.reason ?? criterion.instruction}</p>
+              <p><strong>Правило · v{checklist?.version}</strong> {criterion.instruction}</p>
+              <p>{row?.reason}</p>
               {row?.evidence.map((entry, index) => <div key={index}>
-                <p className="muted">{evidenceKinds[entry.kind]}</p>
+                <p className="muted">EVA Trace · {evidenceKinds[entry.kind]}</p>
                 {entry.message_ids.map(id => {
                   const message = messages.get(id);
                   return message ? <button className="evidence-link" key={id} onClick={() => jump([id, ...entry.message_ids.filter(other => other !== id)])} aria-label={`Перейти к реплике ${id}`}>
