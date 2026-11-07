@@ -7,12 +7,13 @@ from time import perf_counter
 from uuid import uuid4
 import hashlib
 import json
+import os
 
 from jsonschema import Draft202012Validator
 
 from .audit_policy import CONFIG, rules_for
 from .audit_trace import Trace
-from .engine import ContextLimitError, LocalEngine, inference_usage
+from .engine import DEFAULT_WEIGHTS, ContextLimitError, LocalEngine, inference_usage
 from .issai import digest, object_schema, string_enum, uncertain
 
 COMPONENTS = frozenset({"trace","policy","score","sentinel"})
@@ -97,19 +98,35 @@ class Auditor:
         self.components=frozenset(components)
         if not self.components<=COMPONENTS: raise ValueError("Unknown audit component")
         self.cache_size=cache_size
+        local_weights=Path(os.getenv("EVA_ISSAI_GGUF",DEFAULT_WEIGHTS))
+        signature=None
+        if local_weights.is_file():
+            stat=local_weights.stat()
+            signature={"name":local_weights.name,"bytes":stat.st_size,"mtime_ns":stat.st_mtime_ns}
+        self.model_revision={"declared":os.getenv("EVA_MODEL_REVISION"),"local_file":signature,
+                             "served_alias":baseline.model}
+        # The external operator can replace the worker without restarting FastAPI.
+        # Without a pinned revision do not serve old scores from that worker.
+        if os.getenv("EVA_LLAMA_WORKER_PORT") and not self.model_revision["declared"]:
+            self.cache_size=0
         self.cache=OrderedDict()
         self.lock=Lock()
         self.revision=digest([Path(__file__).with_name(f).read_bytes().hex() for f in
                              ("audit.py","audit_policy.py","audit_trace.py","audit_policy.json")])
 
-    def evaluate(self, request):
+    def evaluate(self, request, *, canonical=True):
         started=perf_counter()
+        if canonical:
+            request=json.loads(json.dumps(request,ensure_ascii=False,sort_keys=True))
         trace=Trace(request["conversation"])
         rules=rules_for(request["checklist"],"policy" in self.components)
         versions={"model":self.base.model,"prompt":PROMPT_HASH,"code":self.revision,"policy_version":CONFIG["version"],
                   "baseline_variant":getattr(self.base,"experiment_hash",self.base.__class__.__name__),
+                  "model_revision":self.model_revision,"generation":{"seed":42,"temperature":0,"thinking":False},
                   "components":sorted(self.components),"checklist":digest(request["checklist"]),
                   "rules":{k:v["hash"] for k,v in rules.items()},"transcript":trace.hash}
+        if not canonical:
+            versions["caller_wire_order"]=hashlib.sha256(json.dumps(request,ensure_ascii=False,separators=(",",":")).encode()).hexdigest()
         key=digest(versions)
         with self.lock:
             cached=deepcopy(self.cache.get(key))

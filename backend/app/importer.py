@@ -135,7 +135,7 @@ def _conversation(record: object, contracts: Contracts, *, manual: bool = False)
             "text": text,
             "timestamp": timestamp,
             "offset_seconds": message.get("offset_seconds", offset) if manual else offset,
-            **({k: message[k] for k in ("speaker_id","end_seconds","language","quality","event") if k in message} if manual else {}),
+            **({k: message[k] for k in ("speaker_id","end_seconds","language","quality","event","translation") if k in message} if manual else {}),
         })
         end = messages[-1].get("end_seconds")
         start = messages[-1]["offset_seconds"]

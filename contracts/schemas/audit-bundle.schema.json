@@ -389,6 +389,51 @@
         },
         "cache_hit": {
           "type": "boolean"
+        },
+        "long_input": {
+          "type": "object",
+          "required": [
+            "message_count",
+            "checked",
+            "unread",
+            "cross_fragment_review",
+            "calls"
+          ],
+          "properties": {
+            "message_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "checked": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "first",
+                  "last",
+                  "candidates"
+                ]
+              }
+            },
+            "unread": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "cross_fragment_review": {
+              "const": true
+            },
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
         }
       },
       "required": [

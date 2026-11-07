@@ -23,6 +23,7 @@ from eva_ml.consultation_v11 import select_provider
 @asynccontextmanager
 async def lifespan(application: FastAPI):
     application.state.contracts = Contracts()
+    application.state.auditor = None
     mode = os.getenv("EVA_ML_PROVIDER","issai")
     if mode == "stub":
         application.state.provider = stub
@@ -35,12 +36,16 @@ async def lifespan(application: FastAPI):
             application.state.provider = select_provider(engine, os.getenv("EVA_CONSULTATION_VARIANT", "consultation-v1.1"))
             configured = os.getenv("EVA_AUDIT_COMPONENTS", ",".join(sorted(COMPONENTS)))
             keys=set() if configured.strip().lower()=="off" else {key.strip() for key in configured.split(",") if key.strip()}
-            application.state.auditor = select_auditor(application.state.provider,keys,
-                                                        os.getenv("EVA_AUDIT_PROFILE","source-events"))
+            try:
+                application.state.auditor = select_auditor(application.state.provider,keys,
+                                                          os.getenv("EVA_AUDIT_PROFILE","source-events"))
+            except ValueError:
+                logging.getLogger("uvicorn.error").warning("Invalid experimental audit configuration; baseline remains available.")
             await run_in_threadpool(application.state.provider.prepare)
             logging.getLogger("uvicorn.error").info("ISSAI service ready in %.3f s",time.monotonic()-started)
             yield
         finally:
+            application.state.auditor = None
             await run_in_threadpool(worker.__exit__, None, None, None)
     else:
         raise RuntimeError("Unknown EVA_ML_PROVIDER")

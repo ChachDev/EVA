@@ -15,14 +15,17 @@ from .scoring import score
 from .storage import StorageConflict
 
 
+def fingerprint(value):
+    document=json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(",",":"))
+    return hashlib.sha256(document.encode()).hexdigest()
+
+
 def checked(contracts, request, bundle):
     try:
         contracts.validate("audit-bundle", bundle)
         response, audit = bundle["response"], bundle["audit"]
         contracts.validate_result(request, response)
-        def fingerprint(value):
-            document=json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(",",":"))
-            return hashlib.sha256(document.encode()).hexdigest()
+
         versions=audit["versions"]
         if (versions["transcript"]!=fingerprint(request["conversation"])
                 or versions["checklist"]!=fingerprint(request["checklist"]) or versions["model"]!=response["model"]
@@ -48,6 +51,31 @@ def checked(contracts, request, bundle):
                 if role=="operator" and target and m.get("speaker_id")!=target:
                     role="other_operator" if m.get("speaker_id") else "unknown"
                 if role!=item["role"]: raise ValueError("Invalid speaker")
+        manifest=audit.get("long_input")
+        if manifest is not None:
+            if manifest["message_count"]!=len(messages) or any(f["status"]!="needs_review" for f in audit["sentinel"]):
+                raise ValueError("Incomplete source cannot support a definitive violation decision.")
+            covered=set()
+            ranges=[(s["first"],s["last"],s["candidates"]) for s in manifest["checked"]]
+            ranges.extend((first,last,{}) for first,last in manifest["unread"])
+            for first,last,leads in ranges:
+                lo,hi=known[first][0],known[last][0]
+                if lo>hi or not isinstance(leads,dict): raise ValueError("Invalid inspected range.")
+                covered.update(range(lo,hi+1))
+                for mid in leads.values():
+                    pos,m=known[mid]
+                    if not lo<=pos<=hi or m["speaker"]!="operator" or (audit["target_operator"] and
+                            m.get("speaker_id")!=audit["target_operator"]):
+                        raise ValueError("Invalid fragment lead.")
+            if len(covered)!=len(messages): raise ValueError("Missing fragment range.")
+        if audit["sentinel"]:
+            flags=audit["sentinel"]; ids={f["criterion_id"] for f in flags}
+            if len(ids)!=1 or len(flags)!=3 or {f["rule_id"] for f in flags}!={"insult","private_service","disclosure"}:
+                raise ValueError("Incomplete Sentinel rules.")
+            flag=decisions[ids.pop()]
+            expected=True if any(f["decision"] is True for f in flags) else (
+                None if any(f["status"]=="needs_review" for f in flags) else False)
+            if flag["value"] is not expected: raise ValueError("Sentinel summary disagrees with its evidence.")
         return bundle
     except (ContractError, KeyError, IndexError, ValueError, TypeError) as exc:
         raise MLInvalidResponse("Invalid audit result") from exc
@@ -102,8 +130,16 @@ def install(app, contracts, store, settings):
         if not settings.audit_review: raise HTTPException(404,"EVA Review disabled.")
         case=app.state.workflow.get_review_case(eid)
         snapshot=store.get_snapshot(eid)
-        document={"format":"eva.review.v1","evaluation_id":eid,"snapshot":snapshot,
-                "review":case,"history":review_history(case),"audit":store.get_audit(eid),
+        sidecar=store.get_audit(eid)
+        original=case["original"]["original"]
+        provenance={"run_id":eid,"created_at":case["original"]["created_at"],"model":original["model"],
+                    "provider":original["provider"],"checklist_id":original["checklist_id"],
+                    "checklist_version":original["checklist_version"],
+                    "transcript_sha256":fingerprint(snapshot["conversation"]) if snapshot else None,
+                    "checklist_sha256":fingerprint(snapshot["checklist"]) if snapshot else None,
+                    "saved_experiment":sidecar.get("mode") if sidecar else None}
+        document={"format":"eva.review.v1","evaluation_id":eid,"snapshot":snapshot,"provenance":provenance,
+                "review":case,"history":review_history(case),"audit":sidecar,
                 "can_derive":snapshot is not None and settings.audit_mode!="baseline"}
         contracts.validate("audit-export",document)
         return document

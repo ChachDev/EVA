@@ -207,7 +207,11 @@ class EvaluationStore:
         return {"group_id": group_id, "total": len(prepared), "inserted": inserted, "unchanged": unchanged}
 
     def initialize_audit(self):
-        audit_runs.create(self.engine, checkfirst=True)
+        with self._write_connection() as connection:
+            if self.engine.dialect.name=="postgresql":
+                connection.exec_driver_sql("SET LOCAL lock_timeout = '5s'")
+                connection.exec_driver_sql("SELECT pg_advisory_xact_lock(630487201)")
+            audit_runs.create(connection, checkfirst=True)
 
     def save_shadow(self, evaluation_id: str, payload: dict):
         with self._write_connection() as connection:

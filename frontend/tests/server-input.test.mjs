@@ -93,7 +93,7 @@ for (const role of ['agent', '', ' ', '__proto__', 'constructor', 'toString', 1,
 
 for (const [name, row] of [
   ['speaker', { timestamp: '00:00', text: 'Synthetic.' }],
-  ['timestamp', { speaker: 'client', text: 'Synthetic.' }],
+
   ['text', { timestamp: '00:00', speaker: 'client' }],
 ]) {
   test('missing required ' + name + ' is rejected rather than invented', () => {
@@ -147,6 +147,7 @@ test('10001 messages are rejected rather than truncated', () => {
 test('keeps an unknown speaker, mixed language and explicitly absent time', () => {
   const row=message({timestamp:null,speaker:'unknown',speaker_id:'B',language:'mixed'});
   assert.deepEqual(parseJson([row]),[row]);
+  assert.deepEqual(parseJson([{speaker:'client',text:'Synthetic.'}]),[{speaker:'client',text:'Synthetic.',timestamp:null}]);
 });
 
 test('an invalid later message rejects the whole transcript', () => {

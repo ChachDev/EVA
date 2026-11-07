@@ -12,6 +12,7 @@ export interface Message {
   offset_seconds: number | null;
   speaker_id?: string;
   event?: 'identity_verified';
+  translation?: {language:string;text:string};
   end_seconds?: number | null;
   language?: Language | 'mixed' | 'unknown';
   quality?: string;

@@ -59,6 +59,10 @@
             ],
             "minimum": 0
           },
+          "translation": {
+            "type": "object", "additionalProperties": false, "required": ["language","text"],
+            "properties": {"language":{"type":"string","minLength":1},"text":{"type":"string","minLength":1}}
+          },
           "event": {"const":"identity_verified"},
           "speaker_id": {
             "type": "string",

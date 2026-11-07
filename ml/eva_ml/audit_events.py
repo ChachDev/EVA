@@ -7,6 +7,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 from .audit import Auditor, COMPONENTS
 from .audit_policy import CONFIG
+from .audit_fragments import scan
 from .engine import ContextLimitError
 from .issai import SYSTEM as SCORE_PROMPT, digest, object_schema, string_enum, uncertain
 
@@ -32,7 +33,15 @@ def source_detail(trace, row, stage, conflict=None):
     for group in row["evidence"]:
         for mid in group["message_ids"]:
             if mid not in {e["utterance_id"] for e in proof}:
-                proof.append(trace.verify({"id":mid,"quote":trace.records[mid]["text"]}))
+                text=trace.records[mid]["text"]
+                # Uncertain references locate the reviewed range; duplicating a
+                # many-page utterance for each pending criterion can exceed HTTP limits.
+                if row["status"]=="needs_review" and len(text)>240:
+                    anchor=text[:240]
+                    if not anchor.strip(): anchor=text.lstrip()[:240]
+                else:
+                    anchor=text
+                proof.append(trace.verify({"id":mid,"quote":anchor}))
     pending=row["status"]=="needs_review"
     return {"decision":row["value"],"status":row["status"],"action":row["reason"],
             "applicability":"unknown" if pending else "not_applicable" if row["value"] is None else "applicable",
@@ -105,7 +114,7 @@ class EventsAuditor(Auditor):
             (k=="identity" and "score" in enabled) or (k=="gross_errors" and "sentinel" in enabled))}
         ordinary=[c for c in req["checklist"]["criteria"] if c["id"] not in special or
                   (self.retain_identity_score and c["id"]=="identity")]
-        rows={}; details={}; flags=[]; fields={}; events={}; failure=None
+        rows={}; details={}; flags=[]; fields={}; events={}; failure=None; fragments=None
         if ordinary:
             subset={**req,"checklist":{**req["checklist"],"criteria":ordinary}}
             if trace.target and not trace.ambiguous:
@@ -148,7 +157,9 @@ class EventsAuditor(Auditor):
                     if isinstance(decoded,dict):
                         events={k:v for k,v in decoded.items() if k in fields and Draft202012Validator(fields[k]).is_valid(v)}
             except ContextLimitError:
-                failure="Полный вход превышает окно модели. Данные не обрезаны."
+                failure="Полный вход превышает окно модели. Решение требует проверки всего источника."
+                if "gross_errors" in special:
+                    fragments=scan(self.base.engine,self.base.model,trace,CONFIG["violations"])
             except (KeyError,IndexError,TypeError,ValueError):
                 failure="Некорректный ответ модели при извлечении событий."
         if "identity" in special:
@@ -164,6 +175,10 @@ class EventsAuditor(Auditor):
             r=special["gross_errors"]
             for k in CONFIG["violations"]:
                 row=violation_decision(r,events.get(k),trace) if not failure else uncertain(r,list(trace.records),failure)
+                if fragments:
+                    leads=[part["candidates"][k] for part in fragments["checked"] if k in part["candidates"]]
+                    if leads:
+                        row["evidence"]=[{"kind":"uncertain","message_ids":list(dict.fromkeys(leads))}]
                 flags.append({**source_detail(trace,row,r["stage"]),"rule_id":k,"version":CONFIG["version"],"criterion_id":r["id"]})
             positive=[f for f in flags if f["decision"] is True]
             pending=[f for f in flags if f["status"]=="needs_review"]
@@ -176,7 +191,8 @@ class EventsAuditor(Auditor):
                 "model":self.base.model,"provider":"llama.cpp","criteria":[rows[k] for k in rules],"warnings":[]}
         return {"response":result,"audit":{"version":1,"versions":versions,"target_operator":trace.target,
                 "source":req["conversation"].get("source",{}),"language":req["conversation"]["language"],
-                "criteria":details,"sentinel":flags,"rules":rules,"calls":None,"tokens":None}}
+                "criteria":details,"sentinel":flags,"rules":rules,"calls":None,"tokens":None,
+                **({"long_input":fragments} if fragments else {})}}
 
 
 class GroundedEventsAuditor(EventsAuditor):

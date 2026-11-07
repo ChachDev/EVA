@@ -35,7 +35,7 @@ export function parseTranscript(raw: string, channel?: ConversationCreate['chann
     const role = m.speaker ?? m.role;
     const key = typeof role === 'string' ? role.toLowerCase().trim() : '';
     const speaker = Object.hasOwn(roles, key) ? roles[key] : undefined;
-    const timestamp = m.timestamp === null ? null : m.timestamp ?? m.time;
+    const timestamp = m.timestamp === null ? null : m.timestamp ?? m.time ?? null;
     if (!speaker) throw new Error(`Реплика ${i + 1}: укажите client, operator, bot или system.`);
     if (timestamp !== null && (typeof timestamp !== 'string' || !timestamp.trim() || timestamp.length > 128)) {
       throw new Error(`Реплика ${i + 1}: нужна исходная метка времени.`);
@@ -52,7 +52,7 @@ export function parseTranscript(raw: string, channel?: ConversationCreate['chann
     if (typeof m.text !== 'string' || !m.text.trim() || m.text.length > 100000) {
       throw new Error(`Реплика ${i + 1}: текст пуст или превышает 100 000 символов.`);
     }
-    const extra = Object.fromEntries(['speaker_id','event','language','quality','offset_seconds','end_seconds'].filter(k => k in m).map(k => [k,m[k]]));
+    const extra = Object.fromEntries(['speaker_id','event','translation','language','quality','offset_seconds','end_seconds'].filter(k => k in m).map(k => [k,m[k]]));
     return { timestamp, speaker, text: m.text, ...extra };
   });
 }

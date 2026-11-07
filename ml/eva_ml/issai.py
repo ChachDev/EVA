@@ -120,6 +120,10 @@ def contract_row(c, row):
             "value":value, "reason":reason, "evidence":[{"kind":kind,"message_ids":list(dict.fromkeys(row["evidence"]))}]}
 
 
+def original_messages(conversation):
+    return [{k:v for k,v in m.items() if k!="translation"} for m in conversation["messages"]]
+
+
 def digest(value):
     return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True,
                                      separators=(",", ":")).encode()).hexdigest()
@@ -162,7 +166,7 @@ class ISSAIProvider:
     def _payload(self, conversation, checklist):
         instructions, schema, _ = plan_for(checklist, self.model)
         user = {"language":conversation["language"],"channel":conversation["channel"],
-                "criteria":instructions, "messages":conversation["messages"]}
+                "criteria":instructions, "messages":original_messages(conversation)}
         payload = {"model":self.model, "messages":[{"role":"system","content":SYSTEM},
                    {"role":"user","content":json.dumps(user,ensure_ascii=False,separators=(",",":"))}],
                    "temperature":0,"seed":42,"max_tokens":3200,"stream":False,"cache_prompt":False,

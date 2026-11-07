@@ -53,5 +53,8 @@ class Trace:
 
     def span(self, stage):
         rows = list(self.records)
-        return {"first":rows[0],"last":rows[-1],"stage":stage,
+        operators=[k for k in rows if self.records[k]["role"]=="operator"]
+        first=operators[-1] if stage=="end" and operators else rows[0]
+        last=operators[0] if stage=="start" and operators else rows[-1]
+        return {"first":first,"last":last,"stage":stage,
                 "complete_start":self.complete_start,"complete_end":self.complete_end,"gaps":self.gaps}

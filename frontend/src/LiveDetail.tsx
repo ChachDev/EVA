@@ -71,6 +71,12 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
   const results = new Map(resultRows.map(result => [result.criterion_id, result]));
   const contributions = new Map(scoring?.criteria.map(result => [result.criterion_id, result]) ?? []);
   const messages = new Map(conversation.messages.map(message => [message.id, message]));
+  function speakerLabel(message:Conversation['messages'][number]) {
+    const target=conversation.source?.target_operator_id;
+    if(message.speaker==='operator' && target && message.speaker_id!==target)
+      return message.speaker_id?'Другой оператор · '+message.speaker_id:'Оператор не определён';
+    return speakers[message.speaker]+(message.speaker_id?' · '+message.speaker_id:'');
+  }
   const highlighted = new Set(highlight);
   const total = scoring?.status === "complete" ? scoring.total : null;
   const savedAudio = audioLink(conversation.audio_url);
@@ -160,8 +166,9 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
         <div className="transcript-body">{conversation.messages.map(message => transcriptTab === "operator" && message.speaker !== "operator" ? null :
           <article id={messageAnchor(conversation.id, message.id)} tabIndex={-1} key={message.id}
             className={`message ${message.speaker}${highlighted.has(message.id) ? " highlighted" : ""}`}>
-            <div className="message-meta"><span>{speakers[message.speaker]}</span><time title={message.timestamp ?? undefined}>{timeLabel(message.timestamp)}</time></div>
+            <div className="message-meta"><span>{speakerLabel(message)}</span><time title={message.timestamp ?? undefined}>{timeLabel(message.timestamp)}</time></div>
             <div className="message-bubble">{message.text}</div>
+            {message.translation && <details><summary>Перевод · {message.translation.language}</summary>{message.translation.text}</details>}
             {savedAudio && conversation.channel === 'voice_call' && message.offset_seconds !== null && <a className="evidence-link" target="_blank" rel="noopener noreferrer" href={savedAudio.split('#')[0]+'#t='+message.offset_seconds+(message.end_seconds!=null?','+message.end_seconds:'')}>Открыть фрагмент с {formatNumber(message.offset_seconds)} с</a>}
             {highlighted.has(message.id) && <span className="evidence-caption"><Check aria-hidden="true" />{message.id} · основание оценки</span>}
           </article>)}</div>
@@ -199,7 +206,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
                 {entry.message_ids.map(id => {
                   const message = messages.get(id);
                   return message ? <button className="evidence-link" key={id} onClick={() => jump([id, ...entry.message_ids.filter(other => other !== id)])} aria-label={`Перейти к реплике ${id}`}>
-                    <span className="evidence-link-heading"><span><MessageSquare aria-hidden="true" />{speakers[message.speaker]} · {timeLabel(message.timestamp)} · {id}</span><ArrowRight aria-hidden="true" /></span>
+                    <span className="evidence-link-heading"><span><MessageSquare aria-hidden="true" />{speakerLabel(message)} · {timeLabel(message.timestamp)} · {id}</span><ArrowRight aria-hidden="true" /></span>
                     <q>{message.text}</q>
                   </button> : <p className="muted" key={id}>Реплика {id} отсутствует в открытом транскрипте.</p>;
                 })}

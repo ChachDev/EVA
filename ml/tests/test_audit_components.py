@@ -59,6 +59,15 @@ def test_mixed_input_quote_offsets_and_unknown_role(evaluation_request):
     assert trace.scope_problem("whole") and trace.records[m["id"]]["language"]=="mixed"
 
 
+def test_translation_never_proves_an_original_quote(evaluation_request):
+    from eva_ml.issai import original_messages
+    conv=evaluation_request["conversation"]; m=conv["messages"][0]
+    m["translation"]={"language":"EN","text":"a translation only"}
+    assert "translation" not in original_messages(conv)[0]
+    with pytest.raises(ValueError):
+        Trace(conv).verify({"id":m["id"],"quote":"a translation only"})
+
+
 def test_policy_semantic_edit_removes_old_specialization(evaluation_request):
     check=deepcopy(evaluation_request["checklist"])
     old=rules_for(check)["gross_errors"]

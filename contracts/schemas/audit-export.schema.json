@@ -142,6 +142,21 @@
     },
     "can_derive": {
       "type": "boolean"
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Stored identity. Legacy inputs without a snapshot have null hashes.",
+      "required": [
+        "run_id",
+        "created_at",
+        "model",
+        "provider",
+        "checklist_id",
+        "checklist_version",
+        "transcript_sha256",
+        "checklist_sha256",
+        "saved_experiment"
+      ]
     }
   }
 }
