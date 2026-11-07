@@ -1,0 +1,4051 @@
+
+@font-face {
+  font-family: "EVA Sans";
+  src: url("/fonts/open-sans-regular.woff") format("woff");
+  font-weight: 400;
+  font-display: swap
+}
+@font-face {
+  font-family: "EVA Sans";
+  src: url("/fonts/open-sans-semibold.woff") format("woff");
+  font-weight: 600;
+  font-display: swap
+}
+@font-face {
+  font-family: "EVA Sans";
+  src: url("/fonts/open-sans-bold.woff") format("woff");
+  font-weight: 700;
+  font-display: swap
+}
+#eva-root {
+  --forest: #082d21;
+  --green: #00b849;
+  --green-dark: #087d3e;
+  --lime: #c8f06d;
+  --canvas: #f5f7f5;
+  --text: #17281f;
+  --muted: #737e76;
+  --line: #e5eae6;
+  --amber: #a56b12;
+  --red: #c65347;
+  --sidebar: 232px;
+  --font: "EVA Sans","Segoe UI",Arial,sans-serif;
+  color-scheme: light
+}
+#eva-root,#eva-root * {
+  box-sizing: border-box
+}
+#eva-root {
+  scroll-behavior: smooth
+}
+#eva-root {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased
+}
+#eva-root button,#eva-root input,#eva-root textarea,#eva-root select {
+  font: inherit
+}
+#eva-root button,#eva-root a,#eva-root input,#eva-root textarea,#eva-root select {
+  -webkit-tap-highlight-color: transparent
+}
+#eva-root button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  color: inherit
+}
+#eva-root button:disabled {
+  cursor: not-allowed;
+  opacity: .55
+}
+#eva-root button,#eva-root a {
+  touch-action: manipulation
+}
+#eva-root a {
+  color: inherit;
+  text-decoration: none
+}
+#eva-root input,#eva-root textarea,#eva-root select {
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--line);
+  outline: none;
+  border-radius: 7px
+}
+#eva-root select {
+  cursor: pointer
+}
+#eva-root textarea {
+  resize: vertical;
+  line-height: 1.65
+}
+#eva-root input:focus,#eva-root textarea:focus,#eva-root select:focus {
+  border-color: var(--green)
+}
+#eva-root :focus-visible {
+  outline: 2px solid #00a348;
+  outline-offset: 3px
+}
+#eva-root svg {
+  flex-shrink: 0
+}
+#eva-root button svg,#eva-root a svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.7
+}
+#eva-root h1,#eva-root h2,#eva-root h3,#eva-root p {
+  margin: 0
+}
+#eva-root h1 {
+  font-size: 30px;
+  letter-spacing: -1.1px;
+  font-weight: 600;
+  line-height: 1.35
+}
+#eva-root h2 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -.35px
+}
+#eva-root h3 {
+  font-size: 15px;
+  font-weight: 600
+}
+#eva-root small {
+  font-size: 11px
+}
+#eva-root b,#eva-root strong {
+  font-weight: 600
+}
+#eva-root ::selection {
+  background: #c8f06d;
+  color: #082d21
+}
+#eva-root .sr-only {
+  position: absolute!important;
+  width: 1px!important;
+  height: 1px!important;
+  padding: 0!important;
+  margin: -1px!important;
+  overflow: hidden!important;
+  clip: rect(0,0,0,0)!important;
+  white-space: nowrap!important;
+  border: 0!important
+}
+#eva-root .muted {
+  color: var(--muted)
+}
+#eva-root .text-green {
+  color: var(--green-dark)
+}
+#eva-root .text-amber {
+  color: var(--amber)
+}
+#eva-root .required {
+  color: var(--red)
+}
+#eva-root .rotated {
+  transform: rotate(180deg)
+}
+#eva-root .full-width {
+  width: 100%;
+  justify-content: center
+}
+#eva-root .app-shell {
+  min-height: 100vh
+}
+#eva-root .sidebar {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar);
+  background: #10251d;
+  color: #d3ded6;
+  display: flex;
+  flex-direction: column;
+  padding: 29px 16px 19px
+}
+#eva-root .brand-button {
+  display: block;
+  text-align: left;
+  margin: 0 10px 30px;
+  padding: 0;
+  width: fit-content
+}
+#eva-root .eva-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #c8f06d
+}
+#eva-root .eva-logo>svg {
+  width: 36px;
+  height: 36px;
+  stroke-width: 0
+}
+#eva-root .eva-logo strong {
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -2.5px;
+  font-weight: 700;
+  color: #fff;
+  display: block
+}
+#eva-root .eva-logo strong span {
+  display: none
+}
+#eva-root .eva-logo small {
+  display: block;
+  color: #9eb1a5;
+  font-size: 8px;
+  letter-spacing: .6px;
+  margin-top: 8px
+}
+#eva-root .eva-logo.compact small {
+  display: none
+}
+#eva-root .workspace-switch {
+  border: 1px solid #2b4034;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-radius: 9px;
+  padding: 12px 11px;
+  margin: 0 0 28px
+}
+#eva-root .workspace-symbol {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 32px;
+  background: #213b2c;
+  border-radius: 7px;
+  color: #c8f06d
+}
+#eva-root .workspace-symbol svg {
+  width: 17px
+}
+#eva-root .workspace-switch b {
+  font-size: 11px;
+  color: #f2f5f2;
+  font-weight: 600
+}
+#eva-root .workspace-switch small {
+  display: block;
+  font-size: 9px;
+  color: #91a397;
+  margin-top: 3px
+}
+#eva-root .workspace-switch>svg {
+  width: 13px;
+  margin-left: auto;
+  color: #91a397
+}
+#eva-root .nav-label {
+  font-size: 8px;
+  color: #708c7a;
+  letter-spacing: 1.8px;
+  padding: 0 12px;
+  margin-bottom: 13px
+}
+#eva-root .sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px
+}
+#eva-root .nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  padding: 12px 13px;
+  border-radius: 7px;
+  text-align: left;
+  min-height: 43px;
+  color: #a4b6aa;
+  font-size: 12px;
+  font-weight: 400;
+  transition: background .15s,color .15s
+}
+#eva-root .nav-item:hover {
+  background: #1c3528;
+  color: #fff
+}
+#eva-root .nav-item>svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.7
+}
+#eva-root .nav-item.active {
+  color: #d6f3b0;
+  background: #2c4730;
+  font-weight: 600
+}
+#eva-root .nav-item.active>svg {
+  color: #c8f06d
+}
+#eva-root .nav-item small {
+  margin-left: auto;
+  font-size: 10px;
+  color: #7f9b89
+}
+#eva-root .nav-item em {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  background: #c8f06d;
+  color: #17321f;
+  width: 19px;
+  height: 19px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  font-style: normal
+}
+#eva-root .nav-item.active small {
+  color: #c8f06d
+}
+#eva-root .sidebar-bottom {
+  margin-top: auto;
+  padding-top: 35px
+}
+#eva-root .sidebar-promise {
+  border: 1px solid #314638;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 0 0 20px;
+  position: relative;
+  overflow: hidden
+}
+#eva-root .sidebar-promise strong {
+  font-size: 12px;
+  line-height: 1.65;
+  display: block;
+  color: #e4ebe4;
+  position: relative
+}
+#eva-root .sidebar-promise p {
+  font-size: 10px;
+  line-height: 1.65;
+  color: #93a69a;
+  margin-top: 8px;
+  max-width: 145px
+}
+#eva-root .sidebar-promise button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  width: 100%;
+  color: #c8f06d;
+  margin-top: 17px;
+  padding: 0
+}
+#eva-root .sidebar-promise button svg {
+  width: 14px
+}
+#eva-root .promise-art {
+  position: absolute;
+  right: 3px;
+  top: 7px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  opacity: .14;
+  transform: rotate(25deg)
+}
+#eva-root .promise-art span {
+  display: block;
+  width: 8px;
+  height: 75px;
+  border: 1px solid #c8f06d;
+  border-radius: 50%
+}
+#eva-root .promise-art span:nth-child(2) {
+  height: 105px
+}
+#eva-root .promise-art span:nth-child(3) {
+  height: 130px
+}
+#eva-root .promise-art span:nth-child(4) {
+  height: 105px
+}
+#eva-root .secondary-nav {
+  font-size: 10px;
+  min-height: 38px;
+  padding: 10px 12px
+}
+#eva-root .secondary-nav>svg {
+  width: 16px;
+  height: 16px
+}
+#eva-root .sidebar-freedom {
+  margin-top: 22px;
+  padding: 21px 12px 0;
+  border-top: 1px solid #293e31
+}
+#eva-root .freedom-logo {
+  display: flex;
+  align-items: center;
+  color: #00c356;
+  gap: 7px
+}
+#eva-root .freedom-logo span {
+  font-size: 17px;
+  color: #f4f7f3;
+  font-weight: 700;
+  letter-spacing: -.4px
+}
+#eva-root .freedom-logo small {
+  display: block;
+  font-size: 6px;
+  letter-spacing: 4px;
+  color: #a1b1a6;
+  margin-top: 2px
+}
+#eva-root .sidebar-freedom>span {
+  font-size: 7px;
+  letter-spacing: 2px;
+  display: block;
+  margin-top: 15px;
+  color: #708c7a
+}
+#eva-root .main-shell {
+  margin-left: var(--sidebar)
+}
+#eva-root .topbar {
+  height: 72px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+  padding: 0 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px
+}
+#eva-root .breadcrumb {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 11px;
+  white-space: nowrap;
+  color: #88918a
+}
+#eva-root .breadcrumb b {
+  font-weight: 400;
+  color: #405446
+}
+#eva-root .slash {
+  color: #c7cfc8
+}
+#eva-root .top-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px
+}
+#eva-root .global-search {
+  display: flex;
+  align-items: center;
+  width: 242px;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fafbf9
+}
+#eva-root .global-search>svg {
+  width: 15px;
+  height: 15px;
+  color: #7b877e
+}
+#eva-root .global-search input {
+  border: 0;
+  background: transparent;
+  width: 100%;
+  min-width: 0;
+  font-size: 11px;
+  padding: 0
+}
+#eva-root .global-search input::placeholder {
+  color: #8b948d
+}
+#eva-root .global-search kbd {
+  font: 9px var(--font);
+  border: 1px solid #e0e5e0;
+  border-radius: 3px;
+  padding: 2px 4px;
+  white-space: nowrap;
+  color: #929b94
+}
+#eva-root .header-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--line)
+}
+#eva-root .icon-button {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  color: #748178;
+  flex-shrink: 0
+}
+#eva-root .icon-button:hover {
+  background: #eef3ee;
+  color: #123b25
+}
+#eva-root .icon-button svg {
+  width: 17px;
+  height: 17px
+}
+#eva-root .notification-button {
+  position: relative
+}
+#eva-root .notification-button i {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  width: 5px;
+  height: 5px;
+  background: #00b849;
+  border: 1px solid #fff;
+  border-radius: 50%
+}
+#eva-root .profile-avatar {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  background: #e7efe1;
+  color: #476139;
+  font-size: 10px;
+  font-weight: 600;
+  border: 3px solid #f4f7f1
+}
+#eva-root .mobile-menu {
+  display: none
+}
+#eva-root .nav-scrim {
+  display: none
+}
+#eva-root main {
+  padding: 28px 34px 20px;
+  max-width: 1780px;
+  margin: auto
+}
+#eva-root .page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px
+}
+#eva-root .page-heading p {
+  color: #79857c;
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.6
+}
+#eva-root .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  color: #7a877d;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 6px
+}
+#eva-root .status-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #00b849;
+  flex-shrink: 0
+}
+#eva-root .demo-pill {
+  border: 1px solid #dbe5dc;
+  border-radius: 4px;
+  font-size: 8px;
+  letter-spacing: 0;
+  padding: 1px 5px;
+  color: #8a968c;
+  margin-left: 5px
+}
+#eva-root .heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px
+}
+#eva-root .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 10px 15px;
+  line-height: 1.4;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: background .15s,transform .15s
+}
+#eva-root .button:active {
+  transform: translateY(1px)
+}
+#eva-root .button.primary {
+  background: #00b849;
+  color: #052e15
+}
+#eva-root .button.primary:hover {
+  background: #00a943
+}
+#eva-root .button.secondary {
+  background: #fff;
+  border-color: #dfe6df;
+  color: #42564a
+}
+#eva-root .button.secondary:hover {
+  background: #f0f5f0;
+  border-color: #bdcebf
+}
+#eva-root .button.small {
+  min-height: 34px;
+  padding: 7px 10px;
+  font-size: 10px
+}
+#eva-root .button.small svg {
+  width: 14px;
+  height: 14px
+}
+#eva-root .date-control {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 7px;
+  padding: 10px 11px;
+  height: 40px
+}
+#eva-root .date-control>svg {
+  width: 14px;
+  height: 14px;
+  color: #738078
+}
+#eva-root .date-control>svg:last-child {
+  width: 12px
+}
+#eva-root .date-control select {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font-size: 10px;
+  color: #596a5e
+}
+#eva-root .text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #427752;
+  padding: 3px 0
+}
+#eva-root .text-button:hover {
+  color: #00a348
+}
+#eva-root .text-button svg {
+  width: 14px;
+  height: 14px
+}
+#eva-root .metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 16px
+}
+#eva-root .metric-card {
+  padding: 17px 19px 15px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  min-width: 0;
+  text-align: left
+}
+#eva-root .metric-card.featured {
+  background: linear-gradient(120deg,#eff8ee 0%,#fff 100%);
+  border-color: #d7e8d4
+}
+#eva-root .metric-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #627467;
+  font-size: 10px;
+  gap: 5px
+}
+#eva-root .metric-icon {
+  width: 25px;
+  height: 25px;
+  border-radius: 6px;
+  background: #f3f6f1;
+  display: grid;
+  place-items: center;
+  color: #60806b
+}
+#eva-root .metric-icon svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.6
+}
+#eva-root .metric-icon.danger {
+  background: #fff1ed;
+  color: #ca7666
+}
+#eva-root .metric-icon.amber {
+  background: #fff7e8;
+  color: #bd8d36
+}
+#eva-root .metric-value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 35px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -1.6px;
+  margin: 11px 0 16px;
+  position: relative;
+  font-variant-numeric: tabular-nums
+}
+#eva-root .metric-value>small {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #8d978e
+}
+#eva-root .sparkline {
+  width: 67px;
+  height: 31px;
+  margin-left: auto;
+  align-self: center;
+  flex-shrink: 1
+}
+#eva-root .metric-footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  white-space: nowrap
+}
+#eva-root .metric-footer>small {
+  font-size: 8px;
+  color: #96a095
+}
+#eva-root .metric-chip {
+  padding: 3px 6px;
+  font-size: 8px;
+  border-radius: 4px;
+  white-space: nowrap
+}
+#eva-root .metric-chip.good {
+  color: #49844d;
+  background: #e5f3df
+}
+#eva-root .metric-chip.danger {
+  color: #b86a59;
+  background: #fff2ec
+}
+#eva-root .metric-chip.warning {
+  color: #a77b25;
+  background: #fff5de
+}
+#eva-root .metric-footer>svg {
+  width: 13px;
+  height: 13px;
+  color: #8f9b91
+}
+#eva-root .metric-button:hover {
+  border-color: #b8cbbb;
+  box-shadow: 0 2px 6px #102b1104
+}
+#eva-root .language-dots {
+  font-size: 9px;
+  color: #677d6b;
+  display: flex;
+  align-items: center;
+  gap: 7px
+}
+#eva-root .language-dots i {
+  width: 2px;
+  height: 2px;
+  background: #a2ada2;
+  border-radius: 50%
+}
+#eva-root .panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  min-width: 0
+}
+#eva-root .panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px
+}
+#eva-root .panel-heading p {
+  font-size: 10px;
+  line-height: 1.6;
+  color: #8c978d;
+  margin-top: 4px
+}
+#eva-root .panel-heading>svg {
+  width: 18px;
+  color: #87998a
+}
+#eva-root .heading-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px
+}
+#eva-root .count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #edf2ec;
+  color: #6d816e;
+  font-size: 10px;
+  border-radius: 5px;
+  min-width: 24px;
+  min-height: 22px;
+  padding: 1px 6px;
+  font-weight: 400
+}
+#eva-root .overview-middle {
+  display: grid;
+  grid-template-columns: minmax(0,1.95fr) minmax(280px,1fr);
+  gap: 20px;
+  margin-top: 20px
+}
+#eva-root .chart-panel {
+  height: 273px
+}
+#eva-root .chart-panel .panel-heading {
+  padding-bottom: 12px
+}
+#eva-root .chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  white-space: nowrap;
+  color: #7e8e81
+}
+#eva-root .chart-legend i {
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  background: #00b849
+}
+#eva-root .quality-chart {
+  width: calc(100% - 42px);
+  height: 186px;
+  margin: 0 21px;
+  overflow: visible
+}
+#eva-root .quality-chart text {
+  font-family: var(--font);
+  font-size: 10px;
+  fill: #8c9b8f
+}
+#eva-root .quality-chart text.chart-goal {
+  fill: #879c82;
+  font-size: 8px
+}
+#eva-root .insight-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #102b20;
+  position: relative;
+  padding: 21px 23px;
+  color: #fff;
+  min-height: 273px
+}
+#eva-root .insight-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  position: relative;
+  z-index: 2;
+  font-size: 8px;
+  font-weight: 600;
+  color: #d5edc4;
+  letter-spacing: 1.5px
+}
+#eva-root .eva-spark {
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #c8f06d
+}
+#eva-root .insight-live {
+  margin-left: auto;
+  padding: 4px 6px;
+  border: 1px solid #38533b;
+  border-radius: 4px;
+  color: #a7bfa9;
+  font-size: 7px;
+  letter-spacing: 0;
+  font-weight: 400
+}
+#eva-root .insight-card h2 {
+  position: relative;
+  font-size: 23px;
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: -.8px;
+  margin-top: 17px;
+  z-index: 1
+}
+#eva-root .insight-card p {
+  position: relative;
+  z-index: 1;
+  margin-top: 13px;
+  font-size: 10px;
+  line-height: 1.75;
+  color: #9fb6a6;
+  max-width: 175px
+}
+#eva-root .signal-art {
+  position: absolute;
+  width: 200px;
+  right: -63px;
+  bottom: -35px;
+  pointer-events: none;
+  opacity: .9
+}
+#eva-root .insight-card button {
+  position: relative;
+  z-index: 1;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid #42613b;
+  padding: 8px 10px;
+  color: #d9eecc;
+  border-radius: 5px;
+  margin-top: 17px;
+  background: #193727
+}
+#eva-root .insight-card button:hover {
+  background: #2b4a30
+}
+#eva-root .insight-card button svg {
+  height: 13px;
+  width: 13px
+}
+#eva-root .recent-panel {
+  margin-top: 20px
+}
+#eva-root .recent-panel .panel-heading {
+  padding-top: 18px;
+  padding-bottom: 17px
+}
+#eva-root .recent-panel .panel-heading h2 {
+  font-size: 15px
+}
+#eva-root .table-scroll {
+  position: relative;
+  overflow-x: auto
+}
+#eva-root .conversation-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+  min-width: 850px
+}
+#eva-root .conversation-table thead {
+  background: #fafbf9;
+  border-top: 1px solid #edf0eb;
+  border-bottom: 1px solid #edf0eb
+}
+#eva-root .conversation-table th {
+  padding: 10px 12px;
+  color: #87958b;
+  font-weight: 400;
+  font-size: 9px
+}
+#eva-root .conversation-table th:first-child {
+  padding-left: 22px
+}
+#eva-root .conversation-table td {
+  padding: 15px 12px;
+  border-bottom: 1px solid #eff2ed;
+  font-size: 10px
+}
+#eva-root .conversation-table td:first-child {
+  padding-left: 22px
+}
+#eva-root .conversation-table tbody tr:last-child td {
+  border-bottom: 0
+}
+#eva-root .conversation-table tbody tr:hover {
+  background: #fbfdf9
+}
+#eva-root .topic-link {
+  padding: 0;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  max-width: 280px
+}
+#eva-root .topic-link strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #3a5142;
+  max-width: 230px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+#eva-root .topic-link:hover strong {
+  color: #009c3e
+}
+#eva-root .topic-link small {
+  display: block;
+  font-size: 8px;
+  color: #9ba69c;
+  margin-top: 5px;
+  letter-spacing: .1px
+}
+#eva-root .channel-icon {
+  width: 33px;
+  height: 33px;
+  border-radius: 8px;
+  background: #f0f5ed;
+  display: grid;
+  place-items: center;
+  color: #6b9764
+}
+#eva-root .channel-icon svg {
+  height: 15px;
+  width: 15px;
+  stroke-width: 1.6
+}
+#eva-root .channel-icon.voice {
+  background: #f2f0f7;
+  color: #9991ad
+}
+#eva-root .operator-cell {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  color: #667a6b
+}
+#eva-root .avatar-mini {
+  display: inline-grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  font-size: 8px;
+  background: #e9eee2;
+  color: #78815b;
+  flex-shrink: 0
+}
+#eva-root .avatar-0 {
+  background: #e5ede7;
+  color: #5d806d
+}
+#eva-root .avatar-1 {
+  background: #ede9df;
+  color: #998267
+}
+#eva-root .avatar-2 {
+  background: #e4edf0;
+  color: #6c8d97
+}
+#eva-root .avatar-3 {
+  background: #f0e7ef;
+  color: #977a96
+}
+#eva-root .language-tag {
+  font-size: 9px;
+  color: #768577;
+  background: #f2f5ef;
+  border: 1px solid #e4ebe0;
+  border-radius: 4px;
+  padding: 3px 5px;
+  letter-spacing: .3px;
+  font-weight: 400
+}
+#eva-root .score-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap
+}
+#eva-root .score-label>i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor
+}
+#eva-root .score-label.good {
+  color: #328d4b
+}
+#eva-root .score-label.warning {
+  color: #ad8533
+}
+#eva-root .score-label.danger {
+  color: #bc6d58
+}
+#eva-root .score-label small {
+  color: #a1aa9d;
+  font-weight: 400;
+  font-size: 9px
+}
+#eva-root .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 4px;
+  font-size: 8px;
+  padding: 4px 6px;
+  white-space: nowrap;
+  font-weight: 400
+}
+#eva-root .badge i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor
+}
+#eva-root .badge.good {
+  color: #518351;
+  background: #eff7e9
+}
+#eva-root .badge.warning {
+  color: #af8433;
+  background: #fff7e7
+}
+#eva-root .badge.danger {
+  color: #b96e5d;
+  background: #fff0ea
+}
+#eva-root .badge.info {
+  color: #548194;
+  background: #eaf4f8
+}
+#eva-root .badge.neutral {
+  color: #7d8b7f;
+  background: #eff3ef
+}
+#eva-root .table-caption {
+  padding: 13px 21px;
+  border-top: 1px solid #edf1e9;
+  font-size: 9px;
+  color: #8c9b8e;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px
+}
+#eva-root .table-caption>span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 5px
+}
+#eva-root .table-caption svg {
+  color: #7b9e65
+}
+#eva-root .subtle-pill {
+  background: #f0f5eb;
+  padding: 4px 7px;
+  border-radius: 4px;
+  color: #6e8962
+}
+#eva-root .row-open {
+  width: 25px;
+  height: 25px
+}
+#eva-root .row-open svg {
+  width: 14px;
+  height: 14px
+}
+#eva-root .app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 29px;
+  font-size: 8px;
+  color: #a0aba0
+}
+#eva-root .app-footer>span {
+  display: flex;
+  align-items: center;
+  gap: 6px
+}
+#eva-root .app-footer i {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #a9b4a4
+}
+#eva-root .list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 8px 22px 0;
+  border-bottom: 1px solid var(--line)
+}
+#eva-root .filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 25px
+}
+#eva-root .filter-tabs>button {
+  padding: 16px 0;
+  color: #87938a;
+  font-size: 11px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px
+}
+#eva-root .filter-tabs>button.active {
+  color: #176437;
+  border-color: #00b849;
+  font-weight: 600
+}
+#eva-root .filter-tabs>button span {
+  font-size: 8px;
+  background: #f0f4ec;
+  color: #93a08e;
+  padding: 2px 5px;
+  border-radius: 3px
+}
+#eva-root .filter-tabs>button.active span {
+  background: #e5f3dd;
+  color: #4b8d47
+}
+#eva-root .filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 17px 22px
+}
+#eva-root .search-field {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  padding: 9px 11px;
+  border-radius: 7px;
+  min-width: 230px;
+  background: #fff
+}
+#eva-root .search-field>svg {
+  width: 14px;
+  height: 14px;
+  color: #8b9c8e
+}
+#eva-root .search-field input {
+  border: 0;
+  background: none;
+  font-size: 11px;
+  width: 100%;
+  min-width: 0
+}
+#eva-root .search-field input::placeholder {
+  color: #9aa69a
+}
+#eva-root .search-field button {
+  padding: 0;
+  display: flex
+}
+#eva-root .search-field button svg {
+  width: 13px;
+  height: 13px;
+  color: #8e9d8f
+}
+#eva-root .select-field {
+  position: relative
+}
+#eva-root .select-field select {
+  appearance: none;
+  padding: 9px 29px 9px 12px;
+  font-size: 10px;
+  min-width: 122px;
+  height: 36px;
+  border-color: var(--line);
+  color: #798c7c
+}
+#eva-root .select-field>svg {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  pointer-events: none;
+  width: 12px;
+  height: 12px;
+  color: #95a192
+}
+#eva-root .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8a998c
+}
+#eva-root .empty-icon {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #f0f5eb;
+  margin: 0 auto 18px;
+  color: #96ab88
+}
+#eva-root .empty-icon svg {
+  width: 21px
+}
+#eva-root .empty-state h3 {
+  color: #5b715f;
+  margin-bottom: 9px
+}
+#eva-root .empty-state p {
+  font-size: 12px;
+  line-height: 1.7
+}
+#eva-root .stand-alone {
+  margin-top: 20px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--line)
+}
+#eva-root .back-link {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #849488;
+  margin-bottom: 22px
+}
+#eva-root .back-link:hover {
+  color: #068741
+}
+#eva-root .back-link svg {
+  width: 14px;
+  height: 14px
+}
+#eva-root .detail-heading .eyebrow {
+  gap: 12px;
+  margin-bottom: 7px
+}
+#eva-root .detail-heading h1 {
+  font-size: 28px
+}
+#eva-root .detail-heading p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px
+}
+#eva-root .detail-heading p>span {
+  color: #b2beb1
+}
+#eva-root .audit-summary {
+  display: flex;
+  align-items: center;
+  gap: 27px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 22px 27px
+}
+#eva-root .gauge {
+  width: 126px;
+  height: 126px;
+  position: relative;
+  flex-shrink: 0
+}
+#eva-root .gauge svg {
+  width: 100%;
+  height: 100%
+}
+#eva-root .gauge>div {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column
+}
+#eva-root .gauge strong {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums
+}
+#eva-root .gauge span {
+  font-size: 9px;
+  margin-top: 3px;
+  color: #93a28e
+}
+#eva-root .summary-description {
+  flex: 1;
+  min-width: 0
+}
+#eva-root .mini-eyebrow {
+  font-size: 8px;
+  color: #829481;
+  letter-spacing: 1.5px
+}
+#eva-root .summary-description h2 {
+  font-size: 20px;
+  margin-top: 9px;
+  line-height: 1.5
+}
+#eva-root .summary-description>p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #8b9b8c;
+  margin-top: 6px
+}
+#eva-root .summary-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  margin-top: 17px
+}
+#eva-root .summary-tags>span {
+  font-size: 9px;
+  color: #7b8f7c;
+  display: flex;
+  align-items: center;
+  gap: 5px
+}
+#eva-root .summary-tags svg {
+  width: 12px;
+  height: 12px
+}
+#eva-root .summary-counts {
+  display: flex;
+  gap: 23px;
+  border-left: 1px solid var(--line);
+  padding-left: 27px
+}
+#eva-root .summary-counts>div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap
+}
+#eva-root .summary-counts b {
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 1
+}
+#eva-root .summary-counts span {
+  font-size: 8px;
+  color: #879e88
+}
+#eva-root .review-banner {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: #e8f5e0;
+  border: 1px solid #d6e7c9;
+  padding: 13px 18px;
+  border-radius: 8px;
+  margin-top: 17px;
+  font-size: 11px;
+  color: #627c51
+}
+#eva-root .review-banner>svg {
+  width: 17px;
+  height: 17px;
+  color: #62953f
+}
+#eva-root .audit-columns {
+  display: grid;
+  grid-template-columns: minmax(0,1.08fr) minmax(0,1fr);
+  gap: 21px;
+  margin-top: 22px;
+  align-items: start
+}
+#eva-root .transcript-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px 15px;
+  border-bottom: 1px solid #edf1e9
+}
+#eva-root .transcript-controls>.muted {
+  font-size: 9px;
+  color: #a0ad9b
+}
+#eva-root .segmented {
+  display: flex;
+  background: #f3f6ef;
+  padding: 3px;
+  border-radius: 6px;
+  gap: 2px
+}
+#eva-root .segmented button {
+  font-size: 9px;
+  padding: 7px 10px;
+  color: #8da081;
+  border-radius: 4px
+}
+#eva-root .segmented button.active {
+  background: #fff;
+  box-shadow: 0 1px 3px #2844110d;
+  color: #557044
+}
+#eva-root .transcript-body {
+  height: 613px;
+  overflow: auto;
+  padding: 22px;
+  scrollbar-width: thin;
+  scrollbar-color: #d7e1d1 transparent
+}
+#eva-root .message {
+  margin-bottom: 18px;
+  scroll-margin-top: 110px;
+  border-radius: 8px;
+  padding: 4px;
+  transition: background .2s
+}
+#eva-root .message-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  font-size: 8px;
+  color: #93a38e;
+  margin-bottom: 6px
+}
+#eva-root .message-meta>span {
+  color: #71866c
+}
+#eva-root .message-bubble {
+  font-size: 11px;
+  line-height: 1.85;
+  padding: 11px 13px;
+  background: #f1f5ed;
+  border-radius: 2px 10px 10px 10px;
+  color: #596f51
+}
+#eva-root .message.client {
+  margin-right: 46px
+}
+#eva-root .message.operator {
+  margin-left: 46px
+}
+#eva-root .message.operator .message-meta>span {
+  color: #649951
+}
+#eva-root .message.operator .message-bubble {
+  background: #eef7e8;
+  border: 1px solid #e4efd9;
+  border-radius: 10px 2px 10px 10px;
+  color: #4e7340
+}
+#eva-root .message.system,#eva-root .message.bot {
+  margin: 22px 0;
+  text-align: center
+}
+#eva-root .message.system .message-meta {
+  justify-content: center;
+  font-size: 7px;
+  color: #a0ac97
+}
+#eva-root .message.system .message-bubble {
+  background: none;
+  font-size: 8px;
+  color: #94a28b;
+  line-height: 1.6;
+  padding: 2px 15px
+}
+#eva-root .message.highlighted {
+  background: #eaf6cb;
+  outline: 2px solid #b5d970;
+  outline-offset: 3px
+}
+#eva-root .message.highlighted .message-bubble {
+  background: #f4fadd
+}
+#eva-root .evidence-caption {
+  font-size: 8px;
+  color: #72974d;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin-top: 8px
+}
+#eva-root .evidence-caption svg {
+  width: 12px;
+  height: 12px
+}
+#eva-root .transcript-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 13px 20px;
+  font-size: 8px;
+  color: #93a48b;
+  border-top: 1px solid #eef3e8
+}
+#eva-root .transcript-footer>span:last-child {
+  margin-left: auto;
+  color: #a7b19f
+}
+#eva-root .audio-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 20px 17px;
+  background: #f5f6f3;
+  border: 1px solid #e7ece1;
+  padding: 11px;
+  border-radius: 7px
+}
+#eva-root .audio-empty>svg {
+  width: 18px;
+  color: #a1af97
+}
+#eva-root .audio-empty strong {
+  display: block;
+  font-size: 10px;
+  color: #819173
+}
+#eva-root .audio-empty span {
+  display: block;
+  font-size: 8px;
+  color: #9eab92;
+  margin-top: 4px;
+  line-height: 1.65
+}
+#eva-root .criteria-panel>.panel-heading {
+  border-bottom: 1px solid var(--line)
+}
+#eva-root .criteria-list {
+  max-height: 688px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d7e1d1 transparent
+}
+#eva-root .criterion {
+  border-bottom: 1px solid #edf1e8
+}
+#eva-root .criterion:last-child {
+  border-bottom: 0
+}
+#eva-root .criterion-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 10px;
+  padding: 15px 20px
+}
+#eva-root .criterion-toggle:hover {
+  background: #fafcf6
+}
+#eva-root .criterion-check {
+  width: 23px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  flex-shrink: 0
+}
+#eva-root .criterion-check svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 1.8
+}
+#eva-root .criterion-check.pass {
+  color: #6e9f4f;
+  background: #eff7e4
+}
+#eva-root .criterion-check.fail {
+  color: #b2924d;
+  background: #fcf5e1
+}
+#eva-root .criterion-check.muted {
+  background: #f1f4ed;
+  color: #a5b09a
+}
+#eva-root .criterion-title {
+  min-width: 0;
+  flex: 1
+}
+#eva-root .criterion-title>strong {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.6;
+  display: block;
+  color: #5d754f
+}
+#eva-root .criterion-title>small {
+  font-size: 8px;
+  font-weight: 400;
+  color: #a1ae94;
+  display: block;
+  margin-top: 3px
+}
+#eva-root .criterion-score {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #63864c
+}
+#eva-root .criterion-score small {
+  font-size: 8px;
+  font-weight: 400;
+  color: #a8b39b
+}
+#eva-root .criterion-score.muted {
+  font-size: 10px;
+  color: #a5b19a;
+  font-weight: 400
+}
+#eva-root .criterion-toggle>svg:last-child {
+  height: 13px;
+  width: 13px;
+  color: #9ba991;
+  transition: transform .2s
+}
+#eva-root .criterion.expanded {
+  background: #fbfdf7
+}
+#eva-root .criterion-detail {
+  padding: 0 20px 17px 53px
+}
+#eva-root .criterion-detail>p {
+  font-size: 10px;
+  color: #8c9b7d;
+  line-height: 1.85;
+  margin-bottom: 12px
+}
+#eva-root .evidence-link {
+  padding: 10px 12px;
+  background: #eff5e5;
+  border: 1px solid #e0ead2;
+  border-radius: 6px;
+  width: 100%;
+  text-align: left
+}
+#eva-root .evidence-link:hover {
+  background: #e8f3d5;
+  border-color: #bfd89e
+}
+#eva-root .evidence-link-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 8px;
+  color: #829b62
+}
+#eva-root .evidence-link-heading>span {
+  display: flex;
+  align-items: center;
+  gap: 5px
+}
+#eva-root .evidence-link-heading svg {
+  width: 11px;
+  height: 11px
+}
+#eva-root .evidence-link q {
+  display: block;
+  line-height: 1.8;
+  font-size: 9px;
+  color: #81926c;
+  margin-top: 7px
+}
+#eva-root .criterion-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 13px
+}
+#eva-root .criterion-bottom>span {
+  font-size: 8px;
+  color: #a0ac91
+}
+#eva-root .criterion-bottom button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 8px;
+  color: #8b9a75
+}
+#eva-root .criterion-bottom button:hover {
+  color: #3f7e32
+}
+#eva-root .criterion-bottom svg {
+  width: 11px;
+  height: 11px
+}
+#eva-root .calculation {
+  padding: 19px 21px;
+  background: #f4f8ee;
+  border-top: 1px solid #e4ecda
+}
+#eva-root .calculation>div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px
+}
+#eva-root .calculation>div>span {
+  font-size: 10px;
+  color: #7f926c
+}
+#eva-root .calculation strong {
+  font-size: 21px;
+  color: #5e7c45;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums
+}
+#eva-root .calculation strong small {
+  font-size: 9px;
+  font-weight: 400;
+  color: #97a684
+}
+#eva-root .calculation p {
+  font-size: 8px;
+  line-height: 1.8;
+  color: #9aa889;
+  margin-top: 8px
+}
+#eva-root .pending-score {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  width: 125px;
+  height: 125px;
+  background: #f0f5e9;
+  border-radius: 50%;
+  font-size: 13px;
+  color: #80966c
+}
+#eva-root .pending-notice {
+  padding: 60px 30px;
+  color: #91a07d;
+  text-align: center
+}
+#eva-root .pending-notice>svg {
+  margin-bottom: 15px
+}
+#eva-root .pending-notice h3 {
+  font-size: 13px;
+  margin-bottom: 11px
+}
+#eva-root .pending-notice p {
+  font-size: 11px;
+  line-height: 1.8
+}
+#eva-root .appeals-intro {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  gap: 45px;
+  padding: 23px 26px
+}
+#eva-root .appeals-intro>div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1
+}
+#eva-root .appeals-intro>div:first-child>svg {
+  width: 30px;
+  height: 30px;
+  color: #71a259
+}
+#eva-root .appeals-intro b {
+  font-size: 12px;
+  color: #607957
+}
+#eva-root .appeals-intro small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #93a387;
+  margin-top: 6px
+}
+#eva-root .appeals-intro>div:not(:first-child) {
+  text-align: center
+}
+#eva-root .appeals-intro strong {
+  font-size: 25px;
+  display: block;
+  font-weight: 400;
+  color: #6a8b52
+}
+#eva-root .appeals-intro>div>span:not(:first-child) {
+  font-size: 9px;
+  color: #9baa8d
+}
+#eva-root .appeals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px
+}
+#eva-root .appeal-card {
+  padding: 23px 25px
+}
+#eva-root .appeal-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 14px
+}
+#eva-root .appeal-id {
+  font-size: 9px;
+  color: #a0ac94;
+  display: flex;
+  align-items: center;
+  gap: 9px
+}
+#eva-root .appeal-card>h2 {
+  font-size: 18px;
+  color: #607c4e
+}
+#eva-root .appeal-conversation-link {
+  font-size: 10px;
+  color: #93a47f;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  padding: 0
+}
+#eva-root .appeal-conversation-link svg {
+  width: 12px;
+  height: 12px
+}
+#eva-root .appeal-comment {
+  background: #f6f9f1;
+  padding: 14px 16px;
+  line-height: 1.9;
+  color: #91a17b;
+  font-size: 11px;
+  border-left: 2px solid #cde1b2;
+  margin: 19px 0
+}
+#eva-root .appeal-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px
+}
+#eva-root .appeal-card-bottom .operator-cell {
+  font-size: 10px
+}
+#eva-root .appeal-scores {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: auto;
+  font-size: 9px;
+  color: #9ca98d
+}
+#eva-root .appeal-scores b {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #7d9466;
+  margin-top: 4px
+}
+#eva-root .appeal-scores svg {
+  width: 14px;
+  color: #afbc9e
+}
+#eva-root .decision-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 15px;
+  background: #f0f6e7;
+  margin-bottom: 20px;
+  color: #889c70;
+  font-size: 10px;
+  line-height: 1.8;
+  border-radius: 6px
+}
+#eva-root .decision-reason>svg {
+  width: 16px;
+  height: 16px
+}
+#eva-root .decision-reason b {
+  display: block;
+  margin-bottom: 4px;
+  color: #748d5c
+}
+#eva-root .checklist-overview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  margin-bottom: 20px
+}
+#eva-root .checklist-symbol {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #eaf4df;
+  display: grid;
+  place-items: center;
+  color: #80a85f
+}
+#eva-root .checklist-symbol>svg {
+  width: 22px;
+  height: 22px
+}
+#eva-root .checklist-overview h2 {
+  font-size: 16px;
+  color: #698354
+}
+#eva-root .checklist-overview p {
+  font-size: 10px;
+  margin-top: 6px;
+  color: #a0af90
+}
+#eva-root .checklist-overview .badge {
+  margin-left: 6px
+}
+#eva-root .checklist-total {
+  margin-left: auto;
+  padding-left: 28px;
+  border-left: 1px solid var(--line)
+}
+#eva-root .checklist-total span {
+  display: block;
+  font-size: 9px;
+  color: #9dae8b
+}
+#eva-root .checklist-total b {
+  font-size: 20px;
+  color: #7b9463;
+  display: block;
+  margin-top: 4px
+}
+#eva-root .checklist-total small {
+  font-size: 9px;
+  font-weight: 400;
+  color: #a9b79a
+}
+#eva-root .checklist-panel h2 .count-badge {
+  margin-left: 6px;
+  vertical-align: middle
+}
+#eva-root .checklist-table-head {
+  display: grid;
+  grid-template-columns: minmax(150px,1fr) 130px 65px 44px 23px;
+  gap: 15px;
+  padding: 13px 22px 13px 60px;
+  background: #f8faf5;
+  border-top: 1px solid #edf2e5;
+  border-bottom: 1px solid #edf2e5;
+  color: #a1b08f;
+  font-size: 9px
+}
+#eva-root .checklist-editor-row {
+  display: grid;
+  grid-template-columns: 23px minmax(150px,1fr) 130px 65px 44px 23px;
+  gap: 15px;
+  padding: 17px 22px;
+  align-items: start;
+  border-bottom: 1px solid #edf2e5
+}
+#eva-root .criterion-number {
+  font-size: 9px;
+  color: #aebba0;
+  padding-top: 8px
+}
+#eva-root .criterion-fields>input {
+  display: block;
+  width: 100%;
+  font-size: 11px;
+  color: #728b5d;
+  font-weight: 600;
+  border-color: transparent;
+  padding: 6px;
+  margin-left: -6px
+}
+#eva-root .criterion-fields>input:hover {
+  border-color: var(--line)
+}
+#eva-root .criterion-fields>textarea {
+  display: block;
+  width: 100%;
+  font-size: 9px;
+  line-height: 1.7;
+  color: #a1b08d;
+  border-color: transparent;
+  padding: 3px 6px;
+  margin-left: -6px;
+  resize: vertical;
+  min-height: 39px
+}
+#eva-root .criterion-fields>textarea:hover {
+  border-color: var(--line)
+}
+#eva-root .criterion-type select {
+  width: 100%;
+  font-size: 10px;
+  color: #8da176;
+  padding: 8px;
+  height: 33px
+}
+#eva-root .criterion-type label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 8px;
+  margin-top: 6px;
+  color: #afbd9e
+}
+#eva-root .criterion-type label>input {
+  width: 58px;
+  height: 26px;
+  padding: 4px;
+  font-size: 9px
+}
+#eva-root .weight-input {
+  width: 60px;
+  height: 33px;
+  font-size: 11px;
+  text-align: center;
+  color: #7d9562
+}
+#eva-root .switch {
+  position: relative;
+  width: 30px;
+  height: 18px;
+  margin-top: 7px;
+  display: block
+}
+#eva-root .switch>input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute
+}
+#eva-root .switch>span {
+  position: absolute;
+  inset: 0;
+  background: #e2e9d8;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background .2s
+}
+#eva-root .switch>span:before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px #71895020;
+  transition: transform .2s
+}
+#eva-root .switch input:checked+span {
+  background: #73b939
+}
+#eva-root .switch input:checked+span:before {
+  transform: translateX(12px)
+}
+#eva-root .switch input:focus-visible+span {
+  outline: 2px solid #00a348;
+  outline-offset: 3px
+}
+#eva-root .switch input:disabled+span {
+  opacity: .4;
+  cursor: not-allowed
+}
+#eva-root .checklist-note {
+  display: flex;
+  gap: 12px;
+  background: #f7faf1;
+  padding: 19px 22px;
+  color: #a0b087;
+  font-size: 10px;
+  line-height: 1.9
+}
+#eva-root .checklist-note>svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #a5bb86
+}
+#eva-root .checklist-note b {
+  font-weight: 600;
+  color: #849e69
+}
+#eva-root .checklist-actions {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 20px
+}
+#eva-root .checklist-actions>span {
+  font-size: 10px;
+  color: #9cae84;
+  margin-right: auto
+}
+#eva-root .brand-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px
+}
+#eva-root .brand-showcase {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 25px;
+  min-height: 285px
+}
+#eva-root .brand-showcase>img {
+  width: 85%;
+  max-width: 370px;
+  height: auto;
+  align-self: center;
+  margin: 18px auto
+}
+#eva-root .brand-showcase>div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px
+}
+#eva-root .brand-showcase p {
+  color: #8fa078;
+  font-size: 11px
+}
+#eva-root .brand-voice {
+  background: #082d21;
+  padding: 25px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  min-height: 285px
+}
+#eva-root .brand-voice .mini-eyebrow {
+  color: #8ea989
+}
+#eva-root .brand-voice h2 {
+  position: relative;
+  color: #dcead0;
+  font-size: 37px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -1.2px;
+  margin-top: 26px;
+  z-index: 1
+}
+#eva-root .brand-voice h2 em {
+  font-style: normal;
+  color: #c8f06d
+}
+#eva-root .brand-voice>img {
+  position: absolute;
+  right: -75px;
+  bottom: -35px;
+  width: 320px
+}
+#eva-root .palette-panel,#eva-root .type-panel {
+  padding: 25px
+}
+#eva-root .palette-panel>h2 {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-top: 13px;
+  color: #748e5c
+}
+#eva-root .swatches {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 10px;
+  margin-top: 23px
+}
+#eva-root .swatches button {
+  text-align: left;
+  padding: 0
+}
+#eva-root .swatches button>span {
+  display: block;
+  height: 70px;
+  border-radius: 7px;
+  border: 1px solid #00000005;
+  margin-bottom: 10px;
+  transition: transform .2s
+}
+#eva-root .swatches button:hover>span {
+  transform: translateY(-3px)
+}
+#eva-root .swatches b {
+  font-size: 9px;
+  font-weight: 400;
+  color: #91a17a;
+  display: block
+}
+#eva-root .swatches small {
+  font-size: 8px;
+  color: #b1bda1;
+  display: block;
+  margin-top: 4px
+}
+#eva-root .type-sample {
+  font-size: 44px;
+  line-height: 1.2;
+  color: #456633;
+  letter-spacing: -2px;
+  margin: 23px 0 18px
+}
+#eva-root .type-panel h2 {
+  font-size: 14px;
+  color: #819968
+}
+#eva-root .type-panel p {
+  font-size: 10px;
+  line-height: 1.9;
+  color: #a2b18b;
+  margin-top: 7px
+}
+#eva-root .font-weights {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  font-size: 11px;
+  color: #829768;
+  margin-top: 20px
+}
+#eva-root .font-weights strong {
+  font-weight: 700
+}
+#eva-root .brand-download {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 23px 25px
+}
+#eva-root .brand-download h2 {
+  font-size: 15px;
+  color: #7b9362
+}
+#eva-root .brand-download p {
+  font-size: 10px;
+  line-height: 1.7;
+  color: #a2b28a;
+  margin-top: 7px
+}
+#eva-root .modal {
+  margin: auto;
+  background: #fff;
+  border: 1px solid #e4ecda;
+  border-radius: 15px;
+  box-shadow: 0 28px 90px #11280830;
+  color: var(--text);
+  padding: 24px;
+  width: 500px;
+  max-width: calc(100vw - 30px);
+  max-height: 88vh;
+  overflow: auto
+}
+#eva-root .modal.wide {
+  width: 800px
+}
+#eva-root .modal::backdrop {
+  background: #0b1e164f;
+  backdrop-filter: blur(4px)
+}
+#eva-root .modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 15px
+}
+#eva-root .modal-head h2 {
+  font-size: 19px;
+  letter-spacing: -.5px;
+  color: #536f40
+}
+#eva-root .modal-description {
+  font-size: 11px;
+  line-height: 1.9;
+  color: #91a477;
+  margin-bottom: 20px
+}
+#eva-root .form-label {
+  display: block;
+  font-size: 10px;
+  color: #8a9f6d;
+  line-height: 1.65;
+  margin: 17px 0
+}
+#eva-root .form-label>input,#eva-root .form-label>select,#eva-root .form-label>textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 7px;
+  font-size: 11px;
+  line-height: 1.75;
+  border-color: #dde7d0;
+  color: #718951;
+  border-radius: 7px
+}
+#eva-root .form-label textarea::placeholder {
+  color: #b2bf9e
+}
+#eva-root .form-hint {
+  font-size: 9px;
+  line-height: 1.8;
+  color: #acb994
+}
+#eva-root .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  border-top: 1px solid #e7efdb;
+  margin-top: 23px;
+  padding-top: 18px
+}
+#eva-root .modal-context {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f4f8ed;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 22px
+}
+#eva-root .modal-context>svg {
+  width: 19px;
+  height: 19px;
+  color: #8dad61
+}
+#eva-root .modal-context strong {
+  font-size: 12px;
+  color: #718c50;
+  display: block
+}
+#eva-root .modal-context span:not(.badge) {
+  display: block;
+  font-size: 9px;
+  color: #a5b58b;
+  margin-top: 5px
+}
+#eva-root .modal-context .badge {
+  margin-left: auto
+}
+#eva-root .upload-zone {
+  border: 1px dashed #c8dab0;
+  background: #fafcf5;
+  border-radius: 10px;
+  padding: 23px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+#eva-root .upload-zone:hover {
+  background: #f2f8e8;
+  border-color: #a1c16f
+}
+#eva-root .upload-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #edf5e1;
+  color: #8eb25b;
+  display: grid;
+  place-items: center;
+  margin-bottom: 12px
+}
+#eva-root .upload-icon svg {
+  width: 21px;
+  height: 21px
+}
+#eva-root .upload-zone strong {
+  font-size: 12px;
+  font-weight: 600;
+  color: #7e9856
+}
+#eva-root .upload-zone small {
+  font-size: 10px;
+  color: #a0b282;
+  margin-top: 7px
+}
+#eva-root .upload-zone>span:last-child {
+  font-size: 8px;
+  color: #b3c199;
+  margin-top: 12px
+}
+#eva-root .or-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #b0bd97;
+  font-size: 10px;
+  margin-top: 22px
+}
+#eva-root .or-divider>span {
+  height: 1px;
+  background: #e6eed9;
+  flex: 1
+}
+#eva-root .info-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: #f4f8ec;
+  border: 1px solid #e5edd6;
+  color: #98ad7b;
+  font-size: 10px;
+  padding: 12px;
+  border-radius: 7px;
+  line-height: 1.8;
+  margin: 15px 0
+}
+#eva-root .info-callout>svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 2px
+}
+#eva-root .form-error {
+  font-size: 11px;
+  color: #ba7e4f;
+  line-height: 1.6;
+  margin-top: 10px
+}
+#eva-root .upload-action .button {
+  margin-top: 14px
+}
+#eva-root .review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px
+}
+#eva-root .field-eyebrow {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #a2b585
+}
+#eva-root .review-comment {
+  font-size: 11px;
+  line-height: 1.9;
+  color: #8aa365;
+  margin-top: 11px;
+  margin-bottom: 24px
+}
+#eva-root .review-evidence {
+  margin-top: 10px;
+  border: 1px solid #e3edcf;
+  background: #f7faf0;
+  border-radius: 7px;
+  padding: 13px
+}
+#eva-root .review-evidence>div+div {
+  border-top: 1px solid #e6eed7;
+  margin-top: 13px;
+  padding-top: 13px
+}
+#eva-root .review-evidence span {
+  font-size: 9px;
+  color: #b0bf98
+}
+#eva-root .review-evidence p {
+  font-size: 10px;
+  color: #91a871;
+  line-height: 1.9;
+  margin-top: 5px
+}
+#eva-root .review-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 15px 0 17px
+}
+#eva-root .review-choice label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #829e5c;
+  font-size: 11px
+}
+#eva-root .review-choice input {
+  accent-color: #7ba747;
+  margin: 0
+}
+#eva-root .review-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  background: #f3f8e9;
+  border: 1px solid #e4edcf;
+  border-radius: 8px;
+  margin-top: 21px;
+  padding: 13px 20px;
+  color: #9aaf77;
+  font-size: 10px
+}
+#eva-root .review-preview b {
+  font-size: 19px;
+  color: #839f5c;
+  display: inline-block;
+  margin-left: 8px;
+  font-variant-numeric: tabular-nums
+}
+#eva-root .review-preview>svg {
+  width: 17px;
+  color: #b0c491
+}
+#eva-root .notification-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  text-align: left;
+  border-bottom: 1px solid #e6eed5
+}
+#eva-root .notification-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: #f0f6e5;
+  border-radius: 8px;
+  color: #9ebd77
+}
+#eva-root .notification-row b {
+  font-size: 11px;
+  color: #8ba76c;
+  display: block
+}
+#eva-root .notification-row small {
+  font-size: 9px;
+  color: #adbd97;
+  display: block;
+  margin-top: 5px
+}
+#eva-root .notification-row>svg:last-child {
+  margin-left: auto;
+  width: 14px;
+  color: #abc38e
+}
+#eva-root .help-logo {
+  padding: 12px 0 24px
+}
+#eva-root .help-logo .eva-logo strong {
+  color: #082d21
+}
+#eva-root .help-logo .eva-logo {
+  color: #00b849
+}
+#eva-root .help-logo .eva-logo small {
+  color: #88a473
+}
+#eva-root .help-steps {
+  margin: 22px 0
+}
+#eva-root .help-steps>div {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px
+}
+#eva-root .help-steps>div>span {
+  font-size: 10px;
+  color: #a9c38a;
+  background: #f1f7e6;
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border-radius: 7px;
+  flex-shrink: 0
+}
+#eva-root .help-steps p {
+  font-size: 10px;
+  line-height: 1.85;
+  color: #a1b78b
+}
+#eva-root .help-steps b {
+  display: block;
+  font-size: 11px;
+  color: #8ba36f;
+  margin-bottom: 4px
+}
+#eva-root .toast {
+  position: fixed;
+  z-index: 100;
+  bottom: 24px;
+  left: calc(50% + var(--sidebar)/2);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  max-width: calc(100vw - 40px);
+  background: #143520;
+  color: #e2efce;
+  border: 1px solid #456136;
+  box-shadow: 0 5px 30px #152d182b;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 1.6;
+  animation: toast-in .2s ease-out
+}
+#eva-root .toast>svg {
+  width: 17px;
+  height: 17px;
+  color: #c8f06d;
+  flex-shrink: 0
+}
+#eva-root .toast>button {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+  padding: 0;
+  color: #9ab780
+}
+#eva-root .toast>button>svg {
+  width: 14px;
+  height: 14px
+}
+#eva-root .page-enter {
+  animation: page-in .25s ease-out
+}
+@keyframes page-in {
+from {
+  opacity: .4;
+  transform: translateY(5px)
+}
+to {
+  opacity: 1;
+  transform: translateY(0)
+}
+}
+@keyframes toast-in {
+from {
+  opacity: 0;
+  bottom: 15px
+}
+to {
+  opacity: 1;
+  bottom: 24px
+}
+}
+@media(min-width:1600px) {
+#eva-root {
+  --sidebar: 250px
+}
+#eva-root .sidebar {
+  padding: 32px 20px
+}
+#eva-root .topbar {
+  padding: 0 45px
+}
+#eva-root main {
+  padding: 34px 45px 24px
+}
+#eva-root .metric-card {
+  padding: 21px 23px
+}
+#eva-root .metric-top {
+  font-size: 11px
+}
+#eva-root .metric-value {
+  font-size: 40px
+}
+#eva-root .metric-footer>small {
+  font-size: 9px
+}
+#eva-root .overview-middle {
+  grid-template-columns: 2fr 1fr;
+  gap: 23px;
+  margin-top: 23px
+}
+#eva-root .chart-panel,#eva-root .insight-card {
+  height: 296px
+}
+#eva-root .quality-chart {
+  height: 210px
+}
+#eva-root .insight-card {
+  padding: 25px 28px
+}
+#eva-root .insight-card h2 {
+  font-size: 27px
+}
+#eva-root .insight-card p {
+  font-size: 11px
+}
+#eva-root .insight-card button {
+  margin-top: 20px
+}
+#eva-root .signal-art {
+  width: 240px
+}
+#eva-root .conversation-table td {
+  padding-top: 19px;
+  padding-bottom: 19px
+}
+#eva-root .topic-link strong {
+  font-size: 12px
+}
+#eva-root .conversation-table td {
+  font-size: 11px
+}
+#eva-root .badge {
+  font-size: 9px
+}
+}
+@media(max-width:1250px) {
+#eva-root {
+  --sidebar: 210px
+}
+#eva-root .sidebar {
+  padding-left: 13px;
+  padding-right: 13px
+}
+#eva-root main {
+  padding: 25px
+}
+#eva-root .topbar {
+  padding: 0 25px
+}
+#eva-root .metrics-grid {
+  gap: 12px
+}
+#eva-root .metric-card {
+  padding: 16px 14px
+}
+#eva-root .metric-value {
+  font-size: 31px
+}
+#eva-root .metric-value>small {
+  font-size: 9px
+}
+#eva-root .metric-footer>small {
+  display: none
+}
+#eva-root .sparkline {
+  width: 55px
+}
+#eva-root .heading-actions {
+  gap: 8px
+}
+#eva-root .date-control {
+  padding: 9px
+}
+#eva-root .date-control select {
+  font-size: 9px
+}
+#eva-root .overview-middle {
+  grid-template-columns: minmax(0,1.65fr) minmax(270px,1fr);
+  gap: 16px
+}
+#eva-root .panel-heading {
+  padding-left: 19px;
+  padding-right: 19px
+}
+#eva-root .summary-counts {
+  gap: 14px;
+  padding-left: 20px
+}
+#eva-root .summary-description h2 {
+  font-size: 17px
+}
+#eva-root .summary-counts span {
+  font-size: 7px
+}
+#eva-root .audit-summary {
+  padding: 20px;
+  gap: 19px
+}
+#eva-root .summary-tags {
+  gap: 10px
+}
+#eva-root .checklist-editor-row {
+  grid-template-columns: 20px minmax(140px,1fr) 113px 55px 35px 20px;
+  gap: 10px
+}
+#eva-root .checklist-table-head {
+  grid-template-columns: minmax(140px,1fr) 113px 55px 35px 20px;
+  gap: 10px;
+  padding-left: 52px
+}
+#eva-root .weight-input {
+  width: 50px
+}
+#eva-root .appeal-card-bottom {
+  flex-wrap: wrap
+}
+#eva-root .appeal-scores {
+  margin-left: 0
+}
+#eva-root .brand-voice h2 {
+  font-size: 31px
+}
+}
+@media(max-width:1050px) {
+#eva-root .topbar {
+  gap: 12px
+}
+#eva-root .global-search {
+  width: 190px
+}
+#eva-root .global-search kbd {
+  display: none
+}
+#eva-root .top-actions {
+  gap: 10px
+}
+#eva-root .breadcrumb {
+  font-size: 10px;
+  gap: 9px
+}
+#eva-root .metrics-grid {
+  grid-template-columns: repeat(2,minmax(0,1fr))
+}
+#eva-root .metric-footer>small {
+  display: block
+}
+#eva-root .metric-value {
+  font-size: 34px
+}
+#eva-root .sparkline {
+  width: 83px
+}
+#eva-root .overview-middle {
+  grid-template-columns: minmax(0,1.4fr) minmax(260px,1fr)
+}
+#eva-root .page-heading {
+  align-items: flex-start
+}
+#eva-root .heading-actions {
+  margin-top: 21px
+}
+#eva-root .heading-actions .date-control {
+  display: none
+}
+#eva-root .audit-columns {
+  grid-template-columns: 1fr
+}
+#eva-root .transcript-body {
+  height: 430px
+}
+#eva-root .criteria-list {
+  max-height: none
+}
+#eva-root .summary-counts {
+  display: none
+}
+#eva-root .page-heading h1 {
+  font-size: 28px
+}
+#eva-root .checklist-panel {
+  overflow-x: auto
+}
+#eva-root .checklist-panel>.panel-heading {
+  min-width: 650px
+}
+#eva-root .checklist-editor-row,#eva-root .checklist-table-head {
+  min-width: 650px
+}
+#eva-root .checklist-actions>span {
+  font-size: 9px
+}
+#eva-root .brand-grid {
+  gap: 16px
+}
+#eva-root .brand-showcase {
+  padding: 21px
+}
+#eva-root .brand-showcase>div {
+  flex-direction: column;
+  align-items: flex-start
+}
+#eva-root .palette-panel,#eva-root .type-panel {
+  padding: 21px
+}
+#eva-root .swatches {
+  gap: 7px
+}
+#eva-root .swatches b {
+  font-size: 8px
+}
+#eva-root .brand-voice>img {
+  right: -120px
+}
+#eva-root .type-sample {
+  font-size: 36px
+}
+#eva-root .brand-download {
+  flex-wrap: wrap
+}
+#eva-root .review-grid {
+  gap: 20px
+}
+}
+@media(max-width:900px) {
+#eva-root {
+  --sidebar: 78px
+}
+#eva-root .sidebar {
+  padding: 26px 12px 18px
+}
+#eva-root .brand-button {
+  margin: 0 auto 27px
+}
+#eva-root .eva-logo>div {
+  display: none
+}
+#eva-root .eva-logo {
+  gap: 0
+}
+#eva-root .workspace-switch {
+  padding: 10px;
+  border: 0;
+  margin-bottom: 24px;
+  justify-content: center
+}
+#eva-root .workspace-switch>span:not(.workspace-symbol),#eva-root .workspace-switch>svg {
+  display: none
+}
+#eva-root .workspace-symbol {
+  width: 29px;
+  height: 30px
+}
+#eva-root .nav-label {
+  display: none
+}
+#eva-root .nav-item {
+  justify-content: center;
+  padding: 13px;
+  position: relative
+}
+#eva-root .nav-item>span,#eva-root .nav-item>small {
+  display: none
+}
+#eva-root .nav-item>em {
+  position: absolute;
+  right: 3px;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  font-size: 8px
+}
+#eva-root .sidebar-promise {
+  display: none
+}
+#eva-root .sidebar-freedom {
+  padding: 20px 0 0;
+  display: flex;
+  justify-content: center
+}
+#eva-root .freedom-logo>span,#eva-root .sidebar-freedom>span {
+  display: none
+}
+#eva-root .sidebar-bottom {
+  padding-top: 25px
+}
+#eva-root .sidebar-bottom .nav-item {
+  padding: 13px
+}
+#eva-root .secondary-nav>svg {
+  width: 17px;
+  height: 17px
+}
+#eva-root .overview-middle {
+  grid-template-columns: minmax(0,1.5fr) minmax(245px,1fr)
+}
+#eva-root .insight-card {
+  padding: 20px
+}
+#eva-root .insight-card h2 {
+  font-size: 21px
+}
+#eva-root .insight-card .insight-live {
+  display: none
+}
+#eva-root .insight-card p {
+  font-size: 9px
+}
+#eva-root .signal-art {
+  right: -80px
+}
+#eva-root .global-search {
+  width: 210px
+}
+#eva-root .brand-showcase>img {
+  width: 100%
+}
+#eva-root .help-logo .eva-logo>div {
+  display: block
+}
+}
+@media(max-width:730px) {
+#eva-root .overview-middle {
+  grid-template-columns: 1fr
+}
+#eva-root .insight-card {
+  min-height: 235px;
+  max-height: 250px
+}
+#eva-root .insight-card h2 {
+  font-size: 25px;
+  margin-top: 14px
+}
+#eva-root .insight-card p {
+  font-size: 11px
+}
+#eva-root .insight-card button {
+  position: absolute;
+  bottom: 23px;
+  right: 24px;
+  margin: 0
+}
+#eva-root .insight-card .insight-live {
+  display: block
+}
+#eva-root .signal-art {
+  width: 290px;
+  right: -30px;
+  bottom: -86px;
+  opacity: .5
+}
+#eva-root .global-search {
+  width: 155px
+}
+#eva-root .breadcrumb>span:first-of-type {
+  display: none
+}
+#eva-root .breadcrumb>.slash {
+  display: none
+}
+#eva-root .page-heading p {
+  font-size: 11px
+}
+#eva-root .metrics-grid {
+  gap: 12px
+}
+#eva-root .topbar {
+  padding: 0 22px
+}
+#eva-root main {
+  padding: 23px 22px
+}
+#eva-root .brand-grid {
+  grid-template-columns: 1fr
+}
+#eva-root .brand-showcase>div {
+  flex-direction: row;
+  align-items: center
+}
+#eva-root .brand-voice>img {
+  right: -35px
+}
+#eva-root .type-sample {
+  font-size: 44px
+}
+#eva-root .swatches>button>span {
+  height: 85px
+}
+#eva-root .brand-download {
+  grid-column: auto
+}
+#eva-root .checklist-overview {
+  padding: 17px;
+  gap: 11px
+}
+#eva-root .checklist-overview h2 {
+  font-size: 13px
+}
+#eva-root .checklist-overview .badge {
+  margin-left: 0
+}
+#eva-root .checklist-total {
+  padding-left: 15px
+}
+#eva-root .checklist-actions {
+  flex-wrap: wrap
+}
+#eva-root .checklist-actions>span {
+  width: 100%;
+  margin-bottom: 5px
+}
+#eva-root .appeals-intro {
+  padding: 19px;
+  gap: 20px
+}
+#eva-root .appeals-intro>div:first-child>svg {
+  display: none
+}
+#eva-root .appeals-intro b {
+  font-size: 11px
+}
+#eva-root .appeals-intro small {
+  font-size: 9px
+}
+#eva-root .filter-tabs {
+  gap: 17px
+}
+#eva-root .list-toolbar {
+  padding: 6px 17px 0
+}
+#eva-root .list-toolbar .button {
+  font-size: 0;
+  padding: 7px
+}
+#eva-root .list-toolbar .button svg {
+  width: 16px;
+  height: 16px
+}
+#eva-root .filter-tabs>button {
+  font-size: 10px
+}
+#eva-root .filter-bar {
+  flex-wrap: wrap;
+  padding: 15px 17px
+}
+#eva-root .search-field {
+  flex: 1
+}
+#eva-root .review-grid {
+  grid-template-columns: 1fr
+}
+#eva-root .review-preview {
+  gap: 12px
+}
+#eva-root .review-preview b {
+  font-size: 17px
+}
+#eva-root .app-footer {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px
+}
+}
+@media(max-width:560px) {
+#eva-root {
+  --sidebar: 0px
+}
+#eva-root .sidebar {
+  width: 232px;
+  transform: translateX(-100%);
+  transition: transform .2s ease;
+  padding: 26px 16px 18px
+}
+#eva-root .sidebar.is-open {
+  transform: translateX(0)
+}
+#eva-root .nav-scrim {
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: #0d27184d;
+  z-index: 39;
+  backdrop-filter: blur(2px)
+}
+#eva-root .sidebar .brand-button {
+  margin-left: 8px;
+  margin-right: 0
+}
+#eva-root .sidebar .eva-logo>div {
+  display: block
+}
+#eva-root .sidebar .eva-logo {
+  gap: 9px
+}
+#eva-root .sidebar .workspace-switch {
+  padding: 12px 11px;
+  border: 1px solid #2b4034;
+  justify-content: flex-start;
+  gap: 10px
+}
+#eva-root .sidebar .workspace-switch>span:not(.workspace-symbol),#eva-root .sidebar .workspace-switch>svg {
+  display: block
+}
+#eva-root .sidebar .nav-label {
+  display: block
+}
+#eva-root .sidebar .nav-item {
+  justify-content: flex-start;
+  padding: 12px 13px
+}
+#eva-root .sidebar .nav-item>span,#eva-root .sidebar .nav-item>small {
+  display: block
+}
+#eva-root .sidebar .nav-item>em {
+  position: static;
+  width: 19px;
+  height: 19px;
+  font-size: 10px
+}
+#eva-root .sidebar .sidebar-freedom {
+  padding: 20px 12px 0;
+  justify-content: flex-start;
+  display: block
+}
+#eva-root .sidebar .freedom-logo>span,#eva-root .sidebar .sidebar-freedom>span {
+  display: block
+}
+#eva-root .sidebar .sidebar-promise {
+  display: block
+}
+#eva-root .sidebar .secondary-nav {
+  font-size: 10px
+}
+#eva-root .main-shell {
+  margin-left: 0
+}
+#eva-root .topbar {
+  padding: 0 16px;
+  height: 62px
+}
+#eva-root .mobile-menu {
+  display: inline-flex
+}
+#eva-root .breadcrumb {
+  gap: 8px;
+  font-size: 11px
+}
+#eva-root .top-actions {
+  gap: 8px
+}
+#eva-root .top-actions .global-search,#eva-root .header-divider {
+  display: none
+}
+#eva-root .profile-avatar {
+  width: 30px;
+  height: 30px
+}
+#eva-root .topbar .icon-button {
+  width: 29px
+}
+#eva-root .topbar .breadcrumb .icon-button {
+  margin-left: -5px
+}
+#eva-root main {
+  padding: 23px 16px 22px
+}
+#eva-root .page-heading {
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px
+}
+#eva-root .page-heading h1 {
+  font-size: 29px
+}
+#eva-root .page-heading p {
+  font-size: 11px;
+  max-width: 320px
+}
+#eva-root .heading-actions {
+  margin-top: 0;
+  width: 100%;
+  justify-content: space-between
+}
+#eva-root .heading-actions .date-control {
+  display: flex
+}
+#eva-root .button {
+  min-height: 39px;
+  font-size: 10px;
+  padding: 9px 12px
+}
+#eva-root .date-control {
+  height: 39px;
+  padding: 9px
+}
+#eva-root .date-control select {
+  font-size: 9px
+}
+#eva-root .metrics-grid {
+  gap: 10px
+}
+#eva-root .metric-card {
+  padding: 13px 12px
+}
+#eva-root .metric-top {
+  font-size: 9px
+}
+#eva-root .metric-icon {
+  height: 23px;
+  width: 23px
+}
+#eva-root .metric-value {
+  font-size: 30px;
+  letter-spacing: -1.5px;
+  margin-top: 10px;
+  margin-bottom: 13px
+}
+#eva-root .metric-value small {
+  font-size: 8px
+}
+#eva-root .metric-footer>small {
+  display: none
+}
+#eva-root .sparkline {
+  width: 43px;
+  height: 26px
+}
+#eva-root .metric-chip {
+  font-size: 7px;
+  padding: 3px 5px
+}
+#eva-root .metric-footer {
+  gap: 5px
+}
+#eva-root .language-dots {
+  font-size: 8px
+}
+#eva-root .overview-middle {
+  margin-top: 15px;
+  gap: 15px
+}
+#eva-root .chart-panel {
+  height: 255px
+}
+#eva-root .panel-heading {
+  padding: 17px 16px;
+  gap: 10px
+}
+#eva-root .panel-heading h2 {
+  font-size: 14px
+}
+#eva-root .panel-heading p {
+  font-size: 9px
+}
+#eva-root .chart-legend {
+  font-size: 8px;
+  gap: 4px
+}
+#eva-root .quality-chart {
+  width: calc(100% - 28px);
+  margin: 0 14px;
+  height: 176px
+}
+#eva-root .insight-card {
+  padding: 20px;
+  min-height: 236px
+}
+#eva-root .insight-card h2 {
+  font-size: 25px
+}
+#eva-root .insight-card p {
+  font-size: 10px
+}
+#eva-root .insight-card button {
+  right: 18px;
+  bottom: 22px;
+  font-size: 8px;
+  padding: 8px;
+  gap: 9px
+}
+#eva-root .recent-panel {
+  margin-top: 15px
+}
+#eva-root .recent-panel .panel-heading {
+  padding: 17px 16px
+}
+#eva-root .recent-panel .text-button {
+  font-size: 10px
+}
+#eva-root .table-caption {
+  padding: 13px 16px;
+  font-size: 8px
+}
+#eva-root .table-caption>span:last-child:not(.subtle-pill) {
+  display: none
+}
+#eva-root .conversation-table {
+  min-width: 820px
+}
+#eva-root .list-toolbar {
+  padding: 6px 13px 0;
+  gap: 10px
+}
+#eva-root .filter-tabs {
+  gap: 13px
+}
+#eva-root .filter-tabs>button {
+  font-size: 9px;
+  gap: 4px
+}
+#eva-root .filter-tabs>button>span {
+  font-size: 7px
+}
+#eva-root .filter-bar {
+  padding: 14px
+}
+#eva-root .search-field {
+  flex-basis: 100%;
+  width: 100%
+}
+#eva-root .select-field {
+  flex: 1
+}
+#eva-root .select-field select {
+  width: 100%
+}
+#eva-root .detail-heading {
+  gap: 14px
+}
+#eva-root .detail-heading h1 {
+  font-size: 25px
+}
+#eva-root .detail-heading p {
+  font-size: 9px;
+  gap: 7px;
+  flex-wrap: wrap
+}
+#eva-root .detail-heading .button {
+  align-self: flex-start
+}
+#eva-root .audit-summary {
+  padding: 17px;
+  gap: 15px;
+  align-items: center
+}
+#eva-root .gauge {
+  width: 102px;
+  height: 102px
+}
+#eva-root .gauge strong {
+  font-size: 23px
+}
+#eva-root .gauge span {
+  font-size: 7px
+}
+#eva-root .summary-description h2 {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 7px
+}
+#eva-root .summary-description>p {
+  font-size: 9px;
+  margin-top: 4px
+}
+#eva-root .summary-description .mini-eyebrow {
+  font-size: 6px;
+  letter-spacing: 1px
+}
+#eva-root .summary-tags {
+  margin-top: 11px;
+  gap: 7px
+}
+#eva-root .summary-tags>span {
+  font-size: 7px
+}
+#eva-root .summary-tags>span:last-child {
+  display: none
+}
+#eva-root .summary-tags svg {
+  width: 10px
+}
+#eva-root .review-banner {
+  font-size: 10px;
+  line-height: 1.8;
+  padding: 11px 13px
+}
+#eva-root .audit-columns {
+  gap: 15px;
+  margin-top: 15px
+}
+#eva-root .transcript-controls {
+  padding: 0 16px 13px
+}
+#eva-root .transcript-body {
+  padding: 18px 15px;
+  height: 435px
+}
+#eva-root .message-bubble {
+  font-size: 11px
+}
+#eva-root .message.client {
+  margin-right: 25px
+}
+#eva-root .message.operator {
+  margin-left: 25px
+}
+#eva-root .criterion-toggle {
+  padding: 15px 16px;
+  gap: 8px
+}
+#eva-root .criterion-title>strong {
+  font-size: 10px
+}
+#eva-root .criterion-detail {
+  padding-left: 47px;
+  padding-right: 16px
+}
+#eva-root .criterion-detail>p {
+  font-size: 10px
+}
+#eva-root .criterion-score {
+  font-size: 11px
+}
+#eva-root .calculation {
+  padding: 17px 16px
+}
+#eva-root .checklist-overview {
+  flex-wrap: wrap
+}
+#eva-root .checklist-overview .badge {
+  margin-left: auto
+}
+#eva-root .checklist-total {
+  border-left: 0;
+  margin-left: 60px;
+  width: 100%;
+  padding-left: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px
+}
+#eva-root .checklist-total b {
+  margin-top: 0;
+  font-size: 16px
+}
+#eva-root .checklist-total span {
+  font-size: 9px
+}
+#eva-root .checklist-overview>div>h2 {
+  font-size: 13px
+}
+#eva-root .checklist-overview>div>p {
+  font-size: 9px
+}
+#eva-root .checklist-actions {
+  gap: 9px
+}
+#eva-root .checklist-actions .button {
+  flex: 1;
+  font-size: 9px
+}
+#eva-root .checklist-note {
+  min-width: 650px
+}
+#eva-root .appeals-intro {
+  flex-wrap: wrap;
+  gap: 17px;
+  padding: 18px
+}
+#eva-root .appeals-intro>div:first-child {
+  flex-basis: 100%
+}
+#eva-root .appeals-intro>div:not(:first-child) {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px
+}
+#eva-root .appeals-intro strong {
+  font-size: 23px
+}
+#eva-root .appeals-intro>div>span:not(:first-child) {
+  font-size: 9px
+}
+#eva-root .appeal-card {
+  padding: 18px
+}
+#eva-root .appeal-card h2 {
+  font-size: 17px
+}
+#eva-root .appeal-id {
+  font-size: 8px;
+  gap: 6px
+}
+#eva-root .appeal-card-bottom {
+  gap: 15px;
+  align-items: flex-start
+}
+#eva-root .appeal-card-bottom .operator-cell {
+  width: 100%;
+  font-size: 10px
+}
+#eva-root .appeal-scores {
+  flex: 1;
+  font-size: 8px;
+  gap: 9px
+}
+#eva-root .appeal-scores b {
+  font-size: 14px
+}
+#eva-root .appeal-card-bottom>.button {
+  font-size: 9px;
+  min-height: 35px
+}
+#eva-root .appeal-comment {
+  font-size: 10px;
+  padding: 12px;
+  line-height: 1.85
+}
+#eva-root .brand-voice h2 {
+  font-size: 34px
+}
+#eva-root .brand-showcase {
+  min-height: 260px
+}
+#eva-root .brand-showcase>div>p {
+  font-size: 9px
+}
+#eva-root .brand-showcase .text-button {
+  font-size: 9px
+}
+#eva-root .palette-panel>h2 {
+  font-size: 14px
+}
+#eva-root .brand-download {
+  padding: 21px
+}
+#eva-root .brand-download>div>p {
+  font-size: 10px
+}
+#eva-root .modal {
+  padding: 19px;
+  max-width: calc(100vw - 24px);
+  max-height: 90vh
+}
+#eva-root .modal-head h2 {
+  font-size: 18px
+}
+#eva-root .modal-context {
+  gap: 10px;
+  padding: 12px
+}
+#eva-root .modal-context strong {
+  font-size: 11px
+}
+#eva-root .modal-context span:not(.badge) {
+  font-size: 8px
+}
+#eva-root .modal-context .badge {
+  display: none
+}
+#eva-root .review-preview {
+  gap: 9px;
+  padding: 13px 9px;
+  font-size: 9px
+}
+#eva-root .review-preview b {
+  font-size: 16px;
+  margin-left: 4px
+}
+#eva-root .review-preview svg {
+  width: 13px
+}
+#eva-root .toast {
+  bottom: 17px;
+  left: 50%;
+  font-size: 10px;
+  width: calc(100vw - 30px);
+  max-width: 470px;
+  padding: 12px
+}
+#eva-root .toast>button {
+  margin-left: auto
+}
+#eva-root .help-logo .eva-logo {
+  gap: 9px
+}
+#eva-root .app-footer {
+  font-size: 7px
+}
+}
+@media(prefers-reduced-motion:reduce) {
+#eva-root,#eva-root * {
+  animation: none!important;
+  transition: none!important;
+  scroll-behavior: auto!important
+}
+}
+
+/* Readable foregrounds for working screens. */
+#eva-root .metric-top {
+  font-size: 11px;
+  color: #5c6e60
+}
+#eva-root .metric-footer>small {
+  color: #7c8c7e
+}
+#eva-root .metric-chip {
+  font-size: 9px
+}
+#eva-root .panel-heading p {
+  color: #7c8d7e
+}
+#eva-root .conversation-table th {
+  font-size: 10px;
+  color: #728474
+}
+#eva-root .conversation-table td {
+  font-size: 11px
+}
+#eva-root .topic-link strong {
+  font-size: 12px;
+  color: #354e3c
+}
+#eva-root .topic-link small {
+  font-size: 9px;
+  color: #859585
+}
+#eva-root .badge {
+  font-size: 9px
+}
+#eva-root .operator-cell {
+  color: #617965
+}
+#eva-root .table-caption {
+  color: #788b79
+}
+#eva-root .page-heading p {
+  color: #6d8071
+}
+#eva-root .summary-description>p,#eva-root .criterion-detail>p,#eva-root .message-bubble,#eva-root .review-comment,#eva-root .review-evidence p {
+  color: #52664f
+}
+#eva-root .criterion-title>strong {
+  color: #354e35;
+  font-size: 11px
+}
+#eva-root .criterion-title>small,#eva-root .criterion-bottom>span {
+  color: #7e9071
+}
+#eva-root .evidence-link q {
+  color: #617c47;
+  font-size: 10px
+}
+#eva-root .evidence-link-heading {
+  color: #6e8a50;
+  font-size: 9px
+}
+#eva-root .criterion-detail>p {
+  font-size: 11px
+}
+#eva-root .criterion-score {
+  color: #4b7033
+}
+#eva-root .criterion-bottom button {
+  color: #688549;
+  font-size: 9px
+}
+#eva-root .calculation p {
+  color: #7b9165
+}
+#eva-root .calculation>div>span {
+  color: #5d7b42
+}
+#eva-root .message.operator .message-bubble {
+  color: #426536
+}
+#eva-root .message-meta {
+  font-size: 9px
+}
+#eva-root .message.system .message-bubble {
+  color: #7f9273;
+  font-size: 9px
+}
+#eva-root .appeals-intro b,#eva-root .appeal-card>h2,#eva-root .checklist-overview h2,#eva-root .brand-download h2,#eva-root .palette-panel>h2,#eva-root .type-panel h2 {
+  color: #405e33
+}
+#eva-root .appeal-comment,#eva-root .decision-reason,#eva-root .appeals-intro small,#eva-root .appeal-conversation-link {
+  color: #617d4d
+}
+#eva-root .appeal-id,#eva-root .appeal-scores,#eva-root .checklist-overview p,#eva-root .checklist-total span,#eva-root .checklist-actions>span {
+  color: #7c9467
+}
+#eva-root .criterion-fields>input {
+  color: #48653a;
+  font-size: 12px
+}
+#eva-root .criterion-fields>textarea {
+  color: #6c8657;
+  font-size: 10px
+}
+#eva-root .criterion-type select,#eva-root .weight-input {
+  color: #52723d
+}
+#eva-root .checklist-table-head {
+  color: #78955d;
+  font-size: 10px
+}
+#eva-root .checklist-note {
+  color: #6c8750
+}
+#eva-root .checklist-note b {
+  color: #496d30
+}
+#eva-root .checklist-note p {
+  font-size: 10px
+}
+#eva-root .type-panel p,#eva-root .brand-showcase p,#eva-root .brand-download p {
+  color: #6f8757
+}
+#eva-root .swatches b {
+  color: #647e4a
+}
+#eva-root .swatches small {
+  color: #7f9566
+}
+#eva-root .mini-eyebrow {
+  color: #789163
+}
+#eva-root .modal-description,#eva-root .form-label,#eva-root .form-hint,#eva-root .review-choice label,#eva-root .help-steps p {
+  color: #687f4d
+}
+#eva-root .modal-head h2,#eva-root .help-steps b,#eva-root .modal-context strong {
+  color: #365a26
+}
+#eva-root .form-label>input,#eva-root .form-label>select,#eva-root .form-label>textarea {
+  color: #4e6e35
+}
+#eva-root .modal-context span:not(.badge) {
+  color: #78935b
+}
+#eva-root .info-callout {
+  color: #688648
+}
+#eva-root .field-eyebrow {
+  color: #6e8d4f
+}
+#eva-root .review-preview {
+  color: #6c894d
+}
+#eva-root .review-preview b {
+  color: #437221
+}
+#eva-root .upload-zone strong {
+  color: #587b36
+}
+#eva-root .upload-zone small {
+  color: #819e5d
+}
+#eva-root .upload-zone>span:last-child {
+  color: #8aa66a
+}
+#eva-root .notification-row b {
+  color: #587c39
+}
+#eva-root .notification-row small {
+  color: #829c63
+}
+#eva-root .review-evidence span {
+  color: #7a9853
+}
+#eva-root .form-label textarea::placeholder {
+  color: #91a677
+}
+@media(max-width:560px) {
+#eva-root .metric-top {
+  font-size: 9px
+}
+#eva-root .metric-chip {
+  font-size: 8px
+}
+#eva-root .criterion-title>strong {
+  font-size: 11px
+}
+#eva-root .criterion-detail>p {
+  font-size: 11px
+}
+#eva-root .badge {
+  font-size: 9px
+}
+#eva-root .page-heading p {
+  font-size: 11px
+}
+}
+#eva-root .message-bubble {
+  font-size: 12px
+}
+#eva-root .criterion-title>strong {
+  font-size: 12px
+}
+#eva-root .criterion-detail>p {
+  font-size: 12px
+}
+#eva-root .evidence-link q {
+  font-size: 11px
+}
+#eva-root .appeal-comment,#eva-root .modal-description,#eva-root .review-comment,#eva-root .review-evidence p {
+  font-size: 12px
+}
+#eva-root .criterion-fields>textarea {
+  font-size: 11px
+}
+#eva-root .form-label {
+  font-size: 11px
+}
+#eva-root .form-label>textarea,#eva-root .form-label>select {
+  font-size: 12px
+}
+@media(max-width:560px) {
+#eva-root .sidebar {
+  visibility: hidden
+}
+#eva-root .sidebar.is-open {
+  visibility: visible
+}
+#eva-root .quality-chart text {
+  font-size: 11px
+}
+#eva-root .quality-chart text.chart-goal {
+  font-size: 9px
+}
+}
+
+
+#eva-root .reset-demo { margin-top: 12px; }

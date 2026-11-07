@@ -1,263 +1,150 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { api, apiMode } from './api/client';
-import type { Checklist, Conversation, Evaluation, EvaluationResponse } from './api/types';
+"use client";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { LayoutDashboard, MessagesSquare, ClipboardList, GitPullRequest, Search, Bell, Plus, ArrowRight, ArrowUpRight, ChevronDown, Download, CalendarDays, ShieldCheck, AlertTriangle, Check, X, Menu, CircleHelp, Upload, Save, Trash2, Palette, CheckCircle2, Info } from "lucide-react";
+import { conversations as seedConversations, criteria as seedCriteria, defaultAppeals, score, formatScore, evidence, type Conversation, type Criterion, type Appeal, type Message } from "./eva-data";
+import { EvaLogo, FreedomLogo, Modal, StatusBadge, QualityChart, ConversationTable, EmptyState } from "./eva-ui";
+import AuditDetail from "./eva-detail";
+import { parseDemoState } from "./eva-storage";
 
-const speakers = { client: 'Клиент', operator: 'Оператор', bot: 'Бот', system: 'Система' };
-const languages = { RU: 'Русский', KZ: 'Қазақша', EN: 'English' };
-const evidenceKinds = { message: 'Основание', missing_action: 'Ожидаемое действие', not_applicable: 'Контекст неприменимости', uncertain: 'Требуется уточнение' };
-type Criterion = Checklist['criteria'][number];
-type Result = EvaluationResponse['criteria'][number];
-type Filter = 'all' | 'attention' | 'review';
-const checklistKey = (item: Checklist) => `${item.id}:${item.version}`;
-const errorMessage = (error: unknown) => error instanceof Error ? error.message : 'Не удалось выполнить запрос.';
-const number = (value: number) => value.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
-const channelLabel = (item: Conversation) => item.channel === 'voice_call' ? 'Звонок' : 'Чат';
-const messageAnchor = (id: string) => `eva-message-${encodeURIComponent(id)}`;
-const timeLabel = (value: string) => /^\d{4}-\d{2}-\d{2}T/.test(value) && !Number.isNaN(Date.parse(value))
-  ? new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' }).format(new Date(value))
-  : value;
+type Tab = "overview"|"dialogs"|"appeals"|"checklists"|"brand";
+type ModalName = "upload"|"appeal"|"review"|"notifications"|"help"|null;
+const navigation=[{id:"overview" as Tab,title:"Обзор",icon:LayoutDashboard},{id:"dialogs" as Tab,title:"Диалоги",icon:MessagesSquare},{id:"checklists" as Tab,title:"Чек-листы",icon:ClipboardList},{id:"appeals" as Tab,title:"Апелляции",icon:GitPullRequest}];
+const titles:Record<Tab,string>={overview:"Обзор качества",dialogs:"Диалоги",appeals:"Апелляции",checklists:"Чек-листы",brand:"Дизайн-система"};
+const ratingOptions=(c:Criterion)=>c.type==="scale"?(c.max===20?[0,5,10,15,20]:c.max===10?[0,4,7,10]:[0,c.max/2,c.max]):[0,1];
 
-function reveal(element: HTMLElement | null | undefined, focus = false) {
-  if (!element) return;
-  const bounds = element.getBoundingClientRect();
-  if (bounds.top < 16 || bounds.bottom > window.innerHeight - 16) element.scrollIntoView({ block: 'nearest', behavior: 'instant' });
-  if (focus) element.focus({ preventScroll: true });
+function download(name:string,content:string,type="application/json"){const url=URL.createObjectURL(new Blob([content],{type}));const link=document.createElement("a");link.href=url;link.download=name;link.click();URL.revokeObjectURL(url);}
+function readRoute():{tab:Tab;selected:string|null}{
+ const [section,id]=window.location.hash.replace(/^#\/?/,"").split("/");
+ const tab:Tab=["overview","dialogs","appeals","checklists","brand"].includes(section)?section as Tab:"overview";
+ let selected:string|null=null;
+ try { if(tab==="dialogs"&&id)selected=decodeURIComponent(id); } catch { /* Invalid URL opens the list. */ }
+ return {tab,selected};
 }
+function checklistFor(c:Conversation){return c.evaluationChecklist??seedCriteria;}
+function resultFor(c:Conversation){return c.pending?null:score(c.ratings,checklistFor(c));}
 
-function readRoute() {
-  const hash = window.location.hash.slice(1);
-  if (hash === '/checklists') return { page: 'checklists' as const, conversationId: null };
-  const match = hash.match(/^\/dialogs\/([^/?]+)$/);
-  try { return { page: 'dialogs' as const, conversationId: match ? decodeURIComponent(match[1]) : null }; }
-  catch { return { page: 'dialogs' as const, conversationId: null }; }
-}
-
-function criterionValue(result: Result | undefined, criterion: Criterion) {
-  if (!result) return 'Не оценён';
-  if (result.status === 'needs_review') return 'Нужна проверка';
-  if (result.value === null) return 'Неприменимо';
-  if (criterion.type === 'flag') return result.value ? 'Есть нарушение' : 'Не обнаружены';
-  if (typeof result.value === 'boolean') return result.value ? 'Выполнен' : 'Не выполнен';
-  return `${number(result.value)} / ${number(Math.max(...criterion.scale))}`;
-}
-
-function isProblem(result: Result | undefined, criterion: Criterion) {
-  if (!result || result.status !== 'scored' || result.value === null) return false;
-  if (criterion.type === 'flag') return result.value === true;
-  if (criterion.type === 'boolean') return result.value === false;
-  return typeof result.value === 'number' && result.value < Math.max(...criterion.scale);
-}
-
-function Highlight({ text, query }: { text: string; query: string }) {
-  if (!query.trim()) return <>{text}</>;
-  const escaped = query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return <>{text.split(new RegExp(`(${escaped})`, 'gi')).map((part, index) =>
-    part.toLocaleLowerCase() === query.trim().toLocaleLowerCase()
-      ? <mark key={index}>{part}</mark> : <Fragment key={index}>{part}</Fragment>)}</>;
-}
-
-export function App() {
-  const [route, setRoute] = useState(readRoute);
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [checklists, setChecklists] = useState<Checklist[]>([]);
-  const [selectedChecklist, setSelectedChecklist] = useState('');
-  const [evaluations, setEvaluations] = useState<Record<string, Evaluation>>({});
-  const [loading, setLoading] = useState(true);
-  const [evaluatingKey, setEvaluatingKey] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [evaluationErrors, setEvaluationErrors] = useState<Record<string, string>>({});
-  const [connection, setConnection] = useState('Подключение…');
-  const [queueQuery, setQueueQuery] = useState('');
-  const [channel, setChannel] = useState<'all' | Conversation['channel']>('all');
-  const [textQuery, setTextQuery] = useState('');
-  const [filter, setFilter] = useState<Filter>('all');
-  const [criterionId, setCriterionId] = useState('');
-  const [focusedMessageId, setFocusedMessageId] = useState('');
-  const [announcement, setAnnouncement] = useState('');
-  const requestVersion = useRef(0);
-  const messageRefs = useRef(new Map<string, HTMLLIElement>());
-  const queueRef = useRef<HTMLDetailsElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const focusPageOnRoute = useRef(false);
-  const conversationId = route.conversationId ?? conversations[0]?.id ?? '';
-  const conversation = conversations.find(item => item.id === conversationId);
-  const checklist = checklists.find(item => checklistKey(item) === selectedChecklist);
-  const evaluationKey = JSON.stringify([conversationId, selectedChecklist]);
-  const activeEvaluationKey = useRef(evaluationKey);
-  activeEvaluationKey.current = evaluationKey;
-  const displayedError = error ?? (route.page === 'dialogs' ? evaluationErrors[evaluationKey] : null);
-  const evaluation = evaluations[evaluationKey];
-  const evaluating = evaluatingKey !== null;
-  const finalScore = evaluation?.status === 'completed' && evaluation.scoring.status === 'complete' ? evaluation.scoring.total : null;
-  const results = useMemo(() => new Map(evaluation?.original.criteria.map(item => [item.criterion_id, item])), [evaluation]);
-  const scores = useMemo(() => new Map(evaluation?.scoring.criteria.map(item => [item.criterion_id, item])), [evaluation]);
-  const attentionCount = checklist?.criteria.filter(item => isProblem(results.get(item.id), item) || results.get(item.id)?.status === 'needs_review').length ?? 0;
-  const reviewCount = checklist?.criteria.filter(item => results.get(item.id)?.status === 'needs_review').length ?? 0;
-  const visibleCriteria = checklist?.criteria.filter(item => filter === 'all' ||
-    (filter === 'review' ? results.get(item.id)?.status === 'needs_review'
-      : results.get(item.id)?.status === 'needs_review' || isProblem(results.get(item.id), item))) ?? [];
-  const criterion = visibleCriteria.find(item => item.id === criterionId) ?? visibleCriteria[0];
-  const result = criterion ? results.get(criterion.id) : undefined;
-  const contribution = criterion ? scores.get(criterion.id) : undefined;
-  const evidenceIds = useMemo(() => [...new Set(result?.evidence.flatMap(item => item.message_ids) ?? [])], [result]);
-  const evidenceMessages = conversation?.messages.filter(item => evidenceIds.includes(item.id)) ?? [];
-  const activeEvidenceIndex = evidenceMessages.findIndex(item => item.id === focusedMessageId);
-  const searchMatches = conversation?.messages.filter(item => textQuery.trim() && item.text.toLocaleLowerCase().includes(textQuery.trim().toLocaleLowerCase())) ?? [];
-  const activeSearchIndex = searchMatches.findIndex(item => item.id === focusedMessageId);
-  const queue = conversations.filter(item => (channel === 'all' || item.channel === channel) &&
-    (!queueQuery.trim() || `${item.id} ${item.messages.map(message => message.text).join(' ')}`.toLocaleLowerCase().includes(queueQuery.trim().toLocaleLowerCase())));
-
-  useEffect(() => {
-    const onRoute = () => { focusPageOnRoute.current = true; setRoute(readRoute()); };
-    window.addEventListener('hashchange', onRoute);
-    return () => window.removeEventListener('hashchange', onRoute);
-  }, []);
-  useEffect(() => {
-    if (focusPageOnRoute.current) { reveal(headingRef.current, true); focusPageOnRoute.current = false; }
-  }, [route]);
-
-  const load = useCallback(async () => {
-    const version = ++requestVersion.current;
-    setLoading(true); setError(null); setConnection('Подключение…');
-    setConversations([]); setChecklists([]); setEvaluations({}); setEvaluationErrors({});
-    try {
-      const [health, nextConversations, nextChecklists] = await Promise.all([api.health(), api.getConversations(), api.getChecklists()]);
-      if (version !== requestVersion.current) return;
-      setConversations(nextConversations); setChecklists(nextChecklists);
-      setSelectedChecklist(nextChecklists[0] ? checklistKey(nextChecklists[0]) : '');
-      setConnection(apiMode === 'demo' ? 'Деморежим' : health.status === 'ok' ? 'Сервис доступен' : `Сервис: ${health.status}`);
-    } catch (failure) {
-      if (version !== requestVersion.current) return;
-      setError(errorMessage(failure)); setConnection('Нет соединения');
-    } finally { if (version === requestVersion.current) setLoading(false); }
-  }, []);
-
-  useEffect(() => { void load(); return () => { requestVersion.current += 1; }; }, [load]);
-  useEffect(() => {
-    setTextQuery(''); setCriterionId(''); setFocusedMessageId(''); setFilter('all'); setAnnouncement('');
-  }, [conversationId, selectedChecklist]);
-  useEffect(() => {
-    const narrow = window.matchMedia('(max-width: 680px)');
-    const syncQueue = () => { if (queueRef.current) queueRef.current.open = !narrow.matches; };
-    syncQueue(); narrow.addEventListener('change', syncQueue);
-    return () => narrow.removeEventListener('change', syncQueue);
-  }, []);
-
-  async function evaluate() {
-    if (!conversation || !checklist || evaluating) return;
-    const version = requestVersion.current, key = evaluationKey;
-    setEvaluatingKey(key); setError(null);
-    setEvaluationErrors(previous => { const next = { ...previous }; delete next[key]; return next; });
-    setEvaluations(previous => { const next = { ...previous }; delete next[key]; return next; });
-    try {
-      const next = await api.evaluate({ conversation_id: conversation.id, checklist_id: checklist.id, checklist_version: checklist.version });
-      if (version !== requestVersion.current) return;
-      if (next.original.conversation_id !== conversation.id || next.original.checklist_id !== checklist.id || next.original.checklist_version !== checklist.version) {
-        throw new Error('Получена оценка другого диалога или версии чек-листа. Повторите запрос.');
-      }
-      setEvaluations(previous => ({ ...previous, [key]: next }));
-      if (activeEvaluationKey.current === key) { setCriterionId(''); setFilter('all'); setFocusedMessageId(''); }
-    } catch (failure) { if (version === requestVersion.current) setEvaluationErrors(previous => ({ ...previous, [key]: errorMessage(failure) })); }
-    finally { if (version === requestVersion.current) setEvaluatingKey(null); }
+export default function Home(){
+ const [tab,setTab]=useState<Tab>(()=>readRoute().tab);
+ const [items,setItems]=useState<Conversation[]>(seedConversations);
+ const [appeals,setAppeals]=useState<Appeal[]>(defaultAppeals);
+ const [checklist,setChecklist]=useState<Criterion[]>(seedCriteria);
+ const [draft,setDraft]=useState<Criterion[]>(seedCriteria);
+ const [version,setVersion]=useState(1);
+ const [ready,setReady]=useState(false);
+ const [selected,setSelected]=useState<string|null>(()=>readRoute().selected);
+ const [modal,setModal]=useState<ModalName>(null);
+ const [mobileNav,setMobileNav]=useState(false);
+ const [query,setQuery]=useState("");
+ const [language,setLanguage]=useState("all");
+ const [channel,setChannel]=useState("all");
+ const [filter,setFilter]=useState("all");
+ const [period,setPeriod]=useState("week");
+ const [appealFilter,setAppealFilter]=useState("open");
+ const [toast,setToast]=useState("");
+ const [appealTarget,setAppealTarget]=useState<{conversationId:string;criterionId:number}|null>(null);
+ const [comment,setComment]=useState("");
+ const [reviewId,setReviewId]=useState<string|null>(null);
+ const [reviewMode,setReviewMode]=useState("change");
+ const [reviewValue,setReviewValue]=useState("1");
+ const [reason,setReason]=useState("");
+ const [uploaded,setUploaded]=useState<Conversation|null>(null);
+ const [uploadError,setUploadError]=useState("");
+ const [demoChoice,setDemoChoice]=useState("DEMO-RU-001");
+ const searchRef=useRef<HTMLInputElement>(null);
+ const fileRef=useRef<HTMLInputElement>(null);
+ const importSequence=useRef(0);
+ const storageWarning=useRef(false);
+ useEffect(()=>{
+  try {
+   const raw=localStorage.getItem("eva-freedom-demo-v1");
+   if(raw){
+    const saved=parseDemoState(raw);
+    if(saved){setItems(saved.items.filter(c=>seedConversations.some(seed=>seed.id===c.id)));setAppeals(saved.appeals.filter(a=>seedConversations.some(seed=>seed.id===a.conversationId)));setChecklist(saved.checklist);setDraft(saved.checklist);setVersion(saved.version);}
+    else setToast("Сохранённое демо повреждено. Загружены исходные примеры.");
+   }
+  } catch { setToast("Сохранённое демо недоступно. Изменения доступны в этой вкладке."); }
+  setReady(true);
+ },[]);
+ useEffect(()=>{
+  if(!ready)return;
+  try {
+   // Uploaded transcripts stay in memory; persist only the synthetic demo workspace.
+   const demoItems=items.filter(c=>seedConversations.some(seed=>seed.id===c.id));
+   localStorage.setItem("eva-freedom-demo-v1",JSON.stringify({tag:1,items:demoItems,appeals:appeals.filter(a=>demoItems.some(c=>c.id===a.conversationId)),checklist,version}));
+  } catch {
+   if(!storageWarning.current){storageWarning.current=true;setToast("Не удалось сохранить демо в браузере. Изменения доступны до закрытия вкладки.");}
   }
+ },[ready,items,appeals,checklist,version]);
+ useEffect(()=>{const sync=()=>{const route=readRoute();setTab(route.tab);setSelected(route.selected);setMobileNav(false);};window.addEventListener("hashchange",sync);return()=>window.removeEventListener("hashchange",sync);},[]);
+ useEffect(()=>{if(modal!=="upload")importSequence.current++;},[modal]);
+ useEffect(()=>{if(!toast)return;const t=setTimeout(()=>setToast(""),4200);return()=>clearTimeout(t);},[toast]);
+ useEffect(()=>{function hotkey(e:KeyboardEvent){if((e.ctrlKey||e.metaKey)&&e.key==="k"){e.preventDefault();searchRef.current?.focus();}}window.addEventListener("keydown",hotkey);return()=>window.removeEventListener("keydown",hotkey);},[]);
+ const openAppeals=appeals.filter(a=>a.status==="open");
+ const current=items.find(c=>c.id===selected);
+ const filteredByPeriod=items.filter(c=>period==="week"||c.date>=(period==="today"?7:5));
+ const evaluated=filteredByPeriod.filter(c=>!c.pending);
+ const calculatedScores=evaluated.map(resultFor).filter((v):v is number=>v!==null);
+ const average=calculatedScores.length?calculatedScores.reduce((a,v)=>a+v,0)/calculatedScores.length:null;
+ const violations=evaluated.filter(c=>c.ratings[7]===1);
+ const recent=[...filteredByPeriod].sort((a,b)=>b.date-a.date||b.time.localeCompare(a.time));
+ const filtered=items.filter(c=>(language==="all"||c.lang===language)&&(channel==="all"||c.channel===channel)&&(filter==="all"||filter==="critical"&&c.ratings[7]===1||filter==="review"&&openAppeals.some(a=>a.conversationId===c.id))&&[c.id,c.topic,c.operator].some(s=>s.toLowerCase().includes(query.toLowerCase())));
+ const activeReview=appeals.find(a=>a.id===reviewId);
+ const reviewConversation=items.find(c=>c.id===activeReview?.conversationId);
+ const reviewCriterion=reviewConversation&&activeReview?checklistFor(reviewConversation).find(c=>c.id===activeReview.criterionId):undefined;
+ const targetConversation=items.find(c=>c.id===appealTarget?.conversationId);
+ const targetCriterion=targetConversation&&appealTarget?checklistFor(targetConversation).find(c=>c.id===appealTarget.criterionId):undefined;
+ const completed=appeals.filter(a=>a.status!=="open");
 
-  function jumpToMessage(id: string, focus = true) {
-    const message = conversation?.messages.find(item => item.id === id);
-    if (!message) return;
-    setFocusedMessageId(id);
-    setAnnouncement(`${speakers[message.speaker]}, ${timeLabel(message.timestamp)}. Сообщение ${id}.`);
-    reveal(messageRefs.current.get(id), focus);
-  }
-  function moveEvidence(direction: number) {
-    if (!evidenceMessages.length) return;
-    const index = activeEvidenceIndex < 0 ? (direction > 0 ? 0 : evidenceMessages.length - 1) : (activeEvidenceIndex + direction + evidenceMessages.length) % evidenceMessages.length;
-    jumpToMessage(evidenceMessages[index].id, false);
-  }
-  function moveSearch(direction: number) {
-    if (!searchMatches.length) return;
-    const index = activeSearchIndex < 0 ? (direction > 0 ? 0 : searchMatches.length - 1) : (activeSearchIndex + direction + searchMatches.length) % searchMatches.length;
-    jumpToMessage(searchMatches[index].id, false);
-  }
-  const status = evaluatingKey === evaluationKey ? 'Проверяем диалог…' : !evaluation ? 'Ожидает оценки'
-    : evaluation.scoring.status === 'not_calculable' ? 'Нет применимых критериев'
-      : evaluation.status === 'needs_review' || evaluation.scoring.status === 'needs_review' ? 'Нужна ручная проверка' : 'Оценка готова';
+ function navigate(next:Tab){window.location.hash="/"+next;setTab(next);setSelected(null);setMobileNav(false);window.scrollTo({top:0,behavior:"instant"});}
+ function openConversation(id:string){window.location.hash="/dialogs/"+encodeURIComponent(id);setTab("dialogs");setSelected(id);setModal(null);setMobileNav(false);window.scrollTo({top:0,behavior:"instant"});}
+ function showReview(a:Appeal){setReviewId(a.id);setReviewMode("change");const c=items.find(c=>c.id===a.conversationId);const crit=c?checklistFor(c).find(x=>x.id===a.criterionId):undefined;setReviewValue(String(crit?.type==="scale"?crit.max:1));setReason("");setModal("review");}
+ function startAppeal(criterionId:number){if(!current)return;const existing=appeals.find(a=>a.conversationId===current.id&&a.criterionId===criterionId&&a.status==="open");if(existing){showReview(existing);return;}setAppealTarget({conversationId:current.id,criterionId});setComment("");setModal("appeal");}
+ function submitAppeal(){if(!comment.trim()||!targetConversation||!appealTarget){setToast("Добавьте причину апелляции");return;}const a:Appeal={id:"APL-"+String(appeals.length+1).padStart(3,"0"),conversationId:targetConversation.id,criterionId:appealTarget.criterionId,comment:comment.trim(),status:"open",originalScore:resultFor(targetConversation),originalValue:targetConversation.ratings[appealTarget.criterionId-1],date:"7 нояб., только что"};setAppeals(prev=>[a,...prev]);setModal(null);setToast("Апелляция сохранена и ожидает рассмотрения");}
+ function resolveAppeal(){if(!activeReview||!reviewConversation||!reviewCriterion)return;if(!reason.trim()){setToast("Укажите причину решения");return;}const ratings=[...reviewConversation.ratings];if(reviewMode==="change")ratings[activeReview.criterionId-1]=reviewValue==="na"?null:Number(reviewValue);const finalScore=score(ratings,checklistFor(reviewConversation));setItems(prev=>prev.map(c=>c.id===reviewConversation.id?{...c,ratings}:c));setAppeals(prev=>prev.map(a=>a.id===activeReview.id?{...a,status:reviewMode==="change"?"accepted":"confirmed",reason:reason.trim(),finalScore}:a));setModal(null);setToast("Решение сохранено. Итог: "+formatScore(finalScore)+" / 100");}
+ function exportAll(){const rows=[["ID","Тема","Оператор","Язык","Канал","Балл","Грубое нарушение"],...items.map(c=>[c.id,c.topic,c.operator,c.lang,c.channel,resultFor(c)===null?"":String(resultFor(c)),c.ratings[7]===1?"Да":"Нет"])];download("EVA_Dialogues_Demo.csv","\uFEFF"+rows.map(r=>r.map(v=>'"'+(String(v).match(/^[\s]*[=+@-]/)?"'"+String(v):String(v)).replaceAll('"','""')+'"').join(";")).join("\n"),"text/csv;charset=utf-8");setToast("Демонстрационные результаты экспортированы");}
+ function exportCurrent(){if(!current)return;download("EVA_"+current.id+".json",JSON.stringify({demo:true,conversation:current,checklist:checklistFor(current),score:resultFor(current),appeals:appeals.filter(a=>a.conversationId===current.id)},null,2));setToast("Оценка и история пересмотра экспортированы");}
+ function saveChecklist(){if(draft.some(c=>!c.title.trim()||!Number.isFinite(c.weight)||c.weight<0||!Number.isFinite(c.max)||c.max<=0)||draft.reduce((s,c)=>s+c.weight,0)===0){setToast("Проверьте названия, положительные шкалы и веса критериев");return;}setChecklist(draft.map(c=>({...c,weight:c.type==="flag"?0:c.weight})));setVersion(v=>v+1);setToast("Чек-лист v"+(version+1)+" сохранён. Прежние оценки сохранили свою версию.");}
+ function updateDraft(i:number,field:keyof Criterion,value:string|number|boolean){setDraft(prev=>prev.map((c,j)=>j===i?{...c,[field]:value,...(field==="type"?{max:value==="scale"?20:1,weight:value==="flag"?0:c.weight}: {})}:c));}
+ async function importFile(e:ChangeEvent<HTMLInputElement>){const file=e.target.files?.[0];e.target.value="";if(!file)return;const sequence=++importSequence.current;setUploadError("");setUploaded(null);if(!/\.(json|txt)$/i.test(file.name)){setUploadError("Выберите JSON или TXT.");return;}if(file.size>2*1024*1024){setUploadError("Выберите файл размером до 2 МБ.");return;}try{const raw=await file.text();if(sequence!==importSequence.current)return;let messages:Message[]=[];let importedLanguage:Conversation["lang"]="RU";let importedChannel:Conversation["channel"]="chat";if(file.name.toLowerCase().endsWith(".json")){const parsed=JSON.parse(raw);const source=parsed.data?.records?.[0]??parsed.records?.[0]??parsed;if(["RU","KZ","EN"].includes(String(source.language).toUpperCase()))importedLanguage=String(source.language).toUpperCase() as Conversation["lang"];if(source.channel==="voice call"||source.channel==="voice")importedChannel="voice";const list=Array.isArray(source)?source:source.transcript;if(!Array.isArray(list))throw new Error("В JSON нужен массив transcript или records.");if(list.length>10000)throw new Error("В одном файле допустимо до 10 000 реплик.");if(list.some((m:unknown)=>!m||typeof m!=="object"))throw new Error("Каждая реплика JSON должна быть объектом с текстом.");messages=list.map((m:Record<string,unknown>,i:number)=>({time:String(m.timestamp??m.time??("00:"+String(i).padStart(2,"0"))),role:(["operator","client","system","bot"].includes(String(m.speaker??m.role))?String(m.speaker??m.role):"system") as Message["role"],text:String(m.text??"")})).filter(m=>m.text.trim());}else{const lines=raw.split(/\r?\n/).filter(line=>line.trim());if(lines.length>10000)throw new Error("В одном файле допустимо до 10 000 реплик.");messages=lines.map((text,i)=>({time:"00:"+String(i).padStart(2,"0"),role:"system",text}));}if(!messages.length)throw new Error("В файле не найдены реплики.");setUploaded({id:"LOCAL-"+Date.now().toString(36).toUpperCase(),topic:file.name,operator:"Импортированный диалог",initials:"ЛФ",lang:importedLanguage,channel:importedChannel,date:7,time:"—",duration:"—",ratings:checklist.map(()=>null),messages,pending:true,evaluationChecklist:checklist.map(c=>({...c})),evaluationVersion:version});}catch(err){if(sequence!==importSequence.current)return;setUploadError(err instanceof Error?err.message:"Не удалось прочитать файл.");}}
+ function openImported(){if(!uploaded)return;setItems(prev=>[uploaded,...prev]);openConversation(uploaded.id);setUploaded(null);setToast("Транскрипт добавлен. Автоматическая оценка не запускалась.");}
 
-  return <div className="app-frame">
-    <a className="skip-link" href="#eva-main" onClick={event => { event.preventDefault(); reveal(document.getElementById('eva-main'), true); }}>Перейти к рабочей области</a>
-    <header className="topbar">
-      <a className="brand" href="#/dialogs" aria-label="EVA — рабочая консоль"><span className="brand-mark" aria-hidden="true"><b /><b /><b /></span><strong translate="no">EVA</strong><span className="brand-caption">Контроль качества</span></a>
-      <nav className="primary-nav" aria-label="Основные разделы"><a href="#/dialogs" aria-current={route.page === 'dialogs' ? 'page' : undefined}>Диалоги</a><a href="#/checklists" aria-current={route.page === 'checklists' ? 'page' : undefined}>Чек-листы</a></nav>
-      <span className="connection"><span className={`status-dot ${error ? 'offline' : ''}`} aria-hidden="true" />{connection}</span>
-    </header>
-    <div className="console-layout">
-      <aside className="sidebar" aria-label="Очередь диалогов">
-        <details className="queue-panel" open ref={queueRef}>
-          <summary className="queue-heading"><span>Очередь проверки</span><span className="count">{conversations.length}</span></summary>
-          <div className="queue-tools"><label className="field" htmlFor="queue-search">Найти диалог<input id="queue-search" name="queue-search" type="search" autoComplete="off" placeholder="Например, тарифы…" value={queueQuery} onChange={event => setQueueQuery(event.target.value)} /></label>
-            <div className="segmented" role="group" aria-label="Канал диалога">{([['all', 'Все'], ['agent_chat', 'Чаты'], ['voice_call', 'Звонки']] as const).map(([value, title]) => <button key={value} aria-pressed={channel === value} onClick={() => setChannel(value)}>{title}</button>)}</div>
-          </div>
-          <div className="queue-list">{queue.map(item => <a className="queue-item" href={`#/dialogs/${encodeURIComponent(item.id)}`} key={item.id} aria-current={item.id === conversationId && route.page === 'dialogs' ? 'true' : undefined}
-              onClick={event => {
-                if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                if (window.matchMedia('(max-width:680px)').matches && queueRef.current) { queueRef.current.open = false; reveal(headingRef.current, true); }
-              }}>
-              <span className="queue-item-top"><strong translate="no">{item.id}</strong><span>{channelLabel(item)}</span></span><span className="queue-preview">{item.messages.find(message => message.speaker === 'client')?.text ?? 'Нет сообщения клиента'}</span><span className="queue-meta">{languages[item.language]} · сообщений: {item.messages.length}</span>
-            </a>)}{!queue.length && <div className="queue-empty"><p className="empty">{loading ? 'Загружаем диалоги…' : conversations.length ? 'По этим условиям ничего не найдено.' : 'Диалогов пока нет.'}</p>{!loading && conversations.length > 0 && <button className="button secondary" onClick={() => { setQueueQuery(''); setChannel('all'); document.getElementById('queue-search')?.focus(); }}>Сбросить поиск</button>}</div>}</div>
-        </details>
-        <div className="sidebar-bottom"><button className="button secondary" disabled={loading || evaluating} onClick={() => void load()}>{loading ? 'Загрузка…' : 'Обновить данные'}</button><p className="connection-detail">{apiMode === 'demo' ? 'Синтетический пример' : 'Данные рабочего сервиса'}</p></div>
-      </aside>
-      <main className="sheet" id="eva-main" tabIndex={-1} aria-busy={loading}>
-        <div className="page-heading"><div><p className="eyebrow">Рабочая консоль / {route.page === 'dialogs' ? 'Диалоги' : 'Чек-листы'}</p><h1 ref={headingRef} tabIndex={-1}>{route.page === 'checklists' ? 'Правила оценки' : conversation ? `${channelLabel(conversation)} ${conversation.id}` : loading ? 'Загрузка диалогов' : 'Диалог не выбран'}</h1><p className="conversation-meta">{route.page === 'checklists' ? 'Условия и версии, по которым проверяются диалоги.' : conversation ? `${languages[conversation.language]} · сообщений: ${conversation.messages.length} · оценивается работа оператора` : 'Выберите диалог в очереди слева.'}</p></div>
-          {route.page === 'dialogs' && <span className={`review-state ${evaluation?.status === 'needs_review' ? 'tone-attention' : ''}`} role="status">{status}</span>}</div>
-        {apiMode === 'demo' && <p className="demo-notice"><strong>Демонстрация.</strong> Синтетический диалог и ручная разметка. Модель не вызывается.</p>}
-        {displayedError && <div className="error-notice" role="alert"><strong>Не удалось получить данные.</strong> {displayedError}</div>}
-        <div className="workspace-toolbar"><label className="field" htmlFor="checklist">Чек-лист<select id="checklist" name="checklist" aria-label="Чек-лист" value={selectedChecklist} disabled={loading || evaluating || !checklists.length} onChange={event => setSelectedChecklist(event.target.value)}>{!checklists.length && <option value="">Нет доступных чек-листов</option>}{checklists.map(item => <option key={checklistKey(item)} value={checklistKey(item)}>{item.name} · v{item.version}</option>)}</select></label>
-          {route.page === 'dialogs' && <button className="button primary" disabled={loading || evaluating || !conversation || !checklist} onClick={() => void evaluate()}>{evaluatingKey === evaluationKey && <span className="loading-spinner" aria-hidden="true" />}{evaluatingKey === evaluationKey ? 'Проверяем…' : apiMode === 'demo' ? 'Показать пример оценки' : evaluation ? 'Оценить повторно' : 'Оценить диалог'}</button>}</div>
-        {route.page === 'checklists' ? <section className="checklist-view" aria-labelledby="rules-heading">
-          <div className="section-heading"><h2 id="rules-heading">{checklist?.name ?? 'Нет чек-листа'}</h2><span>{checklist ? `${checklist.criteria.length} критериев · версия ${checklist.version}` : ''}</span></div>
-          <div className="checklist-intro"><p className="muted">Изменение правил потребует новой версии чек-листа.</p><span className="readonly-label">Только просмотр</span></div>
-          <ol className="checklist-list" role="list">{checklist?.criteria.map((item, index) => <li className="checklist-card" key={item.id}>
-            <span className="rule-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-            <div className="rule-content"><div className="checklist-card-head"><h3>{item.title}</h3></div><p>{item.instruction}</p>{item.allow_na && <p className="na-rule"><strong>Неприменимо, если:</strong> {item.na_condition}</p>}</div>
-            <dl className="rule-facts"><div><dt>Тип</dt><dd>{item.type === 'flag' ? 'Флаг нарушения' : item.type === 'boolean' ? 'Да / нет' : 'Шкала'}</dd></div><div><dt>Вес</dt><dd>{number(item.weight)}</dd></div>{item.type === 'scale' && <div><dt>Шкала</dt><dd>{item.scale.map(number).join(' · ')}</dd></div>}</dl>
-          </li>)}</ol>{!checklist && <p className="empty">{loading ? 'Загружаем правила…' : 'Нет доступного чек-листа.'}</p>}</section>
-        : <>
-          {evaluation && evaluation.original.warnings.length > 0 && <details className="warnings" open><summary>Оговорки оценки · {evaluation.original.warnings.length}</summary>{evaluation.original.warnings.map((warning, index) => <p key={index}>{warning}</p>)}</details>}
-          {conversation?.channel === 'voice_call' && <p className="demo-notice">{conversation.audio_url ? 'Разбор по расшифровке. Подключение записи ещё не настроено.' : 'Аудиозапись отсутствует. Доступна расшифровка разговора.'}</p>}
-          <nav className="section-shortcuts" aria-label="Области разбора"><button className="button secondary" onClick={() => reveal(document.getElementById('transcript-heading'), true)}>К переписке</button><button className="button secondary" onClick={() => reveal(document.getElementById('score-heading'), true)}>К оценке</button></nav>
-          <div className="review-grid">
-            <section className="transcript" aria-labelledby="transcript-heading"><div className="section-heading"><h2 id="transcript-heading" tabIndex={-1}>{conversation?.channel === 'voice_call' ? 'Расшифровка' : 'Переписка'}</h2><span>Сообщений: {conversation?.messages.length ?? 0}</span></div>
-              <div className="transcript-tools"><label className="search-field" htmlFor="transcript-search">Поиск в диалоге<input id="transcript-search" name="transcript-search" type="search" autoComplete="off" placeholder="Например, комиссия…" aria-describedby="search-hint" aria-keyshortcuts="Enter Shift+Enter" value={textQuery} onChange={event => { setTextQuery(event.target.value); setFocusedMessageId(''); }} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); moveSearch(event.shiftKey ? -1 : 1); } else if (event.key === 'Escape') { setTextQuery(''); setFocusedMessageId(''); } }} /></label><span id="search-hint" className="sr-only">Enter — следующее совпадение. Shift + Enter — предыдущее. Escape — очистить поиск.</span>{textQuery.trim() && <div className="search-navigation"><span role="status">{searchMatches.length ? `${activeSearchIndex < 0 ? '—' : activeSearchIndex + 1} / ${searchMatches.length} сообщений` : 'Совпадений нет'}</span><button className="button secondary icon-button" aria-label="Предыдущее совпадение" disabled={!searchMatches.length} onClick={() => moveSearch(-1)}>↑</button><button className="button secondary icon-button" aria-label="Следующее совпадение" disabled={!searchMatches.length} onClick={() => moveSearch(1)}>↓</button></div>}</div>
-              {result && evidenceMessages.length > 0 && <p className="evidence-tag">Выделены основания: {evidenceMessages.length} · {criterion?.title}</p>}
-              <ol className="messages">{conversation?.messages.map(message => <li id={messageAnchor(message.id)} key={message.id} ref={element => { if (element) messageRefs.current.set(message.id, element); else messageRefs.current.delete(message.id); }} tabIndex={-1} className={`message ${message.speaker}${evidenceIds.includes(message.id) ? ' is-evidence' : ''}${focusedMessageId === message.id ? ' is-current' : ''}`}>
-                <div className="message-meta"><strong>{speakers[message.speaker]}</strong><time dateTime={message.timestamp} title={message.timestamp}>{timeLabel(message.timestamp)}</time></div><p><Highlight text={message.text} query={textQuery} /></p><span className="message-id"><span translate="no">{message.id}</span>{evidenceIds.includes(message.id) ? ' · основание оценки' : ''}</span></li>)}</ol>
-              {(!conversation || !conversation.messages.length) && <p className="empty">{loading ? 'Загружаем переписку…' : conversation ? 'В этом диалоге нет сообщений.' : 'Выберите доступный диалог в очереди.'}</p>}
-            </section>
-            <aside className="inspector" aria-label="Оценка и доказательства">
-              <button className="button secondary return-to-transcript" onClick={() => reveal(document.getElementById('transcript-heading'), true)}>Вернуться к переписке</button>
-              <div className="score-panel"><h2 id="score-heading" tabIndex={-1}>Качество диалога</h2><div className="score"><strong data-testid="total-score">{finalScore == null ? '—' : number(finalScore)}</strong><small>/ 100</small></div><p className="score-caption">{!evaluation ? 'Появится после проверки' : finalScore == null ? status : apiMode === 'demo' ? 'Ручная демонстрационная оценка' : 'Итог рассчитан сервером'}</p><p className="score-facts">Грубые ошибки: <strong>{evaluation?.scoring.has_gross_error == null ? 'неизвестно' : evaluation.scoring.has_gross_error ? 'обнаружены' : 'не обнаружены'}</strong></p></div>
-              {criterion && <section className="evidence-panel" aria-labelledby="evidence-heading"><label className="field" htmlFor="active-criterion">Критерий<select id="active-criterion" name="active-criterion" aria-label="Критерий" value={criterion.id} onChange={event => { setCriterionId(event.target.value); setFocusedMessageId(''); }}>{visibleCriteria.map(item => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><p className="eyebrow">{result ? `Основание оценки · ${criterionValue(result, criterion)}` : 'Условие проверки'}</p><h3 id="evidence-heading">{criterion.title}</h3><p className="evidence-explanation">{result?.reason ?? criterion.instruction}</p>
-                {result && <>{!!evidenceMessages.length && <div className="evidence-navigation"><span>Реплики: {activeEvidenceIndex < 0 ? '—' : activeEvidenceIndex + 1} / {evidenceMessages.length}</span><button className="button secondary icon-button" aria-label="Предыдущее основание" onClick={() => moveEvidence(-1)}>↑</button><button className="button secondary icon-button" aria-label="Следующее основание" onClick={() => moveEvidence(1)}>↓</button></div>}
-                  <div className="quote-list">{result.evidence.map((item, index) => <div key={index}><span className="evidence-kind">{evidenceKinds[item.kind]}</span>{item.message_ids.map(id => {
-                    const message = conversation?.messages.find(entry => entry.id === id);
-                    const quoteId = `eva-quote-${index}-${encodeURIComponent(id)}`;
-                    return message ? <blockquote key={id}><button className="quote-target" onClick={() => jumpToMessage(id)} aria-label={`Перейти к сообщению ${id}`} aria-describedby={`${quoteId}-meta ${quoteId}-text`}><span className="quote-meta" id={`${quoteId}-meta`}>{speakers[message.speaker]} · {timeLabel(message.timestamp)} · <span translate="no">{id}</span></span><span id={`${quoteId}-text`}>{message.text}</span></button></blockquote> : <p className="muted" key={id}>Сообщение {id} не найдено в диалоге.</p>;
-                  })}{!item.message_ids.length && <p className="muted">В ответе нет ссылки на сообщение.</p>}</div>)}</div>
-                  {contribution && evaluation.scoring.status === 'complete' && criterion.type !== 'flag' && contribution.points != null && contribution.effective_weight != null && <p className="muted">Вклад в итог: {number(contribution.points)} из {number(contribution.effective_weight)} балла.</p>}
-                  <details className="criterion-rule"><summary>Правило и условия неприменимости</summary><p>{criterion.instruction}</p>{criterion.allow_na ? <p>Неприменимо, если: {criterion.na_condition}</p> : <p>Критерий применяется ко всем диалогам.</p>}</details>
-                </>}
-              </section>}
-              <details className="criteria-overview"><summary>Все критерии · {checklist?.criteria.length ?? 0}</summary>
-              <div className="criterion-filter segmented" role="group" aria-label="Фильтр критериев">{([['all', 'Все'], ['attention', `Замечания ${attentionCount}`], ['review', `Проверить ${reviewCount}`]] as const).map(([value, title]) => <button key={value} aria-pressed={filter === value} disabled={value !== 'all' && !evaluation} onClick={() => { setFilter(value); setCriterionId(''); setFocusedMessageId(''); }}>{title}</button>)}</div>
-              <div className="criteria-list">{visibleCriteria.map(item => { const itemResult = results.get(item.id), score = scores.get(item.id); return <button className={`criterion-row ${itemResult?.status === 'needs_review' ? 'tone-attention' : isProblem(itemResult, item) ? 'tone-negative' : 'tone-neutral'}`} key={item.id} aria-pressed={criterion?.id === item.id} onClick={() => { setCriterionId(item.id); setFocusedMessageId(''); setAnnouncement(`Выбран критерий: ${item.title}. ${evaluation ? 'Связанные сообщения выделены в переписке.' : 'Условие показано в панели критерия.'}`); reveal(document.getElementById('active-criterion'), true); }}><span className="criterion-label">{item.title}</span><span className="criterion-value">{criterionValue(itemResult, item)}</span>{itemResult?.status === 'scored' && item.type !== 'flag' && score?.points != null && score.effective_weight != null && evaluation?.scoring.status === 'complete' && <span className="criterion-points">{number(score.points)} / {number(score.effective_weight)} балла</span>}</button>; })}</div>
-              {!visibleCriteria.length && <p className="empty">{!checklist ? 'Нет доступных критериев.' : filter === 'review' ? 'Критериев с неопределённым результатом нет.' : 'Замечаний по этой оценке нет.'}</p>}
-              </details>
-            </aside>
-          </div>
-        </>}
-        <footer className="next-work"><span>{checklist ? `${checklist.name} · версия ${checklist.version}` : 'EVA · контроль качества'}</span><span>{evaluation && route.page === 'dialogs' ? `Проверка: ${new Date(evaluation.created_at).toLocaleString('ru-RU', { timeZoneName: 'short' })}` : 'Рабочая консоль'}</span></footer>
-      </main>
-    </div>
-    <div className="sr-only" role="status" aria-live="polite">{announcement}</div>
-  </div>;
+ return <div className="app-shell">
+  {mobileNav&&<button className="nav-scrim" aria-label="Закрыть меню" onClick={()=>setMobileNav(false)}/>}
+  <aside className={"sidebar "+(mobileNav?"is-open":"")}>
+   <button className="brand-button" aria-label="EVA — на главную" onClick={()=>navigate("overview")}><EvaLogo/></button>
+   <div className="workspace-switch"><span className="workspace-symbol"><ShieldCheck/></span><span><b>Freedom Broker</b><small>Контроль качества</small></span><ChevronDown/></div>
+   <div className="nav-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+   <nav aria-label="Главная навигация">{navigation.map(n=><button key={n.id} className={"nav-item "+(tab===n.id?"active":"")} onClick={()=>navigate(n.id)} aria-current={tab===n.id?"page":undefined}><n.icon/><span>{n.title}</span>{n.id==="appeals"&&openAppeals.length>0?<em>{openAppeals.length}</em>:n.id==="dialogs"?<small>{items.length}</small>:null}</button>)}</nav>
+   <div className="sidebar-bottom"><div className="sidebar-promise"><div className="promise-art"><span/><span/><span/><span/><span/></div><strong>Каждая оценка —<br/>с обоснованием.</strong><p>Технологии с человеческим подходом.</p><button onClick={()=>setModal("help")}>Знакомство с EVA <ArrowUpRight/></button></div><button className={"nav-item secondary-nav "+(tab==="brand"?"active":"")} onClick={()=>navigate("brand")}><Palette/><span>Дизайн-система</span></button><button className="nav-item secondary-nav" onClick={()=>setModal("help")}><CircleHelp/><span>Помощь и о проекте</span></button><div className="sidebar-freedom"><FreedomLogo/><span>DESIGN CONCEPT</span></div></div>
+  </aside>
+  <div className="main-shell">
+   <header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Открыть меню" onClick={()=>setMobileNav(true)}><Menu/></button><span>Рабочее пространство</span><span className="slash">/</span><b>{current?"Диалоги":titles[tab].replace(" качества","")}</b><span className="demo-pill">Демо</span></div><div className="top-actions"><label className="global-search"><Search/><input ref={searchRef} placeholder="Найти диалог..." aria-label="Поиск диалогов" value={query} onChange={e=>{setQuery(e.target.value);window.location.hash="/dialogs";setTab("dialogs");setSelected(null);}}/><kbd>Ctrl K</kbd></label><span className="header-divider"/><button className="icon-button notification-button" aria-label="Уведомления" onClick={()=>setModal("notifications")}><Bell/>{openAppeals.length>0&&<i/>}</button><button className="profile-avatar" onClick={()=>setModal("help")} aria-label="Рабочее пространство команды качества">QA</button></div></header>
+   <main>
+    {current?<AuditDetail key={current.id} conversation={current} checklist={checklistFor(current)} appeals={appeals} onBack={()=>navigate("dialogs")} onAppeal={startAppeal} onExport={exportCurrent}/>:<>
+    <div className="page-heading"><div><div className="eyebrow"><span className="status-dot"/>FREEDOM WORKSPACE <span className="demo-pill">Демо</span></div><h1>{titles[tab]}</h1><p>{tab==="overview"?"Большая картина складывается из каждого диалога.":tab==="dialogs"?"Вся история общения. Каждая оценка под рукой.":tab==="appeals"?"Прозрачные решения, которым можно доверять.":tab==="checklists"?"Ваши стандарты качества — в понятных критериях.":"Сдержанная форма. Точные акценты. Человеческий подход."}</p></div><div className="heading-actions">{tab==="overview"&&<label className="date-control"><CalendarDays/><select aria-label="Период обзора" value={period} onChange={e=>setPeriod(e.target.value)}><option value="week">1–7 ноября 2026</option><option value="3days">5–7 ноября 2026</option><option value="today">7 ноября 2026</option></select><ChevronDown/></label>}{(tab==="overview"||tab==="dialogs")&&<button className="button primary" onClick={()=>{importSequence.current++;setUploaded(null);setUploadError("");setModal("upload");}}><Plus/>Новый диалог</button>}{tab==="checklists"&&<button className="button primary" onClick={saveChecklist}><Save/>Сохранить чек-лист</button>}{tab==="brand"&&<a className="button primary" href="/downloads/EVA_Brand_Assets.zip" download><Download/>Файлы дизайна</a>}</div></div>
+    {tab==="overview"&&<div className="page-enter">
+     <div className="metrics-grid">
+      <div className="metric-card featured"><div className="metric-top"><span>Средний балл</span><span className="metric-icon"><ShieldCheck/></span></div><div className="metric-value">{formatScore(average,2)}<small>/100</small><svg className="sparkline" viewBox="0 0 100 40" aria-hidden="true"><path d="M2 34C12 34 12 22 22 24S36 30 45 18S60 28 68 12S83 22 98 3" fill="none" stroke="#00a348" strokeWidth="2.5"/></svg></div><div className="metric-footer"><span className="metric-chip good">Качество общения</span><small>за выбранный период</small></div></div>
+      <div className="metric-card"><div className="metric-top"><span>Оценено диалогов</span><span className="metric-icon"><MessagesSquare/></span></div><div className="metric-value">{evaluated.length}<small>диалогов</small></div><div className="metric-footer"><span className="language-dots">RU <i/> KZ <i/> EN</span><small>три языка</small></div></div>
+      <button className="metric-card metric-button" onClick={()=>{navigate("dialogs");setFilter("critical");}}><div className="metric-top"><span>Грубые нарушения</span><span className="metric-icon danger"><AlertTriangle/></span></div><div className="metric-value">{violations.length}<small>диалог</small></div><div className="metric-footer"><span className="metric-chip danger">Требует внимания</span><ArrowUpRight/></div></button>
+      <button className="metric-card metric-button" onClick={()=>navigate("appeals")}><div className="metric-top"><span>Открытые апелляции</span><span className="metric-icon amber"><GitPullRequest/></span></div><div className="metric-value">{openAppeals.length}<small>на пересмотре</small></div><div className="metric-footer"><span className="metric-chip warning">Ожидают решения</span><ArrowUpRight/></div></button>
+     </div>
+     <div className="overview-middle"><section className="panel chart-panel"><div className="panel-heading"><div><h2>Динамика качества</h2><p>Средний балл по дням</p></div><span className="chart-legend"><i/>Общая оценка</span></div><QualityChart items={filteredByPeriod}/></section><section className="insight-card"><div className="insight-label"><span className="eva-spark">✳</span>EVA INSIGHT<span className="insight-live">AI + человек</span></div><h2>За каждой оценкой —<br/>живой диалог.</h2><p>Замечайте важное.<br/>Проверяйте обоснование.<br/>Принимайте точные решения.</p><img src="/brand/eva-signal-art.svg" alt="" className="signal-art"/><button onClick={()=>openConversation("DEMO-RU-001")}>Посмотреть разбор <ArrowUpRight/></button></section></div>
+     <section className="panel recent-panel"><div className="panel-heading"><div className="heading-inline"><h2>Последние диалоги</h2><span className="count-badge">{recent.length}</span></div><button className="text-button" onClick={()=>{navigate("dialogs");setFilter("all");}}>Все диалоги <ArrowRight/></button></div><ConversationTable items={recent.slice(0,4)} appeals={appeals} checklist={seedCriteria} onOpen={openConversation} small/></section>
+    </div>}
+    {tab==="dialogs"&&<section className="panel page-enter"><div className="list-toolbar"><div className="filter-tabs"><button className={filter==="all"?"active":""} onClick={()=>setFilter("all")}>Все диалоги <span>{items.length}</span></button><button className={filter==="review"?"active":""} onClick={()=>setFilter("review")}>На пересмотре <span>{openAppeals.length}</span></button><button className={filter==="critical"?"active":""} onClick={()=>setFilter("critical")}>Нарушения <span>{items.filter(c=>c.ratings[7]===1).length}</span></button></div><button className="button secondary small" onClick={exportAll}><Download/>Экспорт</button></div><div className="filter-bar"><label className="search-field"><Search/><input placeholder="ID, тема или оператор" aria-label="Фильтр по диалогам" value={query} onChange={e=>setQuery(e.target.value)}/>{query&&<button onClick={()=>setQuery("")} aria-label="Сбросить поиск"><X/></button>}</label><label className="select-field"><select aria-label="Язык диалога" value={language} onChange={e=>setLanguage(e.target.value)}><option value="all">Все языки</option><option value="RU">Русский · RU</option><option value="KZ">Қазақша · KZ</option><option value="EN">English · EN</option></select><ChevronDown/></label><label className="select-field"><select aria-label="Канал диалога" value={channel} onChange={e=>setChannel(e.target.value)}><option value="all">Все каналы</option><option value="chat">Чаты</option><option value="voice">Звонки</option></select><ChevronDown/></label>{(query||language!=="all"||channel!=="all")&&<button className="text-button" onClick={()=>{setQuery("");setLanguage("all");setChannel("all");}}>Сбросить</button>}</div><ConversationTable items={filtered} appeals={appeals} checklist={seedCriteria} onOpen={openConversation}/><div className="table-caption"><span>Показано {filtered.length} из {items.length}</span><span className="subtle-pill">Демонстрационные данные</span></div></section>}
+    {tab==="appeals"&&<div className="page-enter"><div className="appeals-intro"><div><GitPullRequest/><span><b>Проверка человеком — часть процесса.</b><small>Исходная оценка, доказательство и решение остаются в истории.</small></span></div><div><strong>{openAppeals.length}</strong><span>ожидают решения</span></div><div><strong>{completed.length}</strong><span>рассмотрено</span></div></div><div className="filter-tabs stand-alone"><button className={appealFilter==="open"?"active":""} onClick={()=>setAppealFilter("open")}>Открытые <span>{openAppeals.length}</span></button><button className={appealFilter==="done"?"active":""} onClick={()=>setAppealFilter("done")}>Рассмотренные <span>{completed.length}</span></button></div><div className="appeals-list">{appeals.filter(a=>appealFilter==="open"?a.status==="open":a.status!=="open").map(a=>{const c=items.find(c=>c.id===a.conversationId);const crit=c&&checklistFor(c).find(k=>k.id===a.criterionId);return <article className="panel appeal-card" key={a.id}><div className="appeal-card-top"><span className="appeal-id">{a.id}<span>·</span>{a.date}</span><StatusBadge kind={a.status==="open"?"warning":"good"}>{a.status==="open"?"Ожидает решения":a.status==="accepted"?"Оценка изменена":"Оценка подтверждена"}</StatusBadge></div><h2>{crit?.title??"Критерий"}</h2><button className="appeal-conversation-link" onClick={()=>openConversation(a.conversationId)}>{c?.topic} <ArrowUpRight/></button><p className="appeal-comment">{a.comment}</p>{a.reason&&<div className="decision-reason"><ShieldCheck/><span><b>Решение проверяющего</b>{a.reason}</span></div>}<div className="appeal-card-bottom"><div className="operator-cell"><span className="avatar-mini">{c?.initials}</span><span>{c?.operator}</span></div><div className="appeal-scores"><span>Исходный итог <b>{formatScore(a.originalScore)}</b></span>{a.finalScore!==undefined&&<><ArrowRight/><span>После решения <b className="text-green">{formatScore(a.finalScore)}</b></span></>}</div><button className={"button "+(a.status==="open"?"primary":"secondary")} onClick={()=>a.status==="open"?showReview(a):openConversation(a.conversationId)}>{a.status==="open"?"Рассмотреть":"Открыть диалог"}<ArrowRight/></button></div></article>})}{appeals.filter(a=>appealFilter==="open"?a.status==="open":a.status!=="open").length===0&&<div className="panel"><EmptyState title={appealFilter==="open"?"Все обращения рассмотрены":"Решений пока нет"}>{appealFilter==="open"?"Новые апелляции появятся здесь.":"Откройте апелляцию и сохраните решение проверяющего."}</EmptyState></div>}</div></div>}
+    {tab==="checklists"&&<div className="page-enter"><section className="checklist-overview"><div className="checklist-symbol"><ClipboardList/></div><div><h2>Стандарт качества Freedom</h2><p>Чаты и звонки · RU / KZ / EN</p></div><StatusBadge kind="good">Версия {version}</StatusBadge><div className="checklist-total"><span>Сумма весов</span><b>{draft.reduce((s,c)=>s+c.weight,0)}<small> баллов</small></b></div></section><section className="panel checklist-panel"><div className="panel-heading"><div><h2>Критерии оценки <span className="count-badge">{draft.length}</span></h2><p>Меняйте формулировки, веса и типы ответа без изменения кода.</p></div><button className="button secondary small" onClick={()=>{setDraft(prev=>[...prev,{id:Math.max(...prev.map(c=>c.id))+1,title:"Новый критерий",weight:10,type:"binary",max:1,na:false,description:"Опишите, что должен проверить аудитор."}]);setToast("Новый критерий добавлен в черновик");}}><Plus/>Добавить критерий</button></div><div className="checklist-table-head"><span>Критерий и формулировка</span><span>Тип ответа</span><span>Вес</span><span>N/A</span><span/></div>{draft.map((c,i)=><div className="checklist-editor-row" key={c.id}><span className="criterion-number">{String(i+1).padStart(2,"0")}</span><div className="criterion-fields"><input aria-label={"Название критерия "+(i+1)} value={c.title} onChange={e=>updateDraft(i,"title",e.target.value)}/><textarea rows={2} aria-label={"Описание критерия "+(i+1)} value={c.description} onChange={e=>updateDraft(i,"description",e.target.value)}/></div><div className="criterion-type"><select aria-label={"Тип критерия "+(i+1)} value={c.type} onChange={e=>updateDraft(i,"type",e.target.value)}><option value="binary">Да / Нет</option><option value="scale">Шкала</option><option value="flag">Флаг</option></select>{c.type==="scale"&&<label>Макс. <input type="number" min="1" max="100" value={c.max} aria-label={"Максимум шкалы "+(i+1)} onChange={e=>updateDraft(i,"max",Number(e.target.value))}/></label>}</div><input type="number" min="0" max="100" className="weight-input" aria-label={"Вес критерия "+(i+1)} disabled={c.type==="flag"} value={c.type==="flag"?0:c.weight} onChange={e=>updateDraft(i,"weight",Number(e.target.value))}/><label className="switch" title="Разрешить N/A"><input aria-label={"Разрешить N/A для критерия "+(i+1)} type="checkbox" checked={c.na} disabled={c.type==="flag"} onChange={e=>updateDraft(i,"na",e.target.checked)}/><span/></label>{c.id>8?<button className="icon-button" aria-label={"Удалить "+c.title} onClick={()=>setDraft(prev=>prev.filter(k=>k.id!==c.id))}><Trash2/></button>:<span/>}</div>)}<div className="checklist-note"><Info/><p><b>N/A не снижает оценку.</b> Вес неприменимого критерия распределяется между остальными. Грубые нарушения отмечаются отдельно. Существующие результаты сохраняют свою версию чек-листа.</p></div></section><div className="checklist-actions"><span>Демо-изменения сохраняются в этом браузере.</span><button className="button secondary" onClick={()=>{setDraft(checklist.map(c=>({...c})));setToast("Черновик возвращён к сохранённой версии");}}>Отменить изменения</button><button className="button primary" onClick={saveChecklist}><Save/>Сохранить версию {version+1}</button></div></div>}
+    {tab==="brand"&&<div className="brand-grid page-enter"><section className="brand-showcase panel"><span className="mini-eyebrow">01 / ЛОГОТИП</span><img src="/brand/eva-wordmark.svg" alt="EVA — Expert Virtual Auditor"/><div><p>Сигнал. Проверка. Ясность.</p><a className="text-button" href="/brand/eva-wordmark.svg" download>Скачать SVG <Download/></a></div></section><section className="brand-voice"><span className="mini-eyebrow">02 / ХАРАКТЕР</span><h2>Внимание<br/>к каждому<br/><em>диалогу.</em></h2><img src="/brand/eva-signal-art.svg" alt="Абстрактная зелёная волна — графический элемент EVA"/></section><section className="panel palette-panel"><span className="mini-eyebrow">03 / ПАЛИТРА</span><h2>Зелёный, который говорит о качестве.</h2><div className="swatches">{[{name:"Forest",hex:"#082D21"},{name:"Freedom green",hex:"#00B849"},{name:"Signal lime",hex:"#C8F06D"},{name:"Canvas",hex:"#F5F7F5"}].map(c=><button key={c.hex} onClick={()=>{navigator.clipboard?.writeText(c.hex).then(()=>setToast(c.hex+" скопирован")).catch(()=>setToast(c.hex));}}><span style={{background:c.hex}}/><b>{c.name}</b><small>{c.hex}</small></button>)}</div></section><section className="panel type-panel"><span className="mini-eyebrow">04 / ТИПОГРАФИКА</span><div className="type-sample">Aa Бб Әә</div><h2>Open Sans</h2><p>Спокойный ритм, читаемые числа и поддержка трёх языков.</p><div className="font-weights"><span>Regular</span><b>Semibold</b><strong>Bold</strong></div></section><section className="panel brand-download"><div><h2>Готово к дальнейшей работе</h2><p>Логотипы SVG, графика сигнала, исходники интерфейса и описание стиля.</p></div><a className="button primary" href="/downloads/EVA_Brand_Assets.zip" download><Download/>Скачать дизайн-набор</a></section></div>}
+    </>}
+    <footer className="app-footer"><span><span className="status-dot"/>EVA · Expert Virtual Auditor</span><span>Дизайн-концепт для Freedom <i/> Демонстрационные данные</span></footer>
+   </main>
+  </div>
+  {toast&&<div className="toast" role="status"><CheckCircle2/><span>{toast}</span><button aria-label="Закрыть уведомление" onClick={()=>setToast("")}><X/></button></div>}
+  {modal==="upload"&&<Modal title="Новый диалог" onClose={()=>setModal(null)}><p className="modal-description">Загрузите транскрипт для просмотра или откройте готовый пример оценки EVA.</p><input ref={fileRef} className="sr-only" type="file" accept=".json,.txt" onChange={importFile}/><button className="upload-zone" onClick={()=>fileRef.current?.click()}><span className="upload-icon"><Upload/></span><strong>{uploaded?uploaded.topic:"Выберите файл диалога"}</strong><small>{uploaded?uploaded.messages.length+" реплик · файл прочитан":"JSON или TXT · до 2 МБ"}</small><span>Только в этой вкладке · до перезагрузки</span></button>{uploadError&&<p className="form-error">{uploadError}</p>}{uploaded?<div className="upload-action"><div className="info-callout"><Info/>В дизайн-прототипе можно просмотреть транскрипт. AI-оценка не подключена. Файл не отправляется на сервер и не сохраняется после перезагрузки.</div><button className="button primary full-width" onClick={openImported}>Открыть транскрипт <ArrowRight/></button></div>:<><div className="or-divider"><span/>или готовый пример<span/></div><label className="form-label">Демонстрационный диалог<select value={demoChoice} onChange={e=>setDemoChoice(e.target.value)}>{items.filter(c=>["DEMO-RU-001","DEMO-KZ-002","DEMO-EN-003"].includes(c.id)).map(c=><option key={c.id} value={c.id}>{c.lang+" · "+c.topic+" · "+formatScore(resultFor(c))}</option>)}</select></label><button className="button primary full-width" onClick={()=>openConversation(demoChoice)}>Открыть пример аудита <ArrowRight/></button></>}</Modal>}
+  {modal==="appeal"&&<Modal title="Оспорить оценку" onClose={()=>setModal(null)}><div className="modal-context"><GitPullRequest/><div><strong>{targetCriterion?.title}</strong><span>{targetConversation?.topic} · {targetConversation?.id}</span></div></div><label className="form-label">Основание для пересмотра<textarea rows={5} placeholder="Объясните, с чем вы не согласны. Укажите реплику или время в диалоге." value={comment} onChange={e=>setComment(e.target.value)}/></label><p className="form-hint">Проверяющий увидит комментарий, исходную оценку и фрагмент диалога.</p><div className="modal-actions"><button className="button secondary" onClick={()=>setModal(null)}>Отмена</button><button className="button primary" onClick={submitAppeal}>Подать апелляцию <ArrowRight/></button></div></Modal>}
+  {modal==="review"&&activeReview&&reviewConversation&&reviewCriterion&&<Modal title="Рассмотрение апелляции" wide onClose={()=>setModal(null)}><div className="modal-context"><GitPullRequest/><div><strong>{reviewCriterion.title}</strong><span>{activeReview.id} · {reviewConversation.topic}</span></div><StatusBadge kind="warning">На пересмотре</StatusBadge></div><div className="review-grid"><section><span className="field-eyebrow">КОММЕНТАРИЙ ОПЕРАТОРА</span><p className="review-comment">{activeReview.comment}</p><span className="field-eyebrow">ФРАГМЕНТ ДИАЛОГА</span><div className="review-evidence">{evidence(reviewConversation,reviewCriterion.id).indices.map(i=><div key={i}><span>{reviewConversation.messages[i]?.time}</span><p>{reviewConversation.messages[i]?.text}</p></div>)}</div></section><section><span className="field-eyebrow">РЕШЕНИЕ ПРОВЕРЯЮЩЕГО</span><div className="review-choice"><label><input type="radio" name="review" value="change" checked={reviewMode==="change"} onChange={()=>setReviewMode("change")}/>Изменить оценку</label><label><input type="radio" name="review" value="confirm" checked={reviewMode==="confirm"} onChange={()=>setReviewMode("confirm")}/>Подтвердить оценку</label></div>{reviewMode==="change"&&<label className="form-label">Новое значение<select value={reviewValue} onChange={e=>setReviewValue(e.target.value)}>{ratingOptions(reviewCriterion).map(v=><option value={v} key={v}>{reviewCriterion.type==="binary"||reviewCriterion.type==="flag"?v===1?"Да":"Нет":v+" / "+reviewCriterion.max}</option>)}{reviewCriterion.na&&<option value="na">N/A — неприменимо</option>}</select></label>}<label className="form-label">Причина решения <span className="required">*</span><textarea rows={4} placeholder="На каком основании вы принимаете решение?" value={reason} onChange={e=>setReason(e.target.value)}/></label></section></div><div className="review-preview"><span>Исходный итог <b>{formatScore(activeReview.originalScore)}</b></span><ArrowRight/><span>После решения <b className="text-green">{formatScore(score(reviewConversation.ratings.map((v,i)=>i===activeReview.criterionId-1&&reviewMode==="change"?reviewValue==="na"?null:Number(reviewValue):v),checklistFor(reviewConversation)))}</b></span></div><div className="modal-actions"><button className="button secondary" onClick={()=>setModal(null)}>Отмена</button><button className="button primary" onClick={resolveAppeal}><Check/>Сохранить решение</button></div></Modal>}
+  {modal==="notifications"&&<Modal title="Уведомления" onClose={()=>setModal(null)}><p className="modal-description">События демонстрационного рабочего пространства.</p>{openAppeals.map(a=><button className="notification-row" key={a.id} onClick={()=>showReview(a)}><span className="notification-icon"><GitPullRequest/></span><span><b>Новая апелляция {a.id}</b><small>{a.conversationId} · {a.date}</small></span><ArrowRight/></button>)}{!openAppeals.length&&<EmptyState title="Всё под контролем">Новых обращений нет.</EmptyState>}</Modal>}
+  {modal==="help"&&<Modal title="Знакомство с EVA" onClose={()=>setModal(null)}><div className="help-logo"><EvaLogo/></div><p className="modal-description">Expert Virtual Auditor — концепт рабочего пространства для оценки качества клиентских диалогов Freedom.</p><div className="help-steps"><div><span>01</span><p><b>Откройте диалог</b>Посмотрите общий балл и оценки по критериям.</p></div><div><span>02</span><p><b>Проверьте обоснование</b>Нажмите на доказательство, чтобы перейти к нужной реплике.</p></div><div><span>03</span><p><b>Разберите спорный балл</b>Откройте апелляцию, укажите решение и проверьте новый итог.</p></div></div><div className="info-callout"><Info/>Это интерактивный дизайн-прототип. Имена, разговоры и оценки вымышлены; AI-сервис и запись звонков не подключены.</div><p className="form-hint">Настройки и апелляции демо сохраняются в этом браузере. Загруженные транскрипты доступны только до перезагрузки страницы.</p><button className="button primary full-width" onClick={()=>openConversation("DEMO-RU-001")}>Попробовать на примере <ArrowRight/></button><button className="button secondary full-width reset-demo" onClick={()=>{importSequence.current++;setItems(seedConversations);setAppeals(defaultAppeals);setChecklist(seedCriteria);setDraft(seedCriteria);setVersion(1);setUploaded(null);setModal(null);navigate("overview");setToast("Демонстрационные данные восстановлены");}}>Сбросить демо и очистить импорт</button></Modal>}
+ </div>;
 }
