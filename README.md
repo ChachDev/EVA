@@ -12,7 +12,7 @@
 |---|---|---|---|
 | **Mansur** | **Frontend** | `frontend/` | [Начать Mansur](frontend/README.md) |
 | **Chach** | **Backend** | `backend/` | [Начать Chach](backend/README.md) |
-| **Kroud** | **ML engineer** | `ml/` | [Начать Kroud](ml/README.md) |
+| **norerade** | **ML engineer** | `ml/` | [Начать norerade](ml/README.md) |
 
 У каждого собственные зависимости, тесты, настройки и очередь задач. Общие файлы — `contracts/`, `docs/`, `tools/` и корень — ролевые ИИ не меняют. Все операции Git/GitHub делает человек: **ИИ не коммитит, не пушит, не создаёт PR и не меняет чужую часть**. Полные правила: [AGENTS.md](AGENTS.md).
 
@@ -22,7 +22,7 @@
 flowchart LR
     UI[Frontend · Mansur<br/>React + TypeScript · :5173] -->|HTTP /api/v1| API[Backend · Chach<br/>FastAPI · :8000]
     API --> DB[(SQLite<br/>локальные результаты)]
-    API -->|HTTP /v1/evaluate| ML[ML · Kroud<br/>FastAPI · :8001]
+    API -->|HTTP /v1/evaluate| ML[ML · norerade<br/>FastAPI · :8001]
     ML --> ENGINE[Оценщик<br/>сейчас честный stub]
     C[contracts<br/>JSON Schema + fixtures] -.-> UI
     C -.-> API
