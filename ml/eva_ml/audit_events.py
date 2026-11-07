@@ -101,7 +101,8 @@ def violation_decision(rule, event,trace):
 class EventsAuditor(Auditor):
     def __init__(self,baseline,components=COMPONENTS,cache_size=16):
         super().__init__(baseline,components,cache_size)
-        self.revision=digest([self.revision,Path(__file__).read_bytes().hex(),EVENT_PROMPT])
+        self.revision=digest([self.revision,Path(__file__).read_text(encoding="utf8"),EVENT_PROMPT,
+                              Path(__file__).with_name("audit_fragments.py").read_text(encoding="utf8")])
 
     profile="events-v2"
     retain_identity_score=False
@@ -212,7 +213,7 @@ class GroundedEventsAuditor(EventsAuditor):
     retain_identity_score=True
     def __init__(self,baseline,components=COMPONENTS,cache_size=16):
         super().__init__(baseline,components,cache_size)
-        self.revision=digest([self.revision,Path(__file__).with_name("banking_events.py").read_bytes().hex()])
+        self.revision=digest([self.revision,Path(__file__).with_name("banking_events.py").read_text(encoding="utf8")])
 
     def verified_identity(self,rule,events,trace,ordinary):
         ordered=identity_decision(rule,events,trace)
