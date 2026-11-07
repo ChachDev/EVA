@@ -1,0 +1,113 @@
+<style>
+#eva-root .ev-console{--c-bg:light-dark(#f7f8f7,#171919);--c-sheet:light-dark(#ffffff,#1c1f1e);--c-hover:light-dark(#f1f3f1,#252927);--c-line:light-dark(#e3e7e4,#343936);--c-ink:light-dark(#232923,#e5eae5);--c-mid:light-dark(#626b63,#aab4ac);--c-low:light-dark(#6e7870,#9da89f);--c-accent:light-dark(#31664b,#a4cfb2);--c-tint:light-dark(#edf4ee,#293b2e);color:var(--c-ink);background:var(--c-sheet);font-family:"EVA Plex","IBM Plex Sans","Segoe UI",sans-serif;font-size:14px;line-height:1.5;border:1px solid var(--c-line);border-radius:16px;min-height:912px;overflow:clip;display:flex;flex-direction:column}
+#eva-root .ev-console *{box-sizing:border-box}
+#eva-root .ev-console h1,#eva-root .ev-console h2,#eva-root .ev-console h3,#eva-root .ev-console p{margin:0;color:inherit}
+#eva-root .ev-console button,#eva-root .ev-console input,#eva-root .ev-console textarea{font:inherit;color:inherit}
+#eva-root .ev-console button{cursor:inherit;transition:background-color 160ms,color 160ms;border-radius:8px}
+#eva-root .ev-console button:disabled{opacity:.65;cursor:default}
+#eva-root .ev-console [hidden]{display:none!important}
+#eva-root .ev-console .co-top{display:flex;gap:32px;align-items:center;min-height:64px;border-bottom:1px solid var(--c-line);padding:12px 24px;flex-wrap:wrap}
+#eva-root .ev-console .co-brand{font-size:20px;font-weight:600;letter-spacing:1px;display:flex;align-items:center;gap:8px;min-width:168px}
+#eva-root .ev-console .co-mark{display:flex;gap:3px;align-items:center;height:24px}
+#eva-root .ev-console .co-mark b{width:3px;border-radius:2px;background:var(--c-accent);height:16px}
+#eva-root .ev-console .co-mark b:nth-child(2){height:24px}
+#eva-root .ev-console .co-mark b:nth-child(3){height:12px}
+#eva-root .ev-console .co-nav{display:flex;align-items:center;gap:24px;color:var(--c-mid);font-size:13px}
+#eva-root .ev-console .co-nav .active{font-weight:500;color:var(--c-ink)}
+#eva-root .ev-console .co-user{font-size:12px;color:var(--c-mid);margin-left:auto;margin-right:72px}
+#eva-root .ev-console .co-layout{display:grid;grid-template-columns:216px minmax(0,1fr);flex:1}
+#eva-root .ev-console .co-queue{background:var(--c-bg);border-right:1px solid var(--c-line);min-width:0;padding:24px 12px}
+#eva-root .ev-console .co-queue summary{font-weight:500;font-size:14px;padding:0 12px;display:flex;justify-content:space-between;align-items:center;cursor:inherit}
+#eva-root .ev-console .co-queue summary span{font-size:12px;color:var(--c-mid);font-weight:400}
+#eva-root .ev-console .co-queue-filter{display:flex;gap:16px;margin:20px 12px 16px;border-bottom:1px solid var(--c-line);padding-bottom:8px;font-size:12px;color:var(--c-mid)}
+#eva-root .ev-console .co-queue-filter strong{font-weight:500;color:var(--c-ink)}
+#eva-root .ev-console .co-qitem{padding:16px 12px;border-radius:8px;margin:4px 0}
+#eva-root .ev-console .co-qitem.active{background:var(--c-sheet);box-shadow:inset 3px 0 0 var(--c-accent)}
+#eva-root .ev-console .co-qitem-top{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px;color:var(--c-mid)}
+#eva-root .ev-console .co-qitem h3{font-size:14px;font-weight:500;margin:4px 0}
+#eva-root .ev-console .co-qitem p{font-size:12px;color:var(--c-low)}
+#eva-root .ev-console .co-queue-note{font-size:12px;color:var(--c-low);margin:32px 12px 0;line-height:1.6}
+#eva-root .ev-console .co-main{min-width:0;display:flex;flex-direction:column}
+#eva-root .ev-console .co-title{padding:24px 24px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+#eva-root .ev-console .co-kicker{font-size:12px;color:var(--c-low);margin-bottom:8px}
+#eva-root .ev-console h1{font-size:28px;line-height:1.2;letter-spacing:-.5px;font-weight:500}
+#eva-root .ev-console .co-meta{font-size:12px;color:var(--c-mid);margin-top:12px;display:flex;gap:8px 16px;flex-wrap:wrap}
+#eva-root .ev-console .co-review{font-size:12px;white-space:nowrap;padding-top:4px;color:var(--c-mid)}
+#eva-root .ev-console .co-review::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--c-accent);margin-right:8px}
+#eva-root .ev-console .co-player{padding:0 24px 20px;border-bottom:1px solid var(--c-line)}
+#eva-root .ev-console .co-player-inner{background:var(--c-bg);border:1px solid var(--c-line);border-radius:12px;padding:12px 16px}
+#eva-root .ev-console .co-player-label{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--c-mid);margin-bottom:12px}
+#eva-root .ev-console .co-tracks{position:relative;display:grid;gap:8px;padding-left:64px}
+#eva-root .ev-console .co-track{display:flex;align-items:center;gap:8px;min-width:0}
+#eva-root .ev-console .co-speaker{position:absolute;left:0;font-size:11px;color:var(--c-low)}
+#eva-root .ev-console .co-wave{display:flex;align-items:center;gap:2px;height:28px;flex:1;overflow:hidden}
+#eva-root .ev-console .co-wave span{min-width:2px;flex:1;border-radius:2px;background:var(--c-mid);opacity:.5}
+#eva-root .ev-console .co-track:last-child .co-wave span{background:var(--c-accent);opacity:.72}
+#eva-root .ev-console .co-seekrow{display:flex;align-items:center;gap:12px;margin-top:12px}
+#eva-root .ev-console .co-time{font:12px "Consolas",monospace;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--c-mid)}
+#eva-root .ev-console .co-time b{font-weight:400;color:var(--c-ink)}
+#eva-root .ev-console input[type=range]{width:100%;min-width:40px;accent-color:var(--c-accent);height:4px}
+#eva-root .ev-console .co-analysis{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(244px,.9fr);flex:1}
+#eva-root .ev-console .co-transcript{padding:24px;min-width:0}
+#eva-root .ev-console .co-section-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px}
+#eva-root .ev-console h2{font-size:15px;font-weight:500}
+#eva-root .ev-console .co-small{font-size:11px;color:var(--c-low)}
+#eva-root .ev-console .co-message{padding:12px 12px 16px;margin:0 -12px 8px;display:block;width:calc(100% + 24px);text-align:left;background:none;border:0;border-left:2px solid transparent}
+#eva-root .ev-console .co-message:hover{background:var(--c-bg)}
+#eva-root .ev-console .co-message[aria-pressed=true]{background:var(--c-tint);border-left-color:var(--c-accent)}
+#eva-root .ev-console .co-message-head{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--c-mid);margin-bottom:8px}
+#eva-root .ev-console .co-message-head time{font:11px "Consolas",monospace;margin-left:auto;color:var(--c-low)}
+#eva-root .ev-console .co-message p{font-size:var(--eva-reading-size,14px);line-height:1.6;color:var(--c-ink)}
+#eva-root .ev-console .co-message .co-msg-flag{font-size:11px;color:var(--c-accent);display:block;margin-top:8px}
+#eva-root .ev-console .co-summary{border-top:1px solid var(--c-line);padding-top:16px;margin-top:16px}
+#eva-root .ev-console .co-summary p{font-size:12px;color:var(--c-mid);line-height:1.6;margin-top:8px}
+#eva-root .ev-console .co-inspector{border-left:1px solid var(--c-line);padding:24px 20px;background:var(--c-bg)}
+#eva-root .ev-console .co-score-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px}
+#eva-root .ev-console .co-score{font-size:36px;line-height:1.1;font-weight:500;letter-spacing:-1px;font-variant-numeric:tabular-nums;margin-top:8px}
+#eva-root .ev-console .co-score small{font-size:14px;font-weight:400;color:var(--c-low);letter-spacing:0}
+#eva-root .ev-console .co-score-caption{color:var(--c-low);font-size:11px;margin-top:8px}
+#eva-root .ev-console .co-criterion{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:10px 8px;background:none;border:0;text-align:left;font-size:12px;min-height:40px}
+#eva-root .ev-console .co-criterion strong{white-space:nowrap;font-weight:400;font-variant-numeric:tabular-nums;color:var(--c-mid)}
+#eva-root .ev-console .co-criterion[aria-pressed=true]{background:var(--c-tint);color:var(--c-accent)}
+#eva-root .ev-console .co-criterion[aria-pressed=true] strong{color:var(--c-accent)}
+#eva-root .ev-console .co-criterion[data-issue]:hover{background:var(--c-hover)}
+#eva-root .ev-console .co-evidence{border-top:1px solid var(--c-line);margin-top:20px;padding-top:20px}
+#eva-root .ev-console .co-evidence-label{display:flex;gap:8px;justify-content:space-between;font-size:11px;color:var(--c-low);margin-bottom:12px}
+#eva-root .ev-console .co-evidence h3{font-size:14px;font-weight:500;margin-bottom:8px}
+#eva-root .ev-console .co-evidence p{color:var(--c-mid);font-size:12px;line-height:1.65}
+#eva-root .ev-console .co-quote{border-left:2px solid var(--c-accent);margin:16px 0;padding:0 0 0 12px;color:var(--c-ink);font-size:12px;line-height:1.65}
+#eva-root .ev-console .co-quote-link{background:none;border:0;padding:0;color:var(--c-accent);font-size:12px;text-decoration:underline;text-underline-offset:4px}
+#eva-root .ev-console .co-btn{min-height:36px;border:1px solid var(--c-line);background:var(--c-sheet);padding:8px 12px;font-size:12px;font-weight:500}
+#eva-root .ev-console .co-btn:hover{background:var(--c-hover)}
+#eva-root .ev-console .co-primary{background:var(--c-ink);color:var(--c-sheet);border-color:var(--c-ink)}
+#eva-root .ev-console .co-primary:hover{background:var(--c-mid)}
+#eva-root .ev-console .co-actions{display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--c-line);padding:16px 24px;align-items:center}
+#eva-root .ev-console .co-checklist{font-size:11px;color:var(--c-low);margin-right:auto}
+#eva-root .ev-console .co-footer{font-size:11px;color:var(--c-low);padding:12px 24px;border-top:1px solid var(--c-line);display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
+#eva-root .ev-console .co-appeal{margin:0 24px 20px;padding:16px;background:var(--c-bg);border:1px solid var(--c-line);border-radius:12px}
+#eva-root .ev-console .co-appeal label{font-size:12px;display:block}
+#eva-root .ev-console .co-appeal textarea{display:block;width:100%;min-height:80px;border:1px solid var(--c-line);border-radius:8px;background:var(--c-sheet);padding:12px;resize:vertical;margin:8px 0 12px}
+#eva-root .ev-console .co-appeal-actions{display:flex;gap:8px;flex-wrap:wrap}
+#eva-root .ev-console .co-notice:not(:empty){padding:12px 24px;background:var(--c-tint);font-size:12px;color:var(--c-accent);overflow-wrap:anywhere}
+@media(max-width:980px){#eva-root .ev-console .co-layout{grid-template-columns:180px minmax(0,1fr)}#eva-root .ev-console .co-analysis{grid-template-columns:minmax(0,1fr) 244px}#eva-root .ev-console .co-title,#eva-root .ev-console .co-transcript{padding:20px}#eva-root .ev-console .co-player{padding:0 20px 20px}#eva-root .ev-console .co-nav{gap:16px}#eva-root .ev-console .co-brand{min-width:132px}#eva-root .ev-console .co-top{gap:16px}#eva-root .ev-console .co-user{margin-right:64px}}
+@media(max-width:800px){#eva-root .ev-console .co-layout{grid-template-columns:168px minmax(0,1fr)}#eva-root .ev-console .co-analysis{grid-template-columns:1fr}#eva-root .ev-console .co-inspector{border-left:0;border-top:1px solid var(--c-line);display:grid;grid-template-columns:1fr 1fr;gap:16px}#eva-root .ev-console .co-score-head{grid-column:1;margin:0}#eva-root .ev-console .co-criteria{grid-column:2;grid-row:1/3}#eva-root .ev-console .co-evidence{grid-column:1/-1;margin-top:0}#eva-root .ev-console .co-user{display:none}#eva-root .ev-console .co-title{flex-wrap:wrap}#eva-root .ev-console .co-nav{font-size:12px}#eva-root .ev-console .co-top{padding:16px 20px}}
+@media(max-width:600px){#eva-root .ev-console{min-height:0}#eva-root .ev-console .co-layout{display:block}#eva-root .ev-console .co-top{gap:12px;padding:16px}#eva-root .ev-console .co-brand{min-width:0;margin-right:12px}#eva-root .ev-console .co-nav{flex-wrap:wrap;gap:12px}#eva-root .ev-console .co-nav .co-hide-mobile{display:none}#eva-root .ev-console .co-queue{border-right:0;border-bottom:1px solid var(--c-line);padding:12px 4px}#eva-root .ev-console .co-queue-note{display:none}#eva-root .ev-console .co-queue-filter{margin-top:12px}#eva-root .ev-console .co-qitems{display:grid;grid-template-columns:1fr 1fr}#eva-root .ev-console .co-qitem{padding:12px}#eva-root .ev-console .co-title{padding:20px 16px}#eva-root .ev-console h1{font-size:24px}#eva-root .ev-console .co-player{padding:0 16px 16px}#eva-root .ev-console .co-transcript{padding:20px 16px}#eva-root .ev-console .co-inspector{display:block;padding:20px 16px}#eva-root .ev-console .co-score-head{margin-bottom:16px}#eva-root .ev-console .co-evidence{margin-top:20px}#eva-root .ev-console .co-actions{padding:16px}#eva-root .ev-console .co-checklist{width:100%;margin-bottom:4px}#eva-root .ev-console .co-footer{padding:12px 16px}#eva-root .ev-console .co-appeal{margin:0 16px 16px}#eva-root .ev-console .co-review{white-space:normal}#eva-root .ev-console .co-btn{min-height:40px}}
+@media(pointer:coarse){#eva-root .ev-console button,#eva-root .ev-console summary{min-height:44px}#eva-root .ev-console textarea{font-size:16px}}
+</style>
+<section data-variant="Рабочая консоль" aria-label="Рабочая консоль EVA">
+  <div class="ev-app ev-console" data-eva-design="console" aria-label="EVA — рабочая консоль">
+    <header class="co-top"><div class="co-brand"><span class="co-mark" aria-hidden="true"><b></b><b></b><b></b></span>EVA</div><nav class="co-nav" aria-label="Разделы EVA"><span class="active" aria-current="page">Диалоги</span><span>Чек-листы</span><span>Апелляции</span><span class="co-hide-mobile">Аналитика</span></nav><span class="co-user">Мария Ким</span></header>
+    <div class="co-layout">
+      <details class="co-queue" open data-mobile-queue><summary class="cursor-interaction">Очередь проверки <span>24</span></summary><div class="co-queue-filter"><strong>Мои диалоги</strong><span>Все</span></div><div class="co-qitems"><div class="co-qitem active"><div class="co-qitem-top"><span>№024</span><span>14:08</span></div><h3>Статус заявки</h3><p>Алина Садыкова · 06:33</p></div><div class="co-qitem"><div class="co-qitem-top"><span>№021</span><span>13:32</span></div><h3>Возврат средств</h3><p>Даниил Орлов · 08:14</p></div><div class="co-qitem"><div class="co-qitem-top"><span>№019</span><span>12:59</span></div><h3>Личный кабинет</h3><p>Даниил Орлов · 07:06</p></div><div class="co-qitem"><div class="co-qitem-top"><span>№018</span><span>12:40</span></div><h3>Условия тарифа</h3><p>Анна Петрова · 04:21</p></div></div><p class="co-queue-note">Показан разбор звонка №024<br>Остальная очередь — пример компоновки</p></details>
+      <div class="co-main"><div class="co-title"><div><div class="co-kicker">Звонок №024 · поддержка клиентов</div><h1>Статус заявки</h1><div class="co-meta"><span>Алина Садыкова</span><span>7 ноя, 14:08</span><span>Русский</span></div></div><span class="co-review" data-review-status>Оценено · демо</span></div>
+        <section class="co-player" aria-label="Демонстрационная запись"><div class="co-player-inner"><div class="co-player-label"><span>Запись разговора</span><span>Демо без аудио</span></div><div class="co-tracks"><div class="co-track"><span class="co-speaker">Клиент</span><div class="co-wave" data-wave="client" aria-hidden="true"></div></div><div class="co-track"><span class="co-speaker">Оператор</span><div class="co-wave" data-wave="operator" aria-hidden="true"></div></div></div><div class="co-seekrow"><div class="co-time"><b data-current-time>02:18</b> / 06:33</div><input class="cursor-interaction" type="range" min="0" max="393" value="138" data-seek aria-label="Время разговора в секундах"></div></div></section>
+        <div class="co-analysis"><section class="co-transcript"><div class="co-section-title"><h2>Расшифровка</h2><span class="co-small">Фрагмент 02:08–02:35</span></div><button type="button" class="co-message cursor-interaction" data-time="128" aria-pressed="false"><span class="co-message-head">Клиент<time>02:08</time></span><p>Когда я получу ответ по обращению?</p></button><button type="button" class="co-message cursor-interaction" data-time="138" aria-pressed="true"><span class="co-message-head">Оператор<time>02:18</time></span><p>Я передам вопрос специалистам. Они с вами свяжутся.</p><span class="co-msg-flag">Связано с замечанием к оценке</span></button><button type="button" class="co-message cursor-interaction" data-time="147" aria-pressed="false"><span class="co-message-head">Клиент<time>02:27</time></span><p>А сколько времени это займёт?</p></button><button type="button" class="co-message cursor-interaction" data-time="155" aria-pressed="false"><span class="co-message-head">Оператор<time>02:35</time></span><p>Сейчас не могу назвать точный срок. Постараемся как можно скорее.</p></button><div class="co-summary"><h2>Результат разговора</h2><p>Заявка передана специалистам. Срок и канал обратной связи не определены.</p></div></section>
+          <aside class="co-inspector"><div class="co-score-head"><div><h2>Качество разговора</h2><div class="co-score">85,5 <small>/ 100</small></div><div class="co-score-caption">Ручная демонстрационная оценка</div></div></div><div class="co-criteria"><div class="co-criterion"><span>Приветствие</span><strong>10 / 10</strong></div><button type="button" class="co-criterion cursor-interaction" data-issue="consultation" aria-pressed="false"><span>Консультация</span><strong>35 / 40</strong></button><div class="co-criterion"><span>Ведение диалога</span><strong>30 / 30</strong></div><button type="button" class="co-criterion cursor-interaction" data-issue="steps" aria-pressed="true"><span>Следующие шаги</span><strong>10,5 / 20</strong></button></div><div class="co-evidence"><div class="co-evidence-label"><span>Основание оценки</span><span data-deduction>−9,5 балла</span></div><h3 data-issue-title>Не обозначен срок ответа</h3><p data-issue-body>Оператор не назвал срок и канал обратной связи. Клиенту пришлось задать уточняющий вопрос.</p><blockquote class="co-quote" data-quote>«Я передам вопрос специалистам. Они с вами свяжутся.»</blockquote><button type="button" class="co-quote-link cursor-interaction" data-time="138">Открыть фрагмент 02:18</button></div></aside>
+        </div>
+        <div class="co-actions"><span class="co-checklist">Поддержка клиентов · версия 2.1</span><button type="button" class="co-btn cursor-interaction" data-appeal>Оспорить</button><button type="button" class="co-btn co-primary cursor-interaction" data-confirm>Подтвердить оценку</button></div>
+        <section class="co-appeal" data-appeal-panel hidden><label>Причина пересмотра<textarea data-appeal-reason maxlength="1000" placeholder="Какой фрагмент следует проверить?"></textarea></label><div class="co-appeal-actions"><button type="button" class="co-btn co-primary cursor-interaction" data-submit-appeal>Добавить в макет</button><button type="button" class="co-btn cursor-interaction" data-close-appeal>Отмена</button></div></section><div class="co-notice" data-notice role="status"></div>
+        <footer class="co-footer"><span>Синтетический пример · ручная разметка</span><span>7 ноября 2026</span></footer>
+      </div>
+    </div>
+  </div>
+</section>
