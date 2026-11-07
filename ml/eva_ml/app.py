@@ -12,7 +12,8 @@ from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from eva_ml import stub
-from eva_ml.audit import Auditor, COMPONENTS
+from eva_ml.audit import COMPONENTS
+from eva_ml.audit_events import select_auditor
 from eva_ml.contracts import ContractError, Contracts
 from eva_ml.engine import EngineError, loaded_engine
 from eva_ml.issai import InvalidDecision
@@ -33,7 +34,9 @@ async def lifespan(application: FastAPI):
         try:
             application.state.provider = select_provider(engine, os.getenv("EVA_CONSULTATION_VARIANT", "consultation-v1.1"))
             configured = os.getenv("EVA_AUDIT_COMPONENTS", ",".join(sorted(COMPONENTS)))
-            application.state.auditor = Auditor(application.state.provider, {key.strip() for key in configured.split(",") if key.strip()})
+            keys=set() if configured.strip().lower()=="off" else {key.strip() for key in configured.split(",") if key.strip()}
+            application.state.auditor = select_auditor(application.state.provider,keys,
+                                                        os.getenv("EVA_AUDIT_PROFILE","source-events"))
             await run_in_threadpool(application.state.provider.prepare)
             logging.getLogger("uvicorn.error").info("ISSAI service ready in %.3f s",time.monotonic()-started)
             yield

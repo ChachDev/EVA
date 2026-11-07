@@ -169,6 +169,12 @@
               },
               "scope": {
                 "type": "object"
+              },
+              "conflict": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "required": [
@@ -326,6 +332,12 @@
               "criterion_id": {
                 "type": "string",
                 "minLength": 1
+              },
+              "conflict": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
             "required": [

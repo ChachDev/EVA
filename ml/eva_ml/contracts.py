@@ -71,6 +71,13 @@ class Contracts:
         criteria = payload["checklist"]["criteria"]
         if not messages:
             _reject("/conversation/messages", "at_least_one_message")
+        for i,message in enumerate(messages):
+            if message.get("event") and message["speaker"]!="system":
+                _reject(f"/conversation/messages/{i}/event","trusted_system_source")
+            end=message.get("end_seconds")
+            start=message.get("offset_seconds")
+            if end is not None and (start is None or end<start or not math.isfinite(end)):
+                _reject(f"/conversation/messages/{i}/end_seconds","source_fragment_bounds")
         if len({message["id"] for message in messages}) != len(messages):
             _reject("/conversation/messages", "unique_message_ids")
         if len({criterion["id"] for criterion in criteria}) != len(criteria):

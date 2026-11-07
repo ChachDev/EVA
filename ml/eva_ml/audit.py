@@ -12,7 +12,7 @@ from jsonschema import Draft202012Validator
 
 from .audit_policy import CONFIG, rules_for
 from .audit_trace import Trace
-from .engine import ContextLimitError
+from .engine import ContextLimitError, LocalEngine, inference_usage
 from .issai import digest, object_schema, string_enum, uncertain
 
 COMPONENTS = frozenset({"trace","policy","score","sentinel"})
@@ -53,6 +53,10 @@ def observed(raw, rule, trace, *, violation=False, verify=True):
             raise ValueError("Нужно выбрать оцениваемого оператора.")
         if verify and label!="review":
             roles = {p["role"] for p in proof}
+            if rule.get("official") and rule["id"]=="contact" and trace.complete_start is False:
+                raise ValueError("Начало транскрипта отсутствует: первый ответ оператора неизвестен.")
+            if rule.get("official") and rule["id"]=="closing" and trace.complete_end is False:
+                raise ValueError("Конец транскрипта отсутствует: завершение не установлено.")
             if label=="true" and "operator" not in roles:
                 raise ValueError("Нет свидетельства действия оцениваемого оператора.")
             if label=="true" and rule.get("official") and rule["id"]=="identity":
@@ -82,6 +86,7 @@ def observed(raw, rule, trace, *, violation=False, verify=True):
              "applicability":"unknown" if reason else ("not_applicable" if label=="N/A" else "applicable"),
              "evidence":proof,"technical":"valid" if proof and len(proof)==len(raw.get("proof",[])) else "invalid",
              "semantic":"requires_review" if reason else "model_assessed","uncertainty":reason or None,
+             "conflict":reason if label=="review" and raw.get("value") not in (None,"review") else None,
              "scope":trace.span(rule["stage"]),"source":"model"}
     return row,details
 
@@ -101,7 +106,7 @@ class Auditor:
         started=perf_counter()
         trace=Trace(request["conversation"])
         rules=rules_for(request["checklist"],"policy" in self.components)
-        versions={"model":self.base.model,"prompt":PROMPT_HASH,"code":self.revision,
+        versions={"model":self.base.model,"prompt":PROMPT_HASH,"code":self.revision,"policy_version":CONFIG["version"],
                   "baseline_variant":getattr(self.base,"experiment_hash",self.base.__class__.__name__),
                   "components":sorted(self.components),"checklist":digest(request["checklist"]),
                   "rules":{k:v["hash"] for k,v in rules.items()},"transcript":trace.hash}
@@ -112,7 +117,10 @@ class Auditor:
         if cached:
             cached["audit"].update(run_id=str(uuid4()),cache_hit=True,seconds=perf_counter()-started,calls=0,tokens=0)
             return cached
-        result=self._evaluate(request,trace,rules,versions)
+        with inference_usage() as usage:
+            result=self._evaluate(request,trace,rules,versions)
+        if isinstance(getattr(self.base,"engine",None),LocalEngine):
+            result["audit"].update(calls=usage["calls"],tokens=usage["tokens"] if usage["has_usage"] else None)
         result["audit"].update(run_id=str(uuid4()),cache_key=key,cache_hit=False,seconds=perf_counter()-started)
         if self.cache_size and all(row["status"]=="scored" for row in result["response"]["criteria"]):
             with self.lock:

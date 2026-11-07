@@ -1,5 +1,6 @@
 """An offline llama.cpp worker owned by the ML service lifespan."""
 from contextlib import contextmanager
+from contextvars import ContextVar
 import json
 import logging
 import os
@@ -14,6 +15,18 @@ import urllib.request
 DEFAULT_ENGINE = "D:/EVA-ML/runtime/b12186/llama-server.exe"
 DEFAULT_WEIGHTS = "D:/EVA-ML/models/Qwen3.5-9B-Kazakh.Q5_K_M.gguf"
 CONTEXT_TOKENS = 16384
+
+
+_usage = ContextVar("eva_request_usage",default=None)
+
+@contextmanager
+def inference_usage():
+    measured={"calls":0,"tokens":0,"has_usage":True}
+    token=_usage.set(measured)
+    try:
+        yield measured
+    finally:
+        _usage.reset(token)
 
 
 class EngineError(RuntimeError):
@@ -41,10 +54,18 @@ class LocalEngine:
     def request(self, route, payload=None, timeout=120):
         body = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
         req = urllib.request.Request(self.base + route, data=body, headers={"Content-Type":"application/json"})
+        meter=_usage.get() if route=="/v1/chat/completions" else None
+        if meter is not None: meter["calls"]+=1
         try:
             with self.client.open(req, timeout=timeout) as reply:
-                return json.load(reply)
+                result=json.load(reply)
+                if meter is not None:
+                    usage=result.get("usage",{}).get("total_tokens")
+                    if type(usage) is int: meter["tokens"]+=usage
+                    else: meter["has_usage"]=False
+                return result
         except urllib.error.HTTPError as error:
+            if meter is not None: meter["has_usage"]=False
             if error.code == 400:
                 try:
                     detail = json.loads(error.read(8192))

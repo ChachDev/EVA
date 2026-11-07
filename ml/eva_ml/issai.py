@@ -241,9 +241,22 @@ class ISSAIProvider:
         conversation = request["conversation"]
         checklist = request["checklist"]
         criteria = checklist["criteria"]
+        ids = [m["id"] for m in conversation["messages"]]
+        # Legacy inference has no target/operator completeness policy. New metadata
+        # must never cause another employee's actions to be scored on rollback.
+        source = conversation.get("source", {})
+        speakers = {m.get("speaker_id") for m in conversation["messages"] if m["speaker"] == "operator"}
+        unsupported_scope = (len(speakers)>1 or (source.get("target_operator_id") and speakers!={source["target_operator_id"]})
+            or any(m["speaker"]=="unknown" for m in conversation["messages"])
+            or source.get("complete_start") is False or source.get("complete_end") is False or source.get("gaps"))
+        if unsupported_scope:
+            reason = "Исходный режим не может надёжно оценить указанного оператора или неполный участок."
+            return {"schema_version":request["schema_version"],"conversation_id":conversation["id"],
+                    "checklist_id":checklist["id"],"checklist_version":checklist["version"],
+                    "provider":self.name,"model":self.model,"criteria":[uncertain(c,ids,reason) for c in criteria],
+                    "warnings":[reason]}
         payload, schema = self._payload(conversation,checklist)
         started = time.monotonic()
-        ids = [m["id"] for m in conversation["messages"]]
         try:
             try:
                 rows = self._generate(payload, schema)

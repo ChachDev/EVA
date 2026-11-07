@@ -59,6 +59,7 @@
             ],
             "minimum": 0
           },
+          "event": {"const":"identity_verified"},
           "speaker_id": {
             "type": "string",
             "minLength": 1

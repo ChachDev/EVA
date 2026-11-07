@@ -25,6 +25,7 @@ class Trace:
             self.records[m["id"]] = dict(utterance_id=m["id"], speaker_id=m.get("speaker_id"), role=role,
                 text=m["text"], order=order, timestamp=m.get("timestamp"), language=m.get("language",self.conversation["language"]),
                 start=m.get("offset_seconds"), end=m.get("end_seconds"), quality=m.get("quality"))
+            if m.get("event") is not None: self.records[m["id"]]["event"]=m["event"]
         self.hash = digest(self.conversation)
 
     def scope_problem(self, stage):
