@@ -2,6 +2,9 @@
 
 from typing import Any
 
+name = "stub"
+model = "unconfigured"
+
 
 def evaluate(request: dict[str, Any]) -> dict[str, Any]:
     # An uncertain reference locates the conversation; it is not proof of a score.
