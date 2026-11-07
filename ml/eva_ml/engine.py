@@ -19,6 +19,11 @@ CONTEXT_TOKENS = 16384
 
 _usage = ContextVar("eva_request_usage",default=None)
 
+def usage_snapshot():
+    meter=_usage.get()
+    return dict(meter) if meter is not None else None
+
+
 @contextmanager
 def inference_usage():
     measured={"calls":0,"tokens":0,"has_usage":True}

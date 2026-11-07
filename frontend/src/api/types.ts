@@ -238,6 +238,8 @@ export interface BackendHealth {
 
 export interface AuditDetail {
   decision: boolean | number | null; status: string; action: string; uncertainty: string | null;
+  technical: 'valid'|'invalid'; semantic: 'model_assessed'|'requires_review'; conflict?:string|null;
+  scope:{first:string;last:string;stage:string;complete_start:boolean|null;complete_end:boolean|null;gaps:boolean};
   evidence: Array<{utterance_id:string; quote:string; start:number|null}>;
 }
 export interface AuditExport {

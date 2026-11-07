@@ -434,6 +434,37 @@
               "minimum": 0
             }
           }
+        },
+        "stage_usage": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "seconds",
+              "calls",
+              "tokens"
+            ],
+            "properties": {
+              "seconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "calls": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "tokens": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            }
+          }
         }
       },
       "required": [

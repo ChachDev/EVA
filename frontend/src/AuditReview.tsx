@@ -55,6 +55,9 @@ export default function AuditReview({evaluation,review,jump}:{evaluation:Evaluat
             <p>{f.uncertainty ?? f.action}</p>{f.evidence.map((e,i)=><button className="evidence-link" key={i} onClick={()=>jump([e.utterance_id])}>{e.utterance_id} · «{e.quote}»</button>)}</div>)}
           <details><summary>EVA Score · решения эксперимента</summary>
             {candidate.response.criteria.map(r=><div key={r.criterion_id}><p>{r.criterion_id} · {companion?.mode==='shadow' && <>{answer(evaluation.original.criteria.find(x=>x.criterion_id===r.criterion_id))} → </>}{answer(r)} · {r.reason}</p>
+              {candidate.audit.criteria[r.criterion_id]?.conflict && <p>{candidate.audit.criteria[r.criterion_id].conflict}</p>}
+              {candidate.audit.criteria[r.criterion_id] && <p>{candidate.audit.criteria[r.criterion_id].technical==='valid'?'Источник ссылки проверен':'Источник ссылки не подтверждён'} · {candidate.audit.criteria[r.criterion_id].semantic==='model_assessed'?'Смысл оценён моделью':'Смысл требует проверки'}</p>}
+              {candidate.audit.criteria[r.criterion_id]?.scope && (r.status==='needs_review' || r.value===false) && <button className="evidence-link" onClick={()=>{const s=candidate.audit.criteria[r.criterion_id].scope;jump([s.first,s.last]);}}>Проверенный участок: {candidate.audit.criteria[r.criterion_id].scope.first} → {candidate.audit.criteria[r.criterion_id].scope.last}</button>}
               {candidate.audit.criteria[r.criterion_id]?.evidence.map((e,i)=><button className="evidence-link" key={i} onClick={()=>jump([e.utterance_id])}>{e.utterance_id} · «{e.quote}»</button>)}</div>)}</details></>}
         {companion?.changes && <details open><summary>EVA Policy · v{companion.from_version} → v{companion.to_version}</summary>
           {Object.entries(companion.changes).map(([id,c])=><div key={id}><strong>{id}</strong> · {c.evaluate?'повторная оценка':'сохранённое решение'}
