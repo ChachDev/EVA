@@ -1,0 +1,131 @@
+// Run against a disposable local DB. Uses actual UI actions and direct server reads for assertions.
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.env.EVA_PLAYWRIGHT_PATH || 'playwright');
+const ui = 'http://127.0.0.1:5186', api = 'http://127.0.0.1:18500';
+assert.equal(process.env.EVA_VERIFY_ISOLATED, '1', 'This test creates a dialogue, an appeal and a checklist version in a disposable DB.');
+const output = fileURLToPath(new URL('../data/',import.meta.url));
+const resultsDir = resolve(output, 'live-project-check', new Date().toISOString().replaceAll(':','-'));
+await mkdir(resultsDir, {recursive:true});
+const read = async path => {
+  const response = await fetch(api + path);
+  assert.ok(response.ok, path + ' ' + response.status);
+  return response.json();
+};
+const versions = await read('/api/v1/checklists');
+assert.equal(versions.length, 1, 'use a fresh database seeded only with v1');
+assert.equal(versions[0].version, 1);
+const browser = await chromium.launch({channel:process.env.EVA_BROWSER_CHANNEL || 'msedge',headless:true});
+const page = await browser.newPage({viewport:{width:1440,height:960}});
+const errors = [];
+page.on('pageerror', e => errors.push(e.message));
+const post = path => page.waitForResponse(r => r.url() === api + path && r.request().method() === 'POST', {timeout:130000});
+const perform = async (path, action) => {
+  const [response] = await Promise.all([post(path),action()]);
+  assert.equal(response.status(),201, path + ': ' + response.status());
+  return response.json();
+};
+const click = name => page.getByRole('button',{name,exact:true}).click();
+const nav = name => page.getByRole('navigation').getByRole('button',{name,exact:true}).click();
+const data = { checks: [] };
+function validEvaluation(rec, conversation, version) {
+  assert.equal(rec.original.provider,'llama.cpp');
+  assert.equal(rec.original.model,'Qwen3.5-9B-Kazakh.Q5_K_M');
+  assert.ok(rec.original.warnings.some(w=>w.includes('consultation-v1.1') && w.includes('bbd032c3b581f82e4b02e7715b54496d30843efe8735b5fcc3a20f1da917bd2d')));
+  assert.equal(rec.original.conversation_id,conversation.id);
+  assert.equal(rec.original.checklist_version,version);
+  assert.equal(new Set(rec.original.criteria.map(c=>c.criterion_id)).size,8);
+  assert.deepEqual(rec.original.criteria.map(c=>c.criterion_id).sort(),versions[0].criteria.map(c=>c.id).sort());
+  const ids = new Set(conversation.messages.map(m=>m.id));
+  for (const c of rec.original.criteria) {
+    assert.ok(c.reason?.trim() && c.evidence?.length);
+    assert.ok(c.evidence.every(e=>e.message_ids.length && e.message_ids.every(id=>ids.has(id))));
+  }
+}
+try {
+  await page.goto(ui);
+  await click('Новый диалог');
+  await page.getByLabel('Переписка',{exact:true}).fill('[00:00] клиент: Где открыть справку о приложении?\n[00:05] оператор: Здравствуйте, я Ирина. В меню откройте «Помощь», затем «Справка».\n[00:10] клиент: Открыл справку, спасибо.\n[00:15] оператор: Рада помочь. Если появятся вопросы, напишите ещё. До свидания!');
+  const chat=await perform('/api/v1/conversations',()=>click('Сохранить диалог'));
+  data.conversation=chat.id;
+  await page.getByRole('heading',{name:'Разбор диалога'}).waitFor();
+  const started = performance.now();
+  const first=await perform('/api/v1/evaluations',()=>click('Оценить диалог'));
+  validEvaluation(first,chat,1);
+  data.v1={id:first.id,seconds:(performance.now()-started)/1000,total:first.scoring.total};
+  assert.equal(typeof first.scoring.total,'number','expected numeric total for this synthetic test');
+  assert.ok(first.original.criteria.some(c=>c.status==='scored'&&c.value===null),'expected N/A');
+  await page.getByText(/llama.cpp · Qwen3.5/).waitFor();
+  await page.getByRole('button',{name:/Установление контакта/}).click();
+  const contact = first.original.criteria.find(c=>c.criterion_id==='contact');
+  assert.equal(typeof contact.value,'boolean');
+  const mid=contact.evidence[0].message_ids[0];
+  await click('Перейти к реплике '+mid);
+  await page.locator('.message.highlighted').first().waitFor();
+  await page.screenshot({path:resolve(resultsDir,'оценка.png'),fullPage:true});
+  data.checks.push('evaluate v1 with real ISSAI','valid evidence links and N/A','navigate to evidence '+mid);
+  const originalUrl=page.url();
+  await click('Оспорить');
+  let dialog=page.getByRole('dialog');
+  const appealReason='Учебная проверка пересчёта · '+first.id;
+  await dialog.getByLabel('Причина',{exact:true}).fill(appealReason);
+  await dialog.getByRole('checkbox').nth(1).check();
+  const opened=await perform('/api/v1/evaluations/'+first.id+'/appeals',()=>dialog.getByRole('button',{name:'Сохранить',exact:true}).click());
+  await dialog.waitFor({state:'hidden'});
+  const appeal=opened.appeals.find(a=>a.status==='open');
+  await page.getByRole('navigation').getByRole('button',{name:/Апелляции/}).click();
+  const card=page.locator('article.live-appeal').filter({hasText:appealReason});
+  await card.getByRole('button',{name:'Рассмотреть',exact:true}).click();
+  await dialog.getByRole('combobox',{name:/^Решение/}).selectOption('accepted');
+  await dialog.getByRole('combobox',{name:/^Новое значение/}).selectOption(String(!contact.value));
+  await dialog.getByLabel('Причина',{exact:true}).fill('Сценарий приёмки: проверяющий меняет решение только в этой тестовой записи.');
+  await dialog.getByRole('checkbox').nth(1).check();
+  const resolved=await perform('/api/v1/appeals/'+appeal.id+'/decisions',()=>dialog.getByRole('button',{name:'Сохранить',exact:true}).click());
+  assert.equal(resolved.original.scoring.total,first.scoring.total);
+  assert.notEqual(resolved.final.scoring.total,first.scoring.total);
+  assert.deepEqual(resolved.original.original,first.original);
+  data.final=resolved.final.scoring.total;
+  await dialog.waitFor({state:'hidden'});
+  await card.getByRole('button',{name:'Открыть оценку',exact:true}).click();
+  await page.reload();
+  await page.locator('.review-banner').waitFor();
+  const gauge = page.locator('.gauge strong');
+  assert.equal(await gauge.innerText(),data.final.toLocaleString('ru-RU',{maximumFractionDigits:2}));
+  data.checks.push('appeal accepted','server recalculation and unchanged original','reload persisted final');
+  await nav('Чек-листы');
+  const criterion=page.locator('.live-criterion-editor').nth(3);
+  await criterion.getByLabel('Название',{exact:true}).fill('Подтверждение результата');
+  await criterion.getByLabel('Инструкция оценки').fill('2: клиент прямо подтвердил успех действия оператора. 1: оператор дал действие, но клиент не подтвердил результат. 0: действия не предложено.');
+  const scale=criterion.getByLabel('Допустимые ступени через запятую');
+  await scale.fill('0, 1, 2');
+  const updated=await perform('/api/v1/checklists/freedom-cqa/versions',()=>scale.press('Enter'));
+  assert.equal(updated.version,2);
+  assert.deepEqual(updated.criteria.find(c=>c.id==='consultation').scale,[0,1,2]);
+  await page.goto(originalUrl);
+  await page.locator('.review-banner').waitFor();
+  await page.getByLabel('Чек-лист для новой оценки').selectOption('freedom-cqa:2');
+  const second=await perform('/api/v1/evaluations',()=>click('Оценить повторно'));
+  validEvaluation(second,chat,2);
+  const newValue=second.original.criteria.find(c=>c.criterion_id==='consultation').value;
+  assert.ok(newValue===null||[0,1,2].includes(newValue));
+  assert.equal((await read('/api/v1/evaluations/'+first.id+'/snapshot')).checklist.version,1);
+  assert.deepEqual((await read('/api/v1/evaluations/'+second.id+'/snapshot')).checklist.criteria[3].scale,[0,1,2]);
+  await page.getByRole('button',{name:/Подтверждение результата/}).waitFor();
+  data.checks.push('published new scale and instruction','real re-evaluation v2','immutable v1 snapshot');
+  data.v2={id:second.id,total:second.scoring.total,consultation:newValue};
+  assert.deepEqual(errors,[]);
+  data.passed=true;
+} catch(error) {
+  data.passed=false; data.error=error.message;
+  await page.screenshot({path:resolve(resultsDir,'ошибка.png')}).catch(()=>{});
+  throw error;
+} finally {
+  await writeFile(resolve(resultsDir,'browser.json'),JSON.stringify(data,null,2)+'\n');
+  console.log(resultsDir,JSON.stringify(data));
+  await browser.close();
+}

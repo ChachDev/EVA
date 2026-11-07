@@ -30,7 +30,7 @@ async def lifespan(application: FastAPI):
         worker = loaded_engine()
         engine = await run_in_threadpool(worker.__enter__)
         try:
-            application.state.provider = select_provider(engine, os.getenv("EVA_CONSULTATION_VARIANT", "baseline"))
+            application.state.provider = select_provider(engine, os.getenv("EVA_CONSULTATION_VARIANT", "consultation-v1.1"))
             await run_in_threadpool(application.state.provider.prepare)
             logging.getLogger("uvicorn.error").info("ISSAI service ready in %.3f s",time.monotonic()-started)
             yield

@@ -64,11 +64,14 @@ def loaded_engine():
     # An explicitly supplied loopback worker belongs to the operator, not to this service.
     configured_port = os.getenv("EVA_LLAMA_WORKER_PORT")
     if configured_port is not None:
-        if not configured_port.isascii() or not configured_port.isdecimal() or not 1 <= int(configured_port) <= 65535:
+        if not (1 <= len(configured_port) <= 5 and configured_port.isascii()
+                and configured_port.isdecimal() and 1 <= int(configured_port) <= 65535):
             raise EngineError("EVA_LLAMA_WORKER_PORT must be a TCP port.")
         model = Path(os.environ.get("EVA_ISSAI_GGUF", DEFAULT_WEIGHTS)).stem
         worker = LocalEngine(int(configured_port), model)
-        if not any(item.get("id") == model for item in worker.request("/v1/models")["data"]):
+        listing = worker.request("/v1/models", timeout=5)
+        models = listing.get("data") if isinstance(listing, dict) else None
+        if not isinstance(models, list) or not any(isinstance(item, dict) and item.get("id") == model for item in models):
             raise EngineError("Configured local worker does not serve the requested model.")
         yield worker
         return
