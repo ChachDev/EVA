@@ -17,7 +17,7 @@ from starlette.responses import JSONResponse
 
 from .config import Settings
 from .contracts import ContractError, Contracts
-from .ml_client import MLClient, MLInvalidResponse, MLUnavailable
+from .ml_client import MLClient, MLContextLimitExceeded, MLInvalidResponse, MLUnavailable
 from .scoring import score
 from .storage import EvaluationStore, StorageConflict
 from .http_boundary import (
@@ -146,6 +146,11 @@ def create_app(settings: Settings | None = None,
                 async with application.state.ml_slots:
                     original = await application.state.evaluate(deepcopy(request))
             contracts.validate_result(request, original)
+        except MLContextLimitExceeded:
+            return JSONResponse(status_code=422, content={
+                "detail": "Conversation and checklist exceed the local model context. No evaluation was saved.",
+                "code": "ml_context_limit_exceeded",
+            })
         except (MLUnavailable, TimeoutError) as error:
             raise HTTPException(503, "ML service is unavailable. No evaluation was saved.") from error
         except (MLInvalidResponse, ContractError) as error:

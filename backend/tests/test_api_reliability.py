@@ -5,9 +5,11 @@ from uuid import UUID
 from fastapi.testclient import TestClient
 import httpx
 import pytest
+from jsonschema import Draft202012Validator
 
 from app.config import Settings
 from app.main import create_app
+from app.ml_client import MLClient
 
 
 @pytest.mark.parametrize("body", [
@@ -75,6 +77,53 @@ def test_evaluation_overload_is_bounded_and_releases_capacity(tmp_path, request_
 def test_all_contract_examples_validate(contracts):
     for path in (contracts.directory / "examples").glob("*.json"):
         contracts.example(path.stem)
+
+
+@pytest.mark.parametrize("upstream_error,expected_status,expected_code", [
+    ({"error": "context_limit_exceeded"}, 422, "ml_context_limit_exceeded"),
+    ({"error": "context_limit_exceeded", "private": "SYNTHETIC_PRIVATE_VALUE"}, 502, None),
+    ({"error": "invalid_request", "private": "SYNTHETIC_PRIVATE_VALUE"}, 502, None),
+])
+def test_ml_context_rejection_is_safe_unsaved_and_releases_capacity(
+    tmp_path, request_data, result_data, upstream_error, expected_status, expected_code,
+):
+    async def run():
+        calls = []
+
+        def handler(request):
+            calls.append(request)
+            if len(calls) == 1:
+                return httpx.Response(422, json=upstream_error)
+            return httpx.Response(200, json=deepcopy(result_data))
+
+        async with httpx.AsyncClient(base_url="http://127.0.0.1:8001", trust_env=False,
+                                     transport=httpx.MockTransport(handler)) as upstream:
+            app = create_app(Settings(database_path=tmp_path / "context.sqlite3", seed_demo=True),
+                             MLClient(upstream).evaluate, start_workers=False)
+            async with app.router.lifespan_context(app):
+                async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+                    body = {"conversation_id": request_data["conversation"]["id"],
+                            "checklist_id": request_data["checklist"]["id"], "checklist_version": 1}
+                    response = await client.post("/api/v1/evaluations", json=body,
+                                                 headers={"Origin": "http://localhost:5173"})
+                    assert response.status_code == expected_status
+                    assert response.json().get("code") == expected_code
+                    if expected_code:
+                        assert response.json() == {
+                            "detail": "Conversation and checklist exceed the local model context. No evaluation was saved.",
+                            "code": "ml_context_limit_exceeded",
+                        }
+                    assert "SYNTHETIC_PRIVATE_VALUE" not in response.text
+                    assert len(calls) == 1
+                    assert (await client.get("/api/v1/evaluations")).json()["items"] == []
+                    assert app.state.evaluation_requests.qsize() == 0
+                    assert not app.state.ml_slots.locked()
+                    assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
+                    UUID(response.headers["x-request-id"])
+                    Draft202012Validator(app.openapi()["components"]["schemas"]["BackendError"]).validate(response.json())
+                    assert (await client.post("/api/v1/evaluations", json=body)).status_code == 201
+                    assert len(calls) == 2
+    asyncio.run(run())
 
 
 def test_browser_can_use_upload_range_and_retry_headers(tmp_path):

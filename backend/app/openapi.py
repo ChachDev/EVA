@@ -16,7 +16,7 @@ _ERROR_DESCRIPTIONS = {
     409: "Immutable content, checklist version or expected review revision conflicts with stored data.",
     413: "Request exceeds the configured byte limit.",
     415: "Unsupported content type or content encoding.",
-    422: "Request does not satisfy the supported contract or its cross-document invariants.",
+    422: "Request does not satisfy its contract, or the evaluation exceeds the local model context.",
     502: "ML returned an invalid result; no evaluation was saved.",
     503: "Local storage, model service or configured processing capacity is unavailable.",
 }
@@ -96,7 +96,9 @@ def install_contract_openapi(app: FastAPI, contracts: Contracts) -> None:
             components[f"Contract_{name}"] = embedded
         components["BackendError"] = {
             "type": "object", "required": ["detail"],
-            "properties": {"detail": {"type": "string"}}, "additionalProperties": False,
+            "properties": {"detail": {"type": "string"},
+                           "code": {"type": "string", "enum": ["ml_context_limit_exceeded"]}},
+            "additionalProperties": False,
         }
         error_schema = {"$ref": "#/components/schemas/BackendError"}
         for (path, method), (request, status, response, array, errors) in _OPERATIONS.items():

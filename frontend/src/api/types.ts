@@ -1,33 +1,68 @@
-// Local view types only. contracts/ is the shared, read-only source of truth.
+// Wire types mirror contracts/schemas/. Scores and review outcomes come from Backend.
+export type Language = 'RU' | 'KZ' | 'EN';
+export type Channel = 'agent_chat' | 'voice_call';
+export type Speaker = 'client' | 'operator' | 'bot' | 'system';
+export type TranscriptRole = 'client' | 'operator';
+
+export interface Message {
+  id: string;
+  speaker: Speaker;
+  text: string;
+  timestamp: string;
+  offset_seconds: number | null;
+}
+
 export interface Conversation {
   id: string;
-  channel: 'agent_chat' | 'voice_call';
-  language: 'RU' | 'KZ' | 'EN';
-  messages: Array<{
-    id: string;
-    speaker: 'client' | 'operator' | 'bot' | 'system';
-    text: string;
-    timestamp: string;
-    offset_seconds: number | null;
-  }>;
+  channel: Channel;
+  language: Language;
+  messages: Message[];
   audio_url: string | null;
+}
+
+export interface ConversationCreate {
+  operation_id: string;
+  channel: Channel;
+  language: Language;
+  messages: Array<Pick<Message, 'timestamp' | 'speaker' | 'text'>>;
+}
+
+export interface Criterion {
+  id: string;
+  title: string;
+  instruction: string;
+  section_id: string | null;
+  type: 'boolean' | 'scale' | 'flag';
+  weight: number;
+  allow_na: boolean;
+  na_condition: string | null;
+  scale: number[];
 }
 
 export interface Checklist {
   id: string;
   version: number;
   name: string;
-  criteria: Array<{
-    id: string;
-    title: string;
-    instruction: string;
-    section_id: string | null;
-    type: 'boolean' | 'scale' | 'flag';
-    weight: number;
-    allow_na: boolean;
-    na_condition: string | null;
-    scale: number[];
-  }>;
+  criteria: Criterion[];
+}
+
+export interface ChecklistPublish {
+  base_version: number;
+  name: string;
+  criteria: Criterion[];
+}
+
+export interface Evidence {
+  kind: 'message' | 'missing_action' | 'not_applicable' | 'uncertain';
+  message_ids: string[];
+}
+
+export interface CriterionResult {
+  criterion_id: string;
+  status: 'needs_review' | 'scored';
+  value: boolean | number | null;
+  reason: string;
+  evidence: Evidence[];
 }
 
 export interface EvaluationResponse {
@@ -37,16 +72,7 @@ export interface EvaluationResponse {
   checklist_version: number;
   provider: string;
   model: string;
-  criteria: Array<{
-    criterion_id: string;
-    status: 'needs_review' | 'scored';
-    value: boolean | number | null;
-    reason: string;
-    evidence: Array<{
-      kind: 'message' | 'missing_action' | 'not_applicable' | 'uncertain';
-      message_ids: string[];
-    }>;
-  }>;
+  criteria: CriterionResult[];
   warnings: string[];
 }
 
@@ -63,10 +89,18 @@ export interface ScoreSummary {
   }>;
 }
 
+// evaluation-create: the browser selects stored inputs; Backend builds the ML request.
 export interface EvaluationRequest {
   conversation_id: string;
   checklist_id: string;
   checklist_version: number;
+}
+
+// evaluation-request: the immutable full request saved alongside an evaluation.
+export interface EvaluationSnapshot {
+  schema_version: '1.0.0';
+  conversation: Conversation;
+  checklist: Checklist;
 }
 
 export interface Evaluation {
@@ -77,9 +111,141 @@ export interface Evaluation {
   scoring: ScoreSummary;
 }
 
+export interface EvaluationList {
+  items: Evaluation[];
+  next_cursor: string | null;
+}
+
+export interface EvaluationListQuery {
+  conversation_id?: string;
+  limit?: number;
+  cursor?: string;
+}
+
+export interface AppealCreate {
+  operation_id: string;
+  expected_revision: number;
+  criterion_id: string;
+  reason: string;
+  message_ids: string[];
+}
+
+type DecisionFields = {
+  operation_id: string;
+  expected_revision: number;
+  reason: string;
+};
+
+export type AppealDecision = DecisionFields & (
+  | { decision: 'accepted'; override: CriterionResult & { status: 'scored' } }
+  | { decision: 'rejected'; override?: never }
+);
+
+export interface Appeal {
+  id: string;
+  evaluation_id: string;
+  criterion_id: string;
+  reason: string;
+  message_ids: string[];
+  created_at: string;
+  status: 'open' | 'accepted' | 'rejected';
+}
+
+export interface ReviewDecision {
+  id: string;
+  appeal_id: string;
+  evaluation_id: string;
+  decision: 'accepted' | 'rejected';
+  reason: string;
+  override: CriterionResult | null;
+  reviewer_id: string;
+  created_at: string;
+}
+
+export interface ReviewCase {
+  evaluation_id: string;
+  revision: number;
+  review_status: 'pending' | 'appealed' | 'resolved';
+  snapshot_available: boolean;
+  original: Evaluation;
+  final: { criteria: CriterionResult[]; scoring: ScoreSummary };
+  appeals: Appeal[];
+  decisions: ReviewDecision[];
+}
+
+export type AudioContentType = 'audio/wav' | 'audio/mpeg' | 'audio/flac' | 'audio/ogg';
+
+export interface AudioAsset {
+  id: string;
+  content_type: AudioContentType;
+  size_bytes: number;
+  sha256: string;
+  duration_seconds: number | null;
+  created_at: string;
+}
+
+export interface TranscriptionCreate {
+  asset_id: string;
+  language: Language;
+  operation_id: string;
+}
+
+export interface TranscriptionResult {
+  schema_version: '1.0.0';
+  audio_sha256: string;
+  language: Language;
+  provider: string;
+  model: string;
+  segments: Array<{
+    speaker: TranscriptRole | 'unknown';
+    text: string;
+    start_seconds: number;
+    end_seconds: number;
+  }>;
+}
+
+export interface TranscriptionJob {
+  id: string;
+  asset_id: string;
+  language: Language;
+  status: 'queued' | 'running' | 'completed' | 'failed' | 'needs_review';
+  created_at: string;
+  updated_at: string;
+  conversation_id: string | null;
+  error_code: string | null;
+  result: TranscriptionResult | null;
+}
+
+export interface TranscriptionReview {
+  operation_id: string;
+  roles: TranscriptRole[];
+}
+
+export interface BackendHealth {
+  status: string;
+  service?: 'backend';
+  schema_version?: '1.0.0';
+}
+
 export interface CqaApi {
-  health(): Promise<{ status: string }>;
+  health(): Promise<BackendHealth>;
   getChecklists(): Promise<Checklist[]>;
+  publishChecklist(id: string, payload: ChecklistPublish): Promise<Checklist>;
   getConversations(): Promise<Conversation[]>;
-  evaluate(request: EvaluationRequest): Promise<Evaluation>;
+  getConversation(id: string): Promise<Conversation>;
+  createConversation(payload: ConversationCreate): Promise<Conversation>;
+  evaluate(payload: EvaluationRequest): Promise<Evaluation>;
+  getEvaluationPage(query?: EvaluationListQuery): Promise<EvaluationList>;
+  getEvaluations(conversationId?: string): Promise<Evaluation[]>;
+  getEvaluation(id: string): Promise<Evaluation>;
+  getEvaluationSnapshot(id: string): Promise<EvaluationSnapshot>;
+  getReviewCase(evaluationId: string): Promise<ReviewCase>;
+  createAppeal(evaluationId: string, payload: AppealCreate): Promise<ReviewCase>;
+  decideAppeal(appealId: string, payload: AppealDecision): Promise<ReviewCase>;
+  uploadAudio(blob: Blob, operationId: string, contentType?: AudioContentType | 'audio/x-wav'): Promise<AudioAsset>;
+  getAudioAsset(id: string): Promise<AudioAsset>;
+  audioContentUrl(id: string): string;
+  createTranscription(payload: TranscriptionCreate): Promise<TranscriptionJob>;
+  getTranscription(id: string): Promise<TranscriptionJob>;
+  reviewTranscription(id: string, payload: TranscriptionReview): Promise<TranscriptionJob>;
 }

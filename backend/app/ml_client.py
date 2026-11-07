@@ -9,6 +9,7 @@ import httpx
 
 
 DEFAULT_MAX_RESPONSE_BYTES = 2 * 1024 * 1024
+MAX_ERROR_RESPONSE_BYTES = 4096
 _JSON_MEDIA_TYPE = re.compile(r"application/(?:json|[a-z0-9!#$&^_.+-]+\+json)")
 _HEALTH_FIELDS = ("status", "service", "provider", "model", "schema_version")
 
@@ -18,6 +19,10 @@ class MLUnavailable(Exception):
 
 
 class MLInvalidResponse(Exception):
+    pass
+
+
+class MLContextLimitExceeded(Exception):
     pass
 
 
@@ -47,11 +52,13 @@ class MLClient:
             ) as response:
                 if response.status_code == 503:
                     raise MLUnavailable("Local ML service is unavailable.")
-                if not 200 <= response.status_code < 300:
+                context_error = response.status_code == 422 and method == "POST" and path == "/v1/evaluate"
+                if not 200 <= response.status_code < 300 and not context_error:
                     # Includes invalid_provider_response (500), unexpected client
                     # errors, redirects, and other upstream server errors. Never
                     # echo an upstream URL, body, or error message to the caller.
                     raise MLInvalidResponse("ML returned an unexpected HTTP status.")
+                byte_limit = min(self.max_response_bytes, MAX_ERROR_RESPONSE_BYTES) if context_error else self.max_response_bytes
                 media_type = response.headers.get("content-type", "").split(";", 1)[0].strip().lower()
                 if not _JSON_MEDIA_TYPE.fullmatch(media_type):
                     raise MLInvalidResponse("ML response must have a JSON content type.")
@@ -65,14 +72,14 @@ class MLClient:
                     if not declared.isascii() or not declared.isdecimal():
                         raise MLInvalidResponse("ML response length is invalid.")
                     try:
-                        too_large = int(declared) > self.max_response_bytes
+                        too_large = int(declared) > byte_limit
                     except ValueError:
                         raise MLInvalidResponse("ML response length is invalid.") from None
                     if too_large:
                         raise MLInvalidResponse("ML response exceeds its size limit.")
                 body = bytearray()
                 async for chunk in response.aiter_bytes(chunk_size=64 * 1024):
-                    if len(body) + len(chunk) > self.max_response_bytes:
+                    if len(body) + len(chunk) > byte_limit:
                         raise MLInvalidResponse("ML response exceeds its size limit.")
                     body.extend(chunk)
         except httpx.RequestError:
@@ -93,6 +100,10 @@ class MLClient:
             raise MLInvalidResponse("ML did not return strict UTF-8 JSON.") from None
         if type(result) is not dict:
             raise MLInvalidResponse("ML response must be an object.")
+        if context_error:
+            if result == {"error": "context_limit_exceeded"}:
+                raise MLContextLimitExceeded("Conversation and checklist exceed the local model context.")
+            raise MLInvalidResponse("ML returned an unexpected HTTP status.")
         return result
 
     async def evaluate(self, request: dict) -> dict:

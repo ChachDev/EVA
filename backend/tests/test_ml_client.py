@@ -7,7 +7,7 @@ import traceback
 import httpx
 import pytest
 
-from app.ml_client import MLClient, MLInvalidResponse, MLUnavailable
+from app.ml_client import MLClient, MLContextLimitExceeded, MLInvalidResponse, MLUnavailable
 
 
 PRIVATE = "SYNTHETIC_PRIVATE_VALUE"
@@ -86,6 +86,88 @@ def test_http_status_classification_is_safe_and_has_no_retries_or_redirects(stat
     rendered = "".join(traceback.format_exception(captured.value))
     assert PRIVATE not in rendered and "example.invalid" not in rendered
     assert len(requests) == 1
+
+
+@pytest.mark.parametrize("media_type", ["application/json", "application/vnd.eva+json; charset=utf-8"])
+def test_exact_context_error_has_a_typed_safe_exception_without_retry(media_type):
+    requests = []
+
+    def handler(request):
+        requests.append(request)
+        return httpx.Response(422, headers={"Content-Type": media_type},
+                              content=b'{"error":"context_limit_exceeded"}')
+
+    with pytest.raises(MLContextLimitExceeded) as captured:
+        evaluate(handler)
+    assert "exceed the local model context" in str(captured.value)
+    assert len(requests) == 1
+
+
+@pytest.mark.parametrize("body", [
+    b'{"error":"invalid_request"}', b'{"code":"context_limit_exceeded"}',
+    b'{"error":"context_limit_exceeded","error":"context_limit_exceeded"}',
+    b'{"error":"context_limit_exceeded","private":"SYNTHETIC_PRIVATE_VALUE"}',
+    b'{"error":"context_limit_exceeded","value":NaN}',
+    b'{"error":"context_limit_exceeded","value":1e999}',
+    b'{"error":"context_limit_exceeded","value":"\\ud800"}',
+    b'{"error":"context_limit_exceeded","value":"\xff"}',
+    b'[{"error":"context_limit_exceeded"}]', b'{"error":"context_limit_exceeded",}',
+])
+def test_unrecognized_or_non_strict_422_remains_an_invalid_response(body):
+    with pytest.raises(MLInvalidResponse) as captured:
+        evaluate(lambda _: httpx.Response(422, headers={"Content-Type": "application/json"}, content=body))
+    assert PRIVATE not in "".join(traceback.format_exception(captured.value))
+
+
+@pytest.mark.parametrize("status", [400, 413, 500, 502])
+def test_context_code_on_other_error_status_is_not_a_context_rejection(status):
+    with pytest.raises(MLInvalidResponse):
+        evaluate(lambda _: httpx.Response(status, json={"error": "context_limit_exceeded"}))
+
+
+def test_context_code_on_success_is_left_for_canonical_response_validation():
+    payload = {"error": "context_limit_exceeded"}
+    assert evaluate(lambda _: httpx.Response(200, json=payload)) == payload
+
+
+def test_health_422_cannot_be_classified_as_evaluation_context_limit():
+    with pytest.raises(MLInvalidResponse):
+        probe(lambda _: httpx.Response(422, json={"error": "context_limit_exceeded"}))
+
+
+@pytest.mark.parametrize("headers", [{}, {"Content-Type": "text/plain"},
+                                       {"Content-Type": "application/json", "Content-Encoding": "gzip"}])
+def test_context_error_requires_uncompressed_json_before_reading(headers):
+    stream = Chunks([b'{"error":"context_limit_exceeded"}'])
+    with pytest.raises(MLInvalidResponse):
+        evaluate(lambda _: httpx.Response(422, headers=headers, stream=stream))
+    assert stream.read == 0 and stream.closed
+
+
+def test_context_error_declared_length_is_bounded_more_tightly_than_success():
+    stream = Chunks([b'{"error":"context_limit_exceeded"}'])
+    with pytest.raises(MLInvalidResponse):
+        evaluate(lambda _: httpx.Response(422, headers={
+            "Content-Type": "application/json", "Content-Length": "4097",
+        }, stream=stream))
+    assert stream.read == 0 and stream.closed
+
+
+def test_context_error_stream_is_bounded_without_content_length():
+    stream = Chunks([b" " * 65536, PRIVATE.encode()])
+    with pytest.raises(MLInvalidResponse) as captured:
+        evaluate(lambda _: httpx.Response(422, headers={"Content-Type": "application/json"}, stream=stream))
+    assert stream.read == 1 and stream.closed
+    assert PRIVATE not in str(captured.value)
+
+
+def test_context_error_obeys_configured_smaller_limit_and_exact_4096_boundary():
+    body = b'{"error":"context_limit_exceeded"}'
+    with pytest.raises(MLInvalidResponse):
+        evaluate(lambda _: httpx.Response(422, headers={"Content-Type": "application/json"}, content=body), limit=8)
+    padded = body + b" " * (4096 - len(body))
+    with pytest.raises(MLContextLimitExceeded):
+        evaluate(lambda _: httpx.Response(422, headers={"Content-Type": "application/json"}, content=padded))
 
 
 @pytest.mark.parametrize("failure", [httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, httpx.ReadError, httpx.RemoteProtocolError])

@@ -1,0 +1,29 @@
+#eva-root .live-workspace .live-panel { padding: 24px; }
+#eva-root .live-workspace .live-panel > .panel-heading { padding: 0 0 20px; }
+#eva-root .live-workspace .live-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-bottom: 24px; }
+#eva-root .live-workspace .live-metric { padding: 22px; display: grid; gap: 12px; }
+#eva-root .live-workspace .live-metric > strong { font-size: 34px; letter-spacing: -1px; }
+#eva-root .live-workspace .live-notice, #eva-root .live-workspace .live-error { padding: 16px 20px; border-radius: 10px; margin: 16px 0; line-height: 1.6; overflow-wrap: anywhere; }
+#eva-root .live-workspace .live-notice { background: #eef5f0; color: #2c563d; border: 1px solid #d9e7dc; }
+#eva-root .live-workspace .live-error { background: #fff1ed; color: #8a3828; border: 1px solid #f0d3c9; }
+#eva-root .live-workspace .live-notice > .icon-button { float: right; }
+#eva-root .live-workspace .live-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; margin: 16px 0; }
+#eva-root .live-workspace .live-select { flex: 1; min-width: 220px; max-width: 550px; margin: 0; }
+#eva-root .live-workspace .live-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+#eva-root .live-workspace .live-form { display: grid; gap: 16px; }
+#eva-root .live-workspace .live-form .form-label { margin: 0; }
+#eva-root .live-workspace .live-form textarea { resize: vertical; }
+#eva-root .live-workspace .live-criterion-editor { min-width: 0; border: 1px solid #dce5df; border-radius: 12px; padding: 20px; display: grid; gap: 14px; }
+#eva-root .live-workspace .live-criterion-editor > legend { padding: 0 8px; font-weight: 600; }
+#eva-root .live-workspace .live-checkbox { display: flex; gap: 12px; align-items: start; line-height: 1.6; }
+#eva-root .live-workspace .live-checkbox > input { margin-top: 5px; flex-shrink: 0; }
+#eva-root .live-workspace .live-evidence-picker { max-height: 300px; overflow-y: auto; border: 1px solid #dce5df; border-radius: 10px; padding: 16px; }
+#eva-root .live-workspace .live-evidence-picker label { padding: 10px 0; border-bottom: 1px solid #edf0ee; }
+#eva-root .live-workspace .live-appeal { border-top: 1px solid #e1e8e3; padding: 20px 0; overflow-wrap: anywhere; }
+#eva-root .live-workspace .live-audio { display: block; width: 100%; margin: 20px 0; }
+#eva-root .live-workspace .live-footer { margin: 32px 0 0; font-size: 12px; color: #68756d; line-height: 1.6; }
+#eva-root .live-workspace .button:disabled { opacity: .55; cursor: not-allowed; }
+#eva-root .live-workspace .form-label > select { min-width: 0; text-overflow: ellipsis; }
+#eva-root .live-workspace .topic-link strong { overflow-wrap: anywhere; }
+@media (max-width: 1000px) { #eva-root .live-workspace .live-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { #eva-root .live-workspace .live-panel { padding: 16px; } #eva-root .live-workspace .live-controls { align-items: stretch; } #eva-root .live-workspace .live-select { min-width: 100%; } #eva-root .live-workspace .live-fields { grid-template-columns: 1fr; } #eva-root .live-workspace .live-metric { padding: 16px; } }
