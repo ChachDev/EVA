@@ -1,0 +1,36 @@
+{
+  "id": "demo-ru-001",
+  "channel": "agent_chat",
+  "language": "RU",
+  "messages": [
+    {
+      "id": "m0001",
+      "speaker": "client",
+      "text": "Здравствуйте! Где посмотреть общие тарифы?",
+      "timestamp": "00:00",
+      "offset_seconds": 0
+    },
+    {
+      "id": "m0002",
+      "speaker": "operator",
+      "text": "Здравствуйте! Меня зовут Алия. Общие тарифы доступны на официальном сайте в разделе «Тарифы».",
+      "timestamp": "00:20",
+      "offset_seconds": 20
+    },
+    {
+      "id": "m0003",
+      "speaker": "client",
+      "text": "Спасибо, нашёл.",
+      "timestamp": "00:35",
+      "offset_seconds": 35
+    },
+    {
+      "id": "m0004",
+      "speaker": "operator",
+      "text": "Рада помочь! Если появятся вопросы, обращайтесь. До свидания!",
+      "timestamp": "00:40",
+      "offset_seconds": 40
+    }
+  ],
+  "audio_url": null
+}

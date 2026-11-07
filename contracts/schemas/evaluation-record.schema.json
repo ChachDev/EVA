@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/evaluation-record.schema.json",
+  "title": "evaluation-record",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "needs_review",
+        "completed"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "original": {
+      "$ref": "https://eva.local/schemas/evaluation-response.schema.json"
+    },
+    "scoring": {
+      "$ref": "https://eva.local/schemas/score-summary.schema.json"
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "created_at",
+    "original",
+    "scoring"
+  ]
+}

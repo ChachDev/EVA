@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/conversation.schema.json",
+  "title": "conversation",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "channel": {
+      "enum": [
+        "agent_chat",
+        "voice_call"
+      ]
+    },
+    "language": {
+      "enum": [
+        "RU",
+        "KZ",
+        "EN"
+      ]
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "speaker": {
+            "enum": [
+              "client",
+              "operator",
+              "bot",
+              "system"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "minLength": 1
+          },
+          "offset_seconds": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "speaker",
+          "text",
+          "timestamp",
+          "offset_seconds"
+        ]
+      },
+      "minItems": 1
+    },
+    "audio_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "channel",
+    "language",
+    "messages",
+    "audio_url"
+  ]
+}

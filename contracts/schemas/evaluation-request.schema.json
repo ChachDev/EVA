@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/evaluation-request.schema.json",
+  "title": "evaluation-request",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "conversation": {
+      "$ref": "https://eva.local/schemas/conversation.schema.json"
+    },
+    "checklist": {
+      "$ref": "https://eva.local/schemas/checklist.schema.json"
+    }
+  },
+  "required": [
+    "schema_version",
+    "conversation",
+    "checklist"
+  ]
+}

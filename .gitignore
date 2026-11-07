@@ -1,0 +1,32 @@
+# Local environments and generated output
+**/node_modules/
+**/dist/
+**/.venv/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/coverage/
+**/.coverage
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+!**/.env.example
+tmp/
+**/data/
+**/artifacts/
+**/logs/
+**/*.sqlite*
+**/*.db
+**/*.log
+# Keep source datasets, audio and models local; commit only synthetic contract fixtures.
+**/*.pdf
+**/*.wav
+**/*.mp3
+**/*.mp4
+**/*.parquet
+**/*.safetensors
+**/*.pt
+.DS_Store
+Thumbs.db

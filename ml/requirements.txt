@@ -1,0 +1,4 @@
+fastapi==0.142.2
+uvicorn==0.54.0
+jsonschema[format]==4.26.0
+referencing==0.37.0

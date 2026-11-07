@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/score-summary.schema.json",
+  "title": "score-summary",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "enum": [
+        "complete",
+        "needs_review",
+        "not_calculable"
+      ]
+    },
+    "total": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "applicable_weight": {
+      "type": "number",
+      "minimum": 0
+    },
+    "has_gross_error": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "section_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "section_id",
+          "score"
+        ]
+      },
+      "minItems": 0
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "points": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "effective_weight": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          }
+        },
+        "required": [
+          "criterion_id",
+          "points",
+          "effective_weight"
+        ]
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "status",
+    "total",
+    "applicable_weight",
+    "has_gross_error",
+    "sections",
+    "criteria"
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/checklist.schema.json",
+  "title": "checklist",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instruction": {
+            "type": "string",
+            "minLength": 1
+          },
+          "section_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "type": {
+            "enum": [
+              "boolean",
+              "scale",
+              "flag"
+            ]
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0
+          },
+          "allow_na": {
+            "type": "boolean"
+          },
+          "na_condition": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scale": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "instruction",
+          "section_id",
+          "type",
+          "weight",
+          "allow_na",
+          "na_condition",
+          "scale"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "flag"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "weight": {
+                  "const": 0
+                },
+                "allow_na": {
+                  "const": false
+                },
+                "scale": {
+                  "maxItems": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "boolean"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "scale": {
+                  "maxItems": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "scale"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "scale": {
+                  "minItems": 2,
+                  "contains": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "allow_na": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "na_condition": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "na_condition": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "name",
+    "criteria"
+  ]
+}

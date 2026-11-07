@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/evaluation-response.schema.json",
+  "title": "evaluation-response",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "conversation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checklist_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checklist_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "scored",
+              "needs_review"
+            ]
+          },
+          "value": {
+            "type": [
+              "boolean",
+              "number",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "message",
+                    "missing_action",
+                    "not_applicable",
+                    "uncertain"
+                  ]
+                },
+                "message_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "kind",
+                "message_ids"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "criterion_id",
+          "status",
+          "value",
+          "reason",
+          "evidence"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "needs_review"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "null"
+                },
+                "evidence": {
+                  "items": {
+                    "properties": {
+                      "kind": {
+                        "const": "uncertain"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "evidence": {
+                  "items": {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "message",
+                          "missing_action",
+                          "not_applicable"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "scored"
+                },
+                "value": {
+                  "type": "null"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "evidence": {
+                  "items": {
+                    "properties": {
+                      "kind": {
+                        "const": "not_applicable"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "minItems": 1
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "schema_version",
+    "conversation_id",
+    "checklist_id",
+    "checklist_version",
+    "provider",
+    "model",
+    "criteria",
+    "warnings"
+  ]
+}
