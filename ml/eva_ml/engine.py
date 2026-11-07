@@ -21,7 +21,10 @@ class EngineError(RuntimeError):
 
 
 class ContextLimitError(EngineError):
-    pass
+    def __init__(self, message, prompt_tokens=None, context_tokens=None):
+        super().__init__(message)
+        self.prompt_tokens = prompt_tokens if type(prompt_tokens) is int else None
+        self.context_tokens = context_tokens if type(context_tokens) is int else None
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -49,7 +52,8 @@ class LocalEngine:
                     detail = None
                 fields = detail.get("error") if isinstance(detail, dict) else None
                 if isinstance(fields, dict) and fields.get("type") == "exceed_context_size_error":
-                    raise ContextLimitError("Input exceeds local model context") from error
+                    raise ContextLimitError("Input exceeds local model context",
+                        fields.get("n_prompt_tokens"), fields.get("n_ctx")) from error
             raise EngineError("Local inference request failed") from error
         except (OSError, ValueError) as error:
             raise EngineError("Local inference request failed") from error
@@ -57,6 +61,17 @@ class LocalEngine:
 
 @contextmanager
 def loaded_engine():
+    # An explicitly supplied loopback worker belongs to the operator, not to this service.
+    configured_port = os.getenv("EVA_LLAMA_WORKER_PORT")
+    if configured_port is not None:
+        if not configured_port.isascii() or not configured_port.isdecimal() or not 1 <= int(configured_port) <= 65535:
+            raise EngineError("EVA_LLAMA_WORKER_PORT must be a TCP port.")
+        model = Path(os.environ.get("EVA_ISSAI_GGUF", DEFAULT_WEIGHTS)).stem
+        worker = LocalEngine(int(configured_port), model)
+        if not any(item.get("id") == model for item in worker.request("/v1/models")["data"]):
+            raise EngineError("Configured local worker does not serve the requested model.")
+        yield worker
+        return
     executable = Path(os.getenv("EVA_LLAMA_SERVER", DEFAULT_ENGINE)).resolve(strict=True)
     weights = Path(os.getenv("EVA_ISSAI_GGUF", DEFAULT_WEIGHTS)).resolve(strict=True)
     with socket.socket() as probe:
@@ -65,7 +80,8 @@ def loaded_engine():
     worker = LocalEngine(port, weights.stem)
     args = [str(executable), "-m", str(weights), "--alias", worker.model, "--host", "127.0.0.1",
             "--port", str(port), "--offline", "--no-webui", "--jinja", "--reasoning", "off",
-            "-c", str(CONTEXT_TOKENS), "-np", "1", "-ngl", "99", "--load-mode", "none"]
+            "-c", str(CONTEXT_TOKENS), "-np", "1", "-ngl", "99", "--load-mode", "none",
+            "--cache-ram", "0"]
     started = time.monotonic()
     proc = subprocess.Popen(args, cwd=executable.parent, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),

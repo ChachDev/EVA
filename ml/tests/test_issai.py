@@ -53,7 +53,7 @@ def test_facts_and_replacement_on_http_boundary(monkeypatch, evaluation_request)
     assert outcomes[1]["reason"] == needs["na_condition"]
 
 
-@pytest.mark.parametrize("failure,expected", [("wrong_evidence",500),("offline",503)])
+@pytest.mark.parametrize("failure,expected", [("wrong_evidence",200),("offline",503)])
 def test_provider_failure_never_returns_a_score(monkeypatch, evaluation_request, failure, expected):
     request = deepcopy(evaluation_request)
     request["checklist"]["criteria"] = [next(c for c in request["checklist"]["criteria"] if c["id"] == "contact")]
@@ -67,7 +67,13 @@ def test_provider_failure_never_returns_a_score(monkeypatch, evaluation_request,
             return {"choices":[{"finish_reason":"stop","message":{"content":'{"contact":{"evidence":["invented"],"facts":["yes","yes"]}}'}}]}
 
     response = evaluate(monkeypatch,request,BrokenEngine({}))
-    assert response.status_code == expected and "criteria" not in response.json()
+    assert response.status_code == expected
+    if failure == "offline":
+        assert "criteria" not in response.json()
+    else:
+        row = response.json()["criteria"][0]
+        assert row["status"] == "needs_review" and row["value"] is None
+        assert row["evidence"][0]["kind"] == "uncertain"
 
 
 def test_evidence_representation_preserves_real_ids_and_order():
@@ -86,7 +92,7 @@ def test_bad_evidence_cannot_acquire_an_arbitrary_source(references, choices):
         resolve_evidence(references, choices)
 
 
-def test_rendered_context_overflow_has_its_own_http_error(monkeypatch, evaluation_request):
+def test_context_overflow_returns_all_pending_with_real_boundaries(monkeypatch, evaluation_request):
     import io
     from urllib.error import HTTPError
     from eva_ml.engine import LocalEngine
@@ -105,8 +111,14 @@ def test_rendered_context_overflow_has_its_own_http_error(monkeypatch, evaluatio
             return engine.request(route, payload)
 
     response = evaluate(monkeypatch, evaluation_request, OverflowOnEvaluation({}))
-    assert response.status_code == 422
-    assert response.json() == {"error": "context_limit_exceeded"}
+    assert response.status_code == 200
+    results = response.json()["criteria"]
+    assert len(results) == len(evaluation_request["checklist"]["criteria"])
+    ids = [m["id"] for m in evaluation_request["conversation"]["messages"]]
+    assert all(row["status"] == "needs_review" and row["value"] is None and
+               "21000" in row["reason"] and "16384" in row["reason"] and
+               row["evidence"] == [{"kind":"uncertain","message_ids":[ids[0],ids[-1]]}]
+               for row in results)
 
 
 @pytest.mark.parametrize("change_facts", [False, True])
@@ -139,7 +151,49 @@ def test_evidence_selection_is_bounded_to_original_decisions(monkeypatch, evalua
     response = evaluate(monkeypatch, request, SelectReference({}))
     assert len(calls) == 2
     if change_facts:
-        assert response.status_code == 500 and "criteria" not in response.json()
+        assert response.status_code == 200
+        good, failed = response.json()["criteria"]
+        assert good["value"] is True and good["evidence"][0]["message_ids"] == [ids[0]]
+        assert failed["status"] == "needs_review" and failed["value"] is None
     else:
         assert response.status_code == 200
         assert response.json()["criteria"][1]["evidence"][0]["message_ids"] == [ids[-1]]
+
+
+def test_prepared_plan_invalidates_all_semantically_distinct_keys(evaluation_request):
+    from eva_ml.issai import compiled_plan, plan_for
+    cs = evaluation_request["checklist"]
+    _, _, original = plan_for(cs, "model@a")
+    for field, value in [("instruction", "Новый смысл"), ("scale", [0, 1, 2]),
+                          ("na_condition", "Другое условие"), ("allow_na", False)]:
+        other = deepcopy(cs)
+        c = next(c for c in other["criteria"] if c["id"] == "consultation")
+        c[field] = value
+        assert plan_for(other, "model@a")[2] != original
+    assert plan_for({**cs, "version":cs["version"]+1}, "model@a")[2] != original
+    assert plan_for(cs, "model@b")[2] != original
+    assert compiled_plan(cs["id"], cs["version"], json.dumps(cs["criteria"]), "model@a", "new-prompt")[2] != original
+    assert plan_for(cs, "model@a")[2] == original
+
+
+def test_malformed_row_and_bad_correction_do_not_hide_valid_neighbor(monkeypatch, evaluation_request):
+    request = deepcopy(evaluation_request)
+    request["checklist"]["criteria"] = [c for c in request["checklist"]["criteria"] if c["id"] in ("contact","needs")]
+    mid = request["conversation"]["messages"][0]["id"]
+    good = {"facts":["yes","yes"],"evidence":[mid]}
+    class Damaged(Inference):
+        attempts = 0
+        def request(self, route, payload):
+            if payload["max_tokens"] == 1: return {"choices":[{"finish_reason":"length"}]}
+            self.attempts += 1
+            if self.attempts == 2:
+                assert payload["response_format"]["json_schema"]["schema"]["properties"]["contact"] == {"const":good}
+                raise EngineError("worker disconnected during row correction")
+            rows = {"contact":good,"needs":{"facts":"bad shape","evidence":[mid]}}
+            return {"choices":[{"finish_reason":"stop","message":{"content":json.dumps(rows)}}]}
+    damaged = Damaged({})
+    resp = evaluate(monkeypatch, request, damaged)
+    assert resp.status_code == 200 and damaged.attempts == 2
+    contact, needs = resp.json()["criteria"]
+    assert contact["value"] is True and contact["evidence"][0]["message_ids"] == [mid]
+    assert needs["status"] == "needs_review" and needs["value"] is None
