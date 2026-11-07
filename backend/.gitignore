@@ -3,6 +3,7 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
-data/*.sqlite3*
+data/
 .env
 tests/.tmp/
+tests/.tmp-*/

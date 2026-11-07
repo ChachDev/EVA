@@ -20,7 +20,7 @@ def create_body(request_data):
 
 
 def test_evaluation_roundtrip_survives_app_restart(tmp_path, contracts, request_data, result_data):
-    settings = Settings(database_path=tmp_path / "eva.sqlite3")
+    settings = Settings(seed_demo=True, database_path=tmp_path / "eva.sqlite3")
 
     async def evaluator(request):
         contracts.validate_request(request)
@@ -44,7 +44,7 @@ def test_unavailable_ml_is_503_without_fabricated_score(tmp_path, request_data):
     async def unavailable(_):
         raise MLUnavailable()
 
-    with TestClient(create_app(Settings(database_path=tmp_path / "eva.sqlite3"), unavailable)) as client:
+    with TestClient(create_app(Settings(seed_demo=True, database_path=tmp_path / "eva.sqlite3"), unavailable)) as client:
         response = client.post("/api/v1/evaluations", json=create_body(request_data))
         assert response.status_code == 503
         assert "scoring" not in response.json()
@@ -56,7 +56,7 @@ def test_invalid_ml_response_is_502(tmp_path, request_data, result_data):
         invalid_result["criteria"][0]["value"] = 1
         return invalid_result
 
-    with TestClient(create_app(Settings(database_path=tmp_path / "eva.sqlite3"), invalid)) as client:
+    with TestClient(create_app(Settings(seed_demo=True, database_path=tmp_path / "eva.sqlite3"), invalid)) as client:
         assert client.post("/api/v1/evaluations", json=create_body(request_data)).status_code == 502
 
 
@@ -69,7 +69,7 @@ def test_pending_ml_result_is_persisted_as_review(tmp_path, request_data, result
         )
         return output
 
-    with TestClient(create_app(Settings(database_path=tmp_path / "eva.sqlite3"), pending)) as client:
+    with TestClient(create_app(Settings(seed_demo=True, database_path=tmp_path / "eva.sqlite3"), pending)) as client:
         response = client.post("/api/v1/evaluations", json=create_body(request_data))
         assert response.status_code == 201
         assert response.json()["status"] == "needs_review"
@@ -77,7 +77,7 @@ def test_pending_ml_result_is_persisted_as_review(tmp_path, request_data, result
 
 
 def test_scored_uncertain_result_is_rejected_without_persistence(tmp_path, request_data, result_data):
-    settings = Settings(database_path=tmp_path / "eva.sqlite3")
+    settings = Settings(seed_demo=True, database_path=tmp_path / "eva.sqlite3")
 
     async def uncertain(_):
         output = deepcopy(result_data)
@@ -96,7 +96,7 @@ def test_request_validation_and_cors(tmp_path, request_data, result_data):
     async def evaluator(_):
         return result_data
 
-    with TestClient(create_app(Settings(database_path=tmp_path / "eva.sqlite3"), evaluator)) as client:
+    with TestClient(create_app(Settings(seed_demo=True, database_path=tmp_path / "eva.sqlite3"), evaluator)) as client:
         body = create_body(request_data)
         assert client.post("/api/v1/evaluations", json={**body, "checklist_version": True}).status_code == 422
         assert client.post("/api/v1/evaluations", json={**body, "checklist_version": 999}).status_code == 409

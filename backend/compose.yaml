@@ -1,0 +1,19 @@
+name: eva-backend
+
+services:
+  postgres:
+    image: postgres:18
+    restart: "no"
+    environment:
+      POSTGRES_DB: eva
+      POSTGRES_USER: eva
+      POSTGRES_PASSWORD: ${EVA_POSTGRES_PASSWORD:-eva-local-dev}
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eva -d eva"]
+      interval: 5s
+      timeout: 3s
+      retries: 10

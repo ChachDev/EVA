@@ -1,1 +1,1 @@
-"""CQA evaluation service owned by Kroud."""
+"""CQA evaluation service owned by norerade."""
