@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from eva_ml import stub
+from eva_ml.audit import Auditor, COMPONENTS
 from eva_ml.contracts import ContractError, Contracts
 from eva_ml.engine import EngineError, loaded_engine
 from eva_ml.issai import InvalidDecision
@@ -31,6 +32,8 @@ async def lifespan(application: FastAPI):
         engine = await run_in_threadpool(worker.__enter__)
         try:
             application.state.provider = select_provider(engine, os.getenv("EVA_CONSULTATION_VARIANT", "consultation-v1.1"))
+            configured = os.getenv("EVA_AUDIT_COMPONENTS", ",".join(sorted(COMPONENTS)))
+            application.state.auditor = Auditor(application.state.provider, {key.strip() for key in configured.split(",") if key.strip()})
             await run_in_threadpool(application.state.provider.prepare)
             logging.getLogger("uvicorn.error").info("ISSAI service ready in %.3f s",time.monotonic()-started)
             yield
@@ -87,3 +90,23 @@ def evaluate(request: Request, payload: Annotated[Any, Body()]) -> Any:
         # Do not pass malformed provider data or conversation text to callers/logs.
         return JSONResponse(status_code=500, content={"error": "invalid_provider_response"})
     return result
+
+
+@app.post("/v1/audit")
+def audit(request: Request, payload: Annotated[Any, Body()]) -> Any:
+    contracts = request.app.state.contracts
+    try:
+        contracts.validate_request(payload)
+    except ContractError as error:
+        return JSONResponse(status_code=422, content={"error":"invalid_request","issues":error.issues})
+    auditor = getattr(request.app.state,"auditor",None)
+    if auditor is None:
+        return JSONResponse(status_code=503,content={"error":"real_evaluator_required"})
+    try:
+        result = auditor.evaluate(payload)
+        contracts.validate_response(payload,result["response"])
+        return result
+    except EngineError:
+        return JSONResponse(status_code=503,content={"error":"local_engine_unavailable"})
+    except (ContractError, InvalidDecision):
+        return JSONResponse(status_code=500,content={"error":"invalid_provider_response"})

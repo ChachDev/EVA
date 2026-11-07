@@ -29,7 +29,10 @@
         "additionalProperties": false,
         "properties": {
           "timestamp": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "minLength": 1,
             "maxLength": 128
           },
@@ -38,13 +41,45 @@
               "client",
               "operator",
               "bot",
-              "system"
+              "system",
+              "unknown"
             ]
           },
           "text": {
             "type": "string",
             "minLength": 1,
             "maxLength": 100000
+          },
+          "speaker_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "language": {
+            "enum": [
+              "RU",
+              "KZ",
+              "EN",
+              "mixed",
+              "unknown"
+            ]
+          },
+          "quality": {
+            "type": "string",
+            "minLength": 1
+          },
+          "end_seconds": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "offset_seconds": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
           }
         },
         "required": [
@@ -55,6 +90,25 @@
       },
       "minItems": 1,
       "maxItems": 10000
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target_operator_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "complete_start": {
+          "type": "boolean"
+        },
+        "complete_end": {
+          "type": "boolean"
+        },
+        "gaps": {
+          "type": "boolean"
+        }
+      }
     }
   },
   "required": [
