@@ -1,0 +1,151 @@
+<style>
+#eva-root .ev-protocol{--ep-page:light-dark(#f7f7f4,#191a18);--ep-paper:light-dark(#ffffff,#20221e);--ep-ink:light-dark(#272925,#e9ebe6);--ep-secondary:light-dark(#62665e,#b3b8ae);--ep-line:light-dark(#dfe1da,#3b3f37);--ep-soft:light-dark(#efefeb,#2a2d27);--ep-accent:light-dark(#49613d,#c3d4a6);--ep-selected:light-dark(#edf1e4,#30392a);--ep-warning:light-dark(#78511f,#dfbc88);font-family:"EVA Plex","IBM Plex Sans","Segoe UI",sans-serif;font-size:14px;line-height:1.5;font-weight:400;color:var(--ep-ink);background:var(--ep-page);color-scheme:inherit;min-width:0;min-height:892px;display:flex;flex-direction:column;overflow:hidden;border-radius:16px;border:1px solid var(--ep-line)}
+#eva-root .ev-protocol *{box-sizing:border-box}
+#eva-root .ev-protocol button,#eva-root .ev-protocol input,#eva-root .ev-protocol textarea{font:inherit;color:inherit}
+
+
+#eva-root .ev-protocol button:disabled{opacity:.65}
+#eva-root .ev-protocol h1,#eva-root .ev-protocol h2,#eva-root .ev-protocol h3,#eva-root .ev-protocol p,#eva-root .ev-protocol blockquote{margin:0}
+#eva-root .ev-protocol .ep-header{display:flex;align-items:center;gap:40px;min-height:56px;padding:12px 36px;border-bottom:1px solid var(--ep-line);background:var(--ep-paper)}
+#eva-root .ev-protocol .ep-brand{font-size:23px;line-height:1;font-weight:500;letter-spacing:1px;color:var(--ep-accent)}
+#eva-root .ev-protocol .ep-nav{display:flex;align-items:center;gap:24px;color:var(--ep-secondary);font-size:13px}
+#eva-root .ev-protocol .ep-nav-current{color:var(--ep-ink);position:relative}
+#eva-root .ev-protocol .ep-nav-current::after{content:"";position:absolute;left:0;right:0;bottom:-19px;height:2px;background:var(--ep-accent)}
+#eva-root .ev-protocol .ep-account{margin-left:auto;margin-right:72px;text-align:right;font-size:12px;line-height:1.4;white-space:nowrap}
+#eva-root .ev-protocol .ep-account span{display:block;color:var(--ep-secondary);font-size:11px}
+#eva-root .ev-protocol .ep-document{flex:1;padding:24px 36px 16px;min-width:0}
+#eva-root .ev-protocol .ep-intro{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:16px}
+#eva-root .ev-protocol .ep-kicker{color:var(--ep-secondary);font-size:12px;margin-bottom:4px}
+#eva-root .ev-protocol .ep-intro h1{font-family:Georgia,"Times New Roman",serif;font-size:32px;font-weight:400;line-height:1.125;letter-spacing:-.5px}
+#eva-root .ev-protocol .ep-intro p{color:var(--ep-secondary);font-size:14px;margin-top:4px}
+#eva-root .ev-protocol .ep-score{display:flex;gap:8px;align-items:baseline;font-variant-numeric:tabular-nums;line-height:1.1;padding-top:12px;white-space:nowrap}
+#eva-root .ev-protocol .ep-score strong{font-size:48px;font-weight:400;letter-spacing:-2px}
+#eva-root .ev-protocol .ep-score span{font-size:14px;color:var(--ep-secondary)}
+#eva-root .ev-protocol .ep-metadata{display:grid;grid-template-columns:1.5fr 1.2fr 1fr 1fr;gap:16px;margin-bottom:16px;padding:8px 0;border-top:1px solid var(--ep-line);border-bottom:1px solid var(--ep-line);font-size:13px}
+#eva-root .ev-protocol .ep-metadata span{color:var(--ep-secondary);display:block;font-size:11px;margin-bottom:4px}
+#eva-root .ev-protocol .ep-criteria{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-bottom:20px}
+#eva-root .ev-protocol .ep-criterion{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;padding:0 0 4px;text-align:left;background:transparent;border:0;border-bottom:2px solid var(--ep-line);border-radius:0}
+#eva-root .ev-protocol button.ep-criterion:hover{border-bottom-color:var(--ep-secondary)}
+#eva-root .ev-protocol button.ep-criterion[aria-pressed="true"],#eva-root .ev-protocol button.ep-criterion.is-active{border-bottom-color:var(--ep-accent)}
+#eva-root .ev-protocol .ep-criterion-label{font-size:12px;color:var(--ep-secondary)}
+#eva-root .ev-protocol .ep-criterion-score{font-size:21px;font-variant-numeric:tabular-nums;line-height:1.25}
+#eva-root .ev-protocol .ep-criterion-score small{font-size:12px;color:var(--ep-secondary)}
+#eva-root .ev-protocol .ep-criterion-note{font-size:11px;color:var(--ep-secondary)}
+#eva-root .ev-protocol button.ep-criterion .ep-criterion-note{color:var(--ep-warning)}
+#eva-root .ev-protocol .ep-reading{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(220px,1fr);gap:32px;min-height:292px}
+#eva-root .ev-protocol .ep-transcript{min-width:0}
+#eva-root .ev-protocol .ep-section-title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:8px;border-bottom:1px solid var(--ep-line);margin-bottom:4px}
+#eva-root .ev-protocol .ep-section-title h2{font-size:15px;font-weight:500}
+#eva-root .ev-protocol .ep-section-title span{font-size:11px;color:var(--ep-secondary)}
+#eva-root .ev-protocol .ep-reply{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;width:100%;padding:8px 8px 8px 0;background:none;border:0;border-bottom:1px solid var(--ep-line);border-radius:0;text-align:left}
+#eva-root .ev-protocol .ep-reply:hover{background:var(--ep-soft)}
+#eva-root .ev-protocol .ep-reply[aria-pressed="true"],#eva-root .ev-protocol .ep-reply.is-active{background:var(--ep-selected);box-shadow:inset 3px 0 0 var(--ep-accent)}
+#eva-root .ev-protocol .ep-reply[aria-pressed="true"] .ep-timecode,#eva-root .ev-protocol .ep-reply.is-active .ep-timecode{color:var(--ep-accent)}
+#eva-root .ev-protocol .ep-timecode{padding-left:8px;color:var(--ep-secondary);font-size:11px;font-variant-numeric:tabular-nums;line-height:20px}
+#eva-root .ev-protocol .ep-reply-person{display:block;font-size:11px;color:var(--ep-secondary);line-height:16px;margin-bottom:4px}
+#eva-root .ev-protocol .ep-reply-text{font-size:var(--eva-reading-size,14px);line-height:1.55;display:block}
+#eva-root .ev-protocol .ep-note-marker{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:1px solid var(--ep-accent);font-size:11px;color:var(--ep-accent);margin-left:4px;vertical-align:1px;border-radius:50%}
+#eva-root .ev-protocol .ep-margin{border-left:1px solid var(--ep-line);padding-left:24px;min-width:0}
+#eva-root .ev-protocol .ep-margin-label{display:flex;gap:8px;align-items:center;color:var(--ep-secondary);font-size:11px;margin:4px 0 16px}
+#eva-root .ev-protocol .ep-margin-label .ep-note-marker{margin:0}
+#eva-root .ev-protocol .ep-margin h3{font-family:Georgia,"Times New Roman",serif;font-size:22px;font-weight:400;line-height:1.3;margin-bottom:12px}
+#eva-root .ev-protocol .ep-margin p{font-size:14px;line-height:1.6;color:var(--ep-secondary)}
+#eva-root .ev-protocol .ep-margin blockquote{margin:16px 0;padding:12px 0 12px 12px;border-left:2px solid var(--ep-line);font-size:14px;line-height:1.6}
+#eva-root .ev-protocol .ep-source{display:inline-block;border:0;border-bottom:1px solid var(--ep-accent);border-radius:0;background:none;padding:0 0 4px;color:var(--ep-accent);font-size:12px;text-align:left}
+#eva-root .ev-protocol .ep-resolution{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:20px;padding-top:16px;border-top:1px solid var(--ep-line)}
+#eva-root .ev-protocol .ep-review-status{font-size:12px;color:var(--ep-secondary)}
+#eva-root .ev-protocol .ep-review-status::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ep-warning);margin-right:8px;vertical-align:1px}
+#eva-root .ev-protocol .ep-actions{display:flex;gap:8px;align-items:center}
+#eva-root .ev-protocol .ep-button{display:inline-flex;justify-content:center;align-items:center;min-height:36px;padding:8px 16px;background:transparent;border:1px solid var(--ep-line);border-radius:4px;font-size:12px;line-height:1.4;white-space:nowrap}
+#eva-root .ev-protocol .ep-button:hover{background:var(--ep-soft)}
+#eva-root .ev-protocol .ep-button-primary{background:var(--ep-accent);color:var(--ep-paper);border-color:var(--ep-accent)}
+#eva-root .ev-protocol .ep-button-primary:hover{background:var(--ep-accent);filter:brightness(.95)}
+#eva-root .ev-protocol .ep-appeal{margin-top:20px;border-top:1px solid var(--ep-line);padding-top:20px}
+#eva-root .ev-protocol .ep-appeal h3{font-size:15px;font-weight:500;margin-bottom:8px}
+#eva-root .ev-protocol .ep-appeal p{font-size:12px;color:var(--ep-secondary);margin-bottom:12px}
+#eva-root .ev-protocol .ep-appeal label{font-size:12px;display:block;margin-bottom:8px}
+#eva-root .ev-protocol .ep-appeal textarea{display:block;width:100%;min-height:88px;padding:12px;border:1px solid var(--ep-line);border-radius:4px;background:var(--ep-paper);resize:vertical}
+#eva-root .ev-protocol .ep-appeal .ep-actions{justify-content:flex-end;margin-top:12px}
+#eva-root .ev-protocol .ep-notice{margin-top:12px;font-size:12px;color:var(--ep-accent)}
+#eva-root .ev-protocol .ep-notice:empty{display:none}
+#eva-root .ev-protocol .ep-player{display:flex;align-items:center;gap:20px;min-height:56px;padding:12px 36px;background:var(--ep-paper);border-top:1px solid var(--ep-line)}
+#eva-root .ev-protocol .ep-player-label{font-size:12px;white-space:nowrap}
+#eva-root .ev-protocol .ep-player-label span{font-size:11px;display:block;color:var(--ep-secondary)}
+#eva-root .ev-protocol .ep-player input{flex:1;min-width:40px;height:20px;margin:0;accent-color:var(--ep-accent)}
+#eva-root .ev-protocol .ep-player-time{font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#eva-root .ev-protocol .ep-player-time span{color:var(--ep-secondary)}
+#eva-root .ev-protocol .ep-footer{display:flex;justify-content:space-between;gap:12px;padding:8px 36px;font-size:11px;color:var(--ep-secondary);background:var(--ep-paper)}
+#eva-root .ev-protocol [hidden]{display:none!important}
+@media(max-width:800px){
+#eva-root .ev-protocol .ep-header{gap:24px;padding:16px 24px}
+#eva-root .ev-protocol .ep-nav{gap:16px}
+#eva-root .ev-protocol .ep-account{display:none}
+#eva-root .ev-protocol .ep-document{padding:24px}
+#eva-root .ev-protocol .ep-reading{grid-template-columns:minmax(0,1.4fr) minmax(188px,1fr);gap:20px}
+#eva-root .ev-protocol .ep-margin{padding-left:16px}
+#eva-root .ev-protocol .ep-criteria{gap:12px}
+#eva-root .ev-protocol .ep-player{padding:16px 24px}
+#eva-root .ev-protocol .ep-footer{padding:8px 24px 12px}
+}
+@media(max-width:600px){
+#eva-root .ev-protocol{min-height:0}
+#eva-root .ev-protocol .ep-header{flex-wrap:wrap;gap:16px;padding:16px}
+#eva-root .ev-protocol .ep-brand{font-size:21px}
+#eva-root .ev-protocol .ep-nav{flex:1;justify-content:flex-end;gap:12px;font-size:12px}
+#eva-root .ev-protocol .ep-nav span:last-child{display:none}
+#eva-root .ev-protocol .ep-nav-current::after{bottom:-20px}
+#eva-root .ev-protocol .ep-document{padding:24px 16px 20px}
+#eva-root .ev-protocol .ep-intro{gap:12px;margin-bottom:20px}
+#eva-root .ev-protocol .ep-intro h1{font-size:27px;letter-spacing:0}
+#eva-root .ev-protocol .ep-intro p{font-size:13px;max-width:180px}
+#eva-root .ev-protocol .ep-kicker{font-size:11px}
+#eva-root .ev-protocol .ep-score{display:block;padding-top:24px}
+#eva-root .ev-protocol .ep-score strong{font-size:36px;letter-spacing:-1px;display:block}
+#eva-root .ev-protocol .ep-score span{font-size:12px;display:block;text-align:right;margin-top:4px}
+#eva-root .ev-protocol .ep-metadata{grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+#eva-root .ev-protocol .ep-criteria{grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+#eva-root .ev-protocol .ep-reading{grid-template-columns:1fr;gap:24px;min-height:0}
+#eva-root .ev-protocol .ep-margin{border-left:0;border-top:1px solid var(--ep-line);padding:20px 0 0}
+#eva-root .ev-protocol .ep-margin-label{margin-top:0;margin-bottom:12px}
+#eva-root .ev-protocol .ep-margin h3{font-size:24px}
+#eva-root .ev-protocol .ep-resolution{flex-direction:column;align-items:stretch;gap:16px}
+#eva-root .ev-protocol .ep-actions{flex-wrap:wrap}
+#eva-root .ev-protocol .ep-resolution .ep-button{flex:1}
+#eva-root .ev-protocol .ep-button{min-height:40px;padding:8px 12px}
+#eva-root .ev-protocol .ep-player{gap:12px;padding:16px;flex-wrap:wrap}
+#eva-root .ev-protocol .ep-player-label{flex:1}
+#eva-root .ev-protocol .ep-player input{order:3;flex-basis:100%}
+#eva-root .ev-protocol .ep-footer{padding:4px 16px 16px;flex-direction:column;gap:4px}
+}
+</style>
+<section data-variant="Протокол" hidden>
+<div class="ev-app ev-protocol" data-eva-design="protocol" aria-label="EVA — протокол проверки">
+<header class="ep-header"><div class="ep-brand">EVA</div><nav class="ep-nav" aria-label="Разделы рабочего пространства"><span>Обзор</span><span class="ep-nav-current" aria-current="page">Диалоги</span><span>Чек-листы</span><span>Команда</span></nav><div class="ep-account">Мария Ким<span>Контроль качества</span></div></header>
+<main class="ep-document">
+<div class="ep-intro"><div><div class="ep-kicker">Поддержка клиентов / Звонок №024</div><h1>Протокол проверки</h1><p>Обращение по статусу заявки</p></div><div class="ep-score" aria-label="Оценка: 85,5 из 100"><strong>85,5</strong><span>/ 100</span></div></div>
+<div class="ep-metadata"><div><span>Оператор</span>Алина Садыкова</div><div><span>Дата и время</span>07.11.2026 · 14:08</div><div><span>Язык</span>Русский</div><div><span>Длительность</span>06:33</div></div>
+<div class="ep-criteria" aria-label="Оценка по критериям">
+<div class="ep-criterion"><span class="ep-criterion-label">Приветствие</span><span class="ep-criterion-score">10 <small>/ 10</small></span><span class="ep-criterion-note">Без замечаний</span></div>
+<button class="ep-criterion cursor-interaction" type="button" data-issue="consultation" aria-pressed="false"><span class="ep-criterion-label">Консультация</span><span class="ep-criterion-score">35 <small>/ 40</small></span><span class="ep-criterion-note">−5 · порядок обработки</span></button>
+<div class="ep-criterion"><span class="ep-criterion-label">Ведение диалога</span><span class="ep-criterion-score">30 <small>/ 30</small></span><span class="ep-criterion-note">Без замечаний</span></div>
+<button class="ep-criterion cursor-interaction" type="button" data-issue="steps" aria-pressed="true"><span class="ep-criterion-label">Следующие шаги</span><span class="ep-criterion-score">10,5 <small>/ 20</small></span><span class="ep-criterion-note">−9,5 · срок и канал ответа</span></button>
+</div>
+<div class="ep-reading">
+<section class="ep-transcript" aria-label="Фрагмент расшифровки"><div class="ep-section-title"><h2>Расшифровка</h2><span>02:08 — 02:35</span></div>
+<button type="button" class="ep-reply cursor-interaction" data-time="128" aria-pressed="false"><span class="ep-timecode">02:08</span><span><span class="ep-reply-person">Клиент</span><span class="ep-reply-text">Когда я получу ответ по обращению?</span></span></button>
+<button type="button" class="ep-reply cursor-interaction" data-time="138" aria-pressed="true"><span class="ep-timecode">02:18</span><span><span class="ep-reply-person">Оператор <span class="ep-note-marker" aria-label="Есть замечание">1</span></span><span class="ep-reply-text">Я передам вопрос специалистам. Они с вами свяжутся.</span></span></button>
+<button type="button" class="ep-reply cursor-interaction" data-time="147" aria-pressed="false"><span class="ep-timecode">02:27</span><span><span class="ep-reply-person">Клиент</span><span class="ep-reply-text">А сколько времени это займёт?</span></span></button>
+<button type="button" class="ep-reply cursor-interaction" data-time="155" aria-pressed="false"><span class="ep-timecode">02:35</span><span><span class="ep-reply-person">Оператор</span><span class="ep-reply-text">Сейчас не могу назвать точный срок. Постараемся как можно скорее.</span></span></button>
+</section>
+<aside class="ep-margin" aria-label="Замечание к фрагменту"><div class="ep-margin-label"><span class="ep-note-marker">1</span>Замечание к разговору</div><h3 data-issue-title>Не названы срок и канал ответа</h3><p data-issue-body>Следующие шаги · −9,5 балла. Оператор обещает обратную связь, но не уточняет, когда и каким способом клиент получит ответ.</p><blockquote data-quote>«Я передам вопрос специалистам. Они с вами свяжутся.»</blockquote><button type="button" class="ep-source cursor-interaction" data-time="138">Открыть реплику · 02:18</button></aside>
+</div>
+<div class="ep-resolution"><span class="ep-review-status" data-review-status>Оценено · демо</span><div class="ep-actions"><button class="ep-button cursor-interaction" type="button" data-appeal>Оспорить</button><button class="ep-button ep-button-primary cursor-interaction" type="button" data-confirm>Подтвердить оценку</button></div></div>
+<section class="ep-appeal" data-appeal-panel hidden aria-label="Апелляция по оценке"><h3>Пересмотр оценки</h3><p>Укажите спорный критерий и фрагмент разговора. Пример сохраняется только в этом макете.</p><label for="ep-appeal-reason">Причина пересмотра</label><textarea class="cursor-interaction" id="ep-appeal-reason" data-appeal-reason maxlength="1000" placeholder="Что следует проверить?"></textarea><div class="ep-actions"><button class="ep-button cursor-interaction" type="button" data-close-appeal>Отмена</button><button class="ep-button ep-button-primary cursor-interaction" type="button" data-submit-appeal>Отправить апелляцию</button></div></section>
+<div class="ep-notice" data-notice role="status"></div>
+</main>
+<div class="ep-player" aria-label="Положение в разговоре"><div class="ep-player-label">Запись разговора<span>Демо без аудио</span></div><input class="cursor-interaction" type="range" data-seek min="0" max="393" value="138" aria-label="Позиция записи в секундах"><div class="ep-player-time"><b data-current-time>02:18</b><span> / 06:33</span></div></div>
+<footer class="ep-footer"><span>Синтетический пример · ручная разметка</span><span>Поддержка клиентов · чек-лист 2.1</span></footer>
+</div>
+</section>
+
+
