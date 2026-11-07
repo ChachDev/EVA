@@ -2,6 +2,7 @@
 import json
 import logging
 from pathlib import Path
+import re
 import time
 
 from jsonschema import Draft202012Validator
@@ -14,6 +15,30 @@ SYSTEM = """Оцени работу оператора на языке исхо�
 
 class InvalidDecision(ValueError):
     pass
+
+
+def _message_number(value):
+    match = re.fullmatch(r"m([0-9]+)", value)
+    return (match[1].lstrip("0") or "0") if match else None
+
+
+def resolve_evidence(references, message_ids):
+    """Keep exact IDs or uniquely equivalent zero-padding; ignore standalone CSV separators."""
+    resolved = []
+    for reference in references:
+        if reference in message_ids:
+            resolved.append(reference)
+        elif reference.strip() == ",":
+            continue
+        else:
+            number = _message_number(reference)
+            matches = [mid for mid in message_ids if _message_number(mid) == number] if number is not None else []
+            if len(matches) != 1:
+                raise InvalidDecision("Unknown or ambiguous evidence reference")
+            resolved.append(matches[0])
+    if not resolved:
+        raise InvalidDecision("Missing evidence reference")
+    return resolved
 
 
 def object_schema(properties):
@@ -121,23 +146,56 @@ class ISSAIProvider:
         if not self.engine.request("/v1/chat/completions",payload).get("choices"):
             raise InvalidDecision("Could not prepare inference schema")
 
-    def evaluate(self, request):
-        conversation = request["conversation"]
-        checklist = request["checklist"]
-        criteria = checklist["criteria"]
-        payload, schema = self._payload(conversation,checklist)
-        started = time.monotonic()
+    def _generate(self, payload, schema):
         reply = self.engine.request("/v1/chat/completions", payload)
         try:
             choice = reply["choices"][0]
             if choice["finish_reason"]!="stop":
                 raise InvalidDecision("Incomplete inference")
             rows = json.loads(choice["message"]["content"])
-            if not Draft202012Validator(schema).is_valid(rows):
-                raise InvalidDecision("Invalid inference output")
-            result = [contract_row(c, rows[c["id"]]) for c in criteria]
         except (KeyError,IndexError,TypeError,ValueError) as exc:
             raise InvalidDecision("Invalid inference output") from exc
+        if not Draft202012Validator(schema).is_valid(rows):
+            raise InvalidDecision("Invalid inference output")
+        return rows
+
+    def _resolve_references(self, rows, payload, message_ids):
+        known = set(message_ids)
+        missing = set()
+        for key, row in rows.items():
+            try:
+                row["evidence"] = resolve_evidence(row["evidence"], known)
+            except InvalidDecision:
+                missing.add(key)
+        if not missing:
+            return
+        # Keep the original prompt, sampler and every decision. Only missing
+        # lists are decoded again, with choices limited to IDs in this input.
+        fields = {}
+        for key, row in rows.items():
+            if key not in missing:
+                fields[key] = {"const":row}
+                continue
+            props = {field:{"const":value} for field,value in row.items()}
+            props["evidence"] = {"type":"array","minItems":1,"maxItems":4,
+                                 "items":string_enum(message_ids)}
+            fields[key] = object_schema(props)
+        schema = object_schema(fields)
+        correction = {**payload, "response_format":{"type":"json_schema","json_schema":{
+            "name":"decisions","strict":True,"schema":schema}}}
+        corrected = self._generate(correction, schema)
+        for key in missing:
+            rows[key]["evidence"] = corrected[key]["evidence"]
+
+    def evaluate(self, request):
+        conversation = request["conversation"]
+        checklist = request["checklist"]
+        criteria = checklist["criteria"]
+        payload, schema = self._payload(conversation,checklist)
+        started = time.monotonic()
+        rows = self._generate(payload, schema)
+        self._resolve_references(rows, payload, [m["id"] for m in conversation["messages"]])
+        result = [contract_row(c, rows[c["id"]]) for c in criteria]
         logging.getLogger("uvicorn.error").info("ISSAI evaluated %d criteria in %.3f s",len(result),time.monotonic()-started)
         warnings = ["Оценка основана на транскрипте; аудио не обрабатывалось."] if conversation.get("audio_url") else []
         return {"schema_version":request["schema_version"],"conversation_id":conversation["id"],
