@@ -6,7 +6,7 @@
 |---|---|---|
 | Mansur | Frontend | `frontend/**` |
 | Chach | Backend | `backend/**` |
-| Kroud | ML engineer | `ml/**` |
+| norerade | ML engineer | `ml/**` |
 
 ## Как начинать работу
 

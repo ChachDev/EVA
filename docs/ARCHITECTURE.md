@@ -2,13 +2,13 @@
 
 ## Почему именно так
 
-Для 24 часов нужен один репозиторий с тремя изолированными приложениями и одним небольшим набором контрактов. Отдельный процесс ML позволяет Kroud менять провайдер и оценщик без изменений серверного расчёта. SQLite достаточно для локального демонстрационного потока. Redis, Celery, Kubernetes, общая Python-библиотека на все сервисы и общие UI/runtime пакеты сейчас увеличили бы пересечения между людьми.
+Для 24 часов нужен один репозиторий с тремя изолированными приложениями и одним небольшим набором контрактов. Отдельный процесс ML позволяет norerade менять провайдер и оценщик без изменений серверного расчёта. SQLite достаточно для локального демонстрационного потока. Redis, Celery, Kubernetes, общая Python-библиотека на все сервисы и общие UI/runtime пакеты сейчас увеличили бы пересечения между людьми.
 
 ```text
 EVA/
   frontend/          Mansur: UI, API adapter, собственные dependencies/tests
   backend/           Chach: HTTP, persistence, imports, deterministic scoring
-  ml/                Kroud: inference, prompts, evidence, quality evaluation
+  ml/                norerade: inference, prompts, evidence, quality evaluation
   contracts/         READ ONLY для ролей: schemas + synthetic examples
   docs/              READ ONLY для ролей: требования, план, правила, skills
   tools/             READ ONLY для ролей: локальные проверки контрактов/границ
