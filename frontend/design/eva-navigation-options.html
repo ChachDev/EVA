@@ -1,0 +1,207 @@
+<div id="eva-root">
+<style>
+#eva-root .en-app {--en-bg:#f5f6f7;--en-surface:#fff;--en-raised:#f0f2f1;--en-ink:#191919;--en-muted:#656d67;--en-line:#e3e7e4;--en-brand:#2a8640;--en-on-brand:#fff;--en-green:#277b3c;--en-tint:#eaf4ed;--en-radius:20px;--en-stage:980px;display:grid;min-height:var(--en-stage);background:var(--en-bg);color:var(--en-ink);color-scheme:light;font:14px/1.55 'Segoe UI',Arial,sans-serif;overflow-wrap:anywhere;}
+#eva-root .en-app[data-theme=dark] {--en-bg:#191919;--en-surface:#282828;--en-raised:#333;--en-ink:#ededed;--en-muted:#abb2ad;--en-line:#3c3c3c;--en-brand:#4fb84e;--en-on-brand:#191919;--en-green:#8cdb94;--en-tint:#293d2d;color-scheme:dark;}
+#eva-root .en-app *,#eva-root .en-app *::before,#eva-root .en-app *::after {box-sizing:border-box;}
+#eva-root .en-app [hidden] {display:none!important;}
+#eva-root .en-app h1,#eva-root .en-app h2,#eva-root .en-app h3,#eva-root .en-app p,#eva-root .en-app blockquote {margin:0;}
+#eva-root .en-app h1 {font-size:28px;line-height:1.25;letter-spacing:-.6px;font-weight:650;}
+#eva-root .en-app h2 {font-size:19px;line-height:1.35;font-weight:600;}
+#eva-root .en-app h3 {font-size:15px;font-weight:600;}
+#eva-root .en-app button {font:inherit;color:inherit;}
+#eva-root .en-brand {display:flex;align-items:center;gap:9px;font-size:26px;font-weight:700;letter-spacing:-1px;}
+#eva-root .en-dot {width:9px;height:9px;border-radius:50%;background:var(--en-brand);flex:none;}
+#eva-root .en-nav {display:flex;gap:6px;}
+#eva-root .en-nav-button {display:flex;align-items:center;gap:11px;padding:10px 12px;border:0;border-radius:12px;background:none;color:var(--en-muted)!important;text-align:left;min-height:48px;}
+#eva-root .en-nav-button[aria-pressed=true] {background:var(--en-tint);color:var(--en-green)!important;font-weight:600;}
+#eva-root .en-nav-letter {display:grid;place-items:center;flex:none;width:28px;height:28px;background:var(--en-raised);border-radius:9px;font-size:12px;color:var(--en-muted);}
+#eva-root .en-nav-button[aria-pressed=true] .en-nav-letter {background:var(--en-brand);color:var(--en-on-brand);}
+#eva-root .en-nav-active {display:none;margin-left:auto;font-size:14px;}
+#eva-root .en-nav-button[aria-pressed=true] .en-nav-active {display:block;}
+#eva-root .en-theme {display:flex;gap:3px;padding:4px;width:156px;max-width:100%;flex-shrink:0;background:var(--en-bg);border-radius:12px;}
+#eva-root .en-theme button {flex:1;min-width:0;min-height:36px;border:0;border-radius:9px;padding:8px 10px;background:none;font-size:11px;color:var(--en-muted);white-space:nowrap;}
+#eva-root .en-theme button[aria-pressed=true] {background:var(--en-surface);color:var(--en-ink);box-shadow:0 1px 4px #0000000d;}
+#eva-root .en-muted {color:var(--en-muted);font-size:12px;}
+#eva-root .en-profile {display:flex;align-items:center;gap:9px;font-size:12px;}
+#eva-root .en-profile-badge {display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--en-raised);font-size:11px;color:var(--en-muted);}
+#eva-root .en-side {background:var(--en-surface);padding:24px 16px 18px;display:flex;flex-direction:column;min-width:0;}
+#eva-root .en-side .en-brand {margin:0 12px 34px;}
+#eva-root .en-side .en-nav {flex-direction:column;}
+#eva-root .en-side-label {margin:0 12px 10px!important;font-size:11px;color:var(--en-muted);}
+#eva-root .en-side-bottom {margin-top:auto;padding-top:28px;}
+#eva-root .en-side-bottom .en-profile {padding:16px 8px 0;border-top:1px solid var(--en-line);margin-top:18px;}
+#eva-root .en-theme-label {font-size:11px;color:var(--en-muted);margin:0 8px 9px!important;}
+#eva-root .en-work {min-width:0;display:flex;flex-direction:column;}
+#eva-root .en-workbar {display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 26px;min-height:70px;}
+#eva-root .en-breadcrumb {color:var(--en-muted);font-size:12px;}
+#eva-root .en-demo {font-size:11px;color:var(--en-muted);}
+#eva-root .en-main {padding:10px 26px 24px;min-width:0;flex:1;}
+#eva-root .en-heading {display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;}
+#eva-root .en-heading p {margin-top:7px;font-size:12px;color:var(--en-muted);}
+#eva-root .en-pill {display:inline-flex;align-items:center;gap:6px;border-radius:30px;padding:7px 11px;background:var(--en-tint);color:var(--en-green);font-size:11px;}
+#eva-root .en-panel {background:var(--en-surface);border-radius:var(--en-radius);padding:24px;min-width:0;}
+#eva-root .en-panel-head {display:flex;align-items:center;justify-content:space-between;gap:14px;}
+#eva-root .en-version {font-size:11px;color:var(--en-muted);padding:6px 10px;background:var(--en-raised);border-radius:9px;}
+#eva-root .en-checklist-description {font-size:13px;color:var(--en-muted);margin-top:9px!important;}
+#eva-root .en-rules {list-style:none;margin:22px 0 0;padding:0;}
+#eva-root .en-rule {display:grid;grid-template-columns:32px minmax(0,1fr);gap:13px;padding:21px 0;border-top:1px solid var(--en-line);}
+#eva-root .en-rule-num {display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--en-tint);color:var(--en-green);font-size:12px;}
+#eva-root .en-rule p {font-size:13px;line-height:1.65;color:var(--en-muted);margin-top:7px;}
+#eva-root .en-link-button {background:none;border:0;color:var(--en-green)!important;font-size:12px!important;padding:9px 0 0;min-height:36px;text-align:left;}
+#eva-root .en-rule:last-child {padding-bottom:0;}
+#eva-root .en-foot {display:flex;justify-content:space-between;gap:8px 20px;flex-wrap:wrap;font-size:11px;color:var(--en-muted);padding:20px 26px;}
+#eva-root .en-summary {display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:18px;border-bottom:1px solid var(--en-line);margin-bottom:18px;}
+#eva-root .en-summary p {color:var(--en-muted);font-size:11px;margin-top:6px;}
+#eva-root .en-score {font-size:30px;font-weight:600;letter-spacing:-1px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+#eva-root .en-score small {font-size:12px;font-weight:400;color:var(--en-muted);letter-spacing:0;}
+#eva-root .en-messages {display:grid;gap:16px;}
+#eva-root .en-message-meta {display:flex;justify-content:space-between;gap:10px;color:var(--en-muted);font-size:11px;margin-bottom:6px;}
+#eva-root .en-message p {padding:12px 14px;background:var(--en-raised);border-radius:0 12px 12px;line-height:1.65;font-size:13px;}
+#eva-root .en-message[data-linked=true] p {background:var(--en-tint);}
+#eva-root .en-message[data-linked=true] p::after {content:'Основание выбранного критерия';display:block;font-size:11px;margin-top:7px;color:var(--en-green);}
+#eva-root .en-criteria {display:flex;gap:6px;flex-wrap:wrap;margin-top:20px;padding-top:18px;border-top:1px solid var(--en-line);}
+#eva-root .en-criteria button {border:0;padding:9px 12px;min-height:38px;border-radius:10px;background:var(--en-raised);font-size:12px;color:var(--en-muted);}
+#eva-root .en-criteria button[aria-pressed=true] {background:var(--en-tint);color:var(--en-green);font-weight:600;}
+#eva-root .en-evidence-label {font-size:11px;color:var(--en-muted);margin-top:10px!important;}
+#eva-root .en-wide {grid-template-columns:208px minmax(0,1fr);}
+#eva-root .en-top {grid-template-rows:auto auto 1fr;}
+#eva-root .en-topbar {display:flex;align-items:center;gap:24px;padding:18px 26px;background:var(--en-surface);min-height:74px;}
+#eva-root .en-topbar .en-theme {margin-left:auto;}
+#eva-root .en-top-nav {background:var(--en-surface);padding:0 26px 12px;}
+#eva-root .en-top-nav .en-nav-button {padding:9px 16px;}
+#eva-root .en-top-nav .en-nav-active {display:none!important;}
+#eva-root .en-top .en-workbar {min-height:54px;padding-top:15px;padding-bottom:12px;}
+#eva-root .en-rail {grid-template-columns:88px minmax(0,1fr);}
+#eva-root .en-rail .en-side {padding:24px 8px 18px;}
+#eva-root .en-rail .en-brand {justify-content:center;gap:0;font-size:21px;margin:0 0 32px;}
+#eva-root .en-rail .en-brand .en-dot {display:none;}
+#eva-root .en-rail .en-nav {gap:10px;}
+#eva-root .en-rail .en-nav-button {flex-direction:column;gap:7px;padding:10px 3px;min-height:76px;text-align:center;font-size:11px;}
+#eva-root .en-rail .en-nav-letter {width:30px;height:30px;}
+#eva-root .en-rail .en-nav-active {display:none!important;}
+#eva-root .en-rail .en-side-bottom {display:grid;justify-items:center;gap:18px;}
+#eva-root .en-theme-toggle {border:0;background:none;display:grid;justify-items:center;gap:7px;padding:7px 2px;font-size:11px!important;min-height:65px;}
+#eva-root .en-theme-symbol {font-size:11px;color:var(--en-muted);}
+@media(max-width:950px){
+ #eva-root .en-wide {grid-template-columns:178px minmax(0,1fr);}
+ #eva-root .en-side {padding-left:12px;padding-right:12px;}
+ #eva-root .en-main {padding-left:20px;padding-right:20px;}
+ #eva-root .en-workbar,#eva-root .en-foot {padding-left:20px;padding-right:20px;}
+ #eva-root .en-panel {padding:22px 20px;}
+ #eva-root .en-app {--en-stage:1000px;}
+}
+@media(max-width:620px){
+ #eva-root .en-app {--en-stage:1280px;}
+ #eva-root .en-wide,#eva-root .en-rail {grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr;}
+ #eva-root .en-side,#eva-root .en-rail .en-side {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;padding:16px;}
+ #eva-root .en-side .en-brand,#eva-root .en-rail .en-brand {margin:0;font-size:24px;justify-content:start;}
+ #eva-root .en-rail .en-brand .en-dot {display:block;}
+ #eva-root .en-rail .en-brand {gap:8px;}
+ #eva-root .en-side-label,#eva-root .en-theme-label,#eva-root .en-side-bottom .en-profile,#eva-root .en-rail .en-side-bottom .en-profile-badge {display:none;}
+ #eva-root .en-side .en-nav {grid-column:1/-1;grid-row:2;flex-direction:row;gap:8px;}
+ #eva-root .en-side .en-nav-button {flex:1;flex-direction:row;gap:9px;font-size:12px;padding:9px 10px;min-height:46px;}
+ #eva-root .en-side .en-nav-active {display:none!important;}
+ #eva-root .en-side-bottom,#eva-root .en-rail .en-side-bottom {grid-row:1;grid-column:2;margin:0;padding:0;display:block;}
+ #eva-root .en-theme {padding:3px;}
+ #eva-root .en-theme button {font-size:11px;min-height:38px;padding:8px 9px;}
+ #eva-root .en-theme-toggle {display:flex;gap:6px;padding:3px;min-height:40px;}
+ #eva-root .en-theme-symbol {display:none;}
+ #eva-root .en-topbar {flex-wrap:wrap;gap:14px;padding:16px;}
+ #eva-root .en-topbar .en-profile {display:none;}
+ #eva-root .en-top-nav {padding:0 16px 14px;}
+ #eva-root .en-top-nav .en-nav-button {flex:1;font-size:12px;padding:9px 10px;}
+ #eva-root .en-workbar {min-height:58px;padding:16px;gap:12px;}
+ #eva-root .en-demo {font-size:10px;}
+ #eva-root .en-main {padding:8px 16px 16px;}
+ #eva-root .en-heading {gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+ #eva-root .en-app h1 {font-size:26px;}
+ #eva-root .en-panel {padding:20px 16px;}
+ #eva-root .en-panel-head {flex-wrap:wrap;}
+ #eva-root .en-rule {grid-template-columns:28px minmax(0,1fr);gap:10px;}
+ #eva-root .en-rule-num {width:28px;height:28px;border-radius:9px;}
+ #eva-root .en-summary {gap:12px;align-items:flex-start;}
+ #eva-root .en-summary h2 {font-size:16px;}
+ #eva-root .en-score {font-size:26px;}
+ #eva-root .en-foot {padding:16px;}
+}
+@media(hover:hover){#eva-root .en-nav-button:not([aria-pressed=true]):hover,#eva-root .en-criteria button:not([aria-pressed=true]):hover {background:var(--en-raised);color:var(--en-ink)!important;}#eva-root .en-link-button:hover {text-decoration:underline;}}
+@media(prefers-reduced-motion:no-preference){#eva-root .en-nav-button,#eva-root .en-theme button,#eva-root .en-criteria button {transition:background-color 140ms ease,color 140ms ease;}}
+</style>
+<div id="eva-navigation-options" class="viz-carousel" aria-label="Расположение навигации EVA" data-previous-label="Предыдущий вариант" data-next-label="Следующий вариант">
+ <section data-variant="Боковое меню" aria-label="EVA с широким меню слева">
+  <div class="en-app en-wide" data-theme="light" aria-label="Боковое меню EVA">
+   <aside class="en-side"><div class="en-brand"><span class="en-dot" aria-hidden="true"></span>EVA</div><p class="en-side-label">Рабочее пространство</p><nav class="en-nav" aria-label="Разделы EVA"><button type="button" class="en-nav-button cursor-interaction" data-screen="dialogs" aria-pressed="false"><span class="en-nav-letter" aria-hidden="true">Д</span><span>Диалоги</span><span class="en-nav-active" aria-hidden="true">›</span></button><button type="button" class="en-nav-button cursor-interaction" data-screen="checklists" aria-pressed="true"><span class="en-nav-letter" aria-hidden="true">Ч</span><span>Чек-листы</span><span class="en-nav-active" aria-hidden="true">›</span></button></nav><div class="en-side-bottom"><p class="en-theme-label">Оформление</p><div class="en-theme" role="group" aria-label="Тема"><button type="button" class="cursor-interaction" data-theme-choice="light" aria-pressed="true">Светлая</button><button type="button" class="cursor-interaction" data-theme-choice="dark" aria-pressed="false">Тёмная</button></div><div class="en-profile"><span class="en-profile-badge" aria-hidden="true">А</span><span>Аудитор</span></div></div></aside>
+   <div class="en-work"><header class="en-workbar"><span class="en-breadcrumb" data-breadcrumb>Рабочее место / Чек-листы</span><span class="en-demo">Демо</span></header><main class="en-main" data-content></main><footer class="en-foot"><span>Freedom Broker · EVA</span><span>Синтетический пример</span></footer></div>
+  </div>
+ </section>
+ <section data-variant="Верхняя панель" aria-label="EVA с горизонтальным меню" hidden>
+  <div class="en-app en-top" data-theme="light" aria-label="Верхняя панель EVA">
+   <header class="en-topbar"><div class="en-brand"><span class="en-dot" aria-hidden="true"></span>EVA</div><div class="en-theme" role="group" aria-label="Тема"><button type="button" class="cursor-interaction" data-theme-choice="light" aria-pressed="true">Светлая</button><button type="button" class="cursor-interaction" data-theme-choice="dark" aria-pressed="false">Тёмная</button></div><div class="en-profile"><span class="en-profile-badge" aria-hidden="true">А</span><span>Аудитор</span></div></header>
+   <nav class="en-nav en-top-nav" aria-label="Разделы EVA"><button type="button" class="en-nav-button cursor-interaction" data-screen="dialogs" aria-pressed="false"><span class="en-nav-letter" aria-hidden="true">Д</span><span>Диалоги</span></button><button type="button" class="en-nav-button cursor-interaction" data-screen="checklists" aria-pressed="true"><span class="en-nav-letter" aria-hidden="true">Ч</span><span>Чек-листы</span></button></nav>
+   <div class="en-work"><header class="en-workbar"><span class="en-breadcrumb" data-breadcrumb>Рабочее место / Чек-листы</span><span class="en-demo">Демо</span></header><main class="en-main" data-content></main><footer class="en-foot"><span>Freedom Broker · EVA</span><span>Синтетический пример</span></footer></div>
+  </div>
+ </section>
+ <section data-variant="Компактная колонка" aria-label="EVA с узким меню слева" hidden>
+  <div class="en-app en-rail" data-theme="light" aria-label="Компактная колонка EVA">
+   <aside class="en-side"><div class="en-brand"><span class="en-dot" aria-hidden="true"></span>EVA</div><nav class="en-nav" aria-label="Разделы EVA"><button type="button" class="en-nav-button cursor-interaction" data-screen="dialogs" aria-pressed="false"><span class="en-nav-letter" aria-hidden="true">Д</span><span>Диалоги</span></button><button type="button" class="en-nav-button cursor-interaction" data-screen="checklists" aria-pressed="true"><span class="en-nav-letter" aria-hidden="true">Ч</span><span>Чек-листы</span></button></nav><div class="en-side-bottom"><button type="button" class="en-theme-toggle cursor-interaction" data-toggle-theme aria-label="Включить тёмную тему"><span class="en-theme-symbol" aria-hidden="true">Тема</span><span data-theme-name>Светлая</span></button><span class="en-profile-badge" aria-label="Аудитор">А</span></div></aside>
+   <div class="en-work"><header class="en-workbar"><span class="en-breadcrumb" data-breadcrumb>Рабочее место / Чек-листы</span><span class="en-demo">Демо</span></header><main class="en-main" data-content></main><footer class="en-foot"><span>Freedom Broker · EVA</span><span>Синтетический пример</span></footer></div>
+  </div>
+ </section>
+</div>
+<template id="eva-navigation-content">
+ <section data-screen-panel="checklists" aria-label="Чек-листы">
+  <header class="en-heading"><div><h1>Чек-листы</h1><p>Правила оценки разговоров с клиентами</p></div><span class="en-pill">Просмотр</span></header>
+  <section class="en-panel"><div class="en-panel-head"><h2>Качество чатов</h2><span class="en-version">Версия 1</span></div><p class="en-checklist-description">Фрагмент чек-листа · 3 из 8 критериев</p><ol class="en-rules">
+   <li class="en-rule"><span class="en-rule-num">01</span><div><h3>Установление контакта</h3><p>Оператор приветствует клиента и представляется в начале разговора.</p><button type="button" class="en-link-button cursor-interaction" data-open-criterion="contact">Посмотреть пример →</button></div></li>
+   <li class="en-rule"><span class="en-rule-num">04</span><div><h3>Корректная консультация</h3><p>Оператор отвечает на вопрос и направляет клиента к нужной информации.</p><button type="button" class="en-link-button cursor-interaction" data-open-criterion="consultation">Посмотреть пример →</button></div></li>
+   <li class="en-rule"><span class="en-rule-num">07</span><div><h3>Завершение диалога</h3><p>Оператор предлагает дальнейшую помощь и вежливо завершает разговор.</p><button type="button" class="en-link-button cursor-interaction" data-open-criterion="closing">Посмотреть пример →</button></div></li>
+  </ol></section>
+ </section>
+ <section data-screen-panel="dialogs" aria-label="Разбор диалога" hidden>
+  <header class="en-heading"><div><h1>Диалоги</h1><p>Разбор выбранного разговора</p></div><span class="en-pill">Оценка готова</span></header>
+  <section class="en-panel"><div class="en-summary"><div><h2>DEMO-RU-001</h2><p>Чат · Русский · Ручная демооценка</p></div><span class="en-score" aria-label="Демонстрационная оценка 100 из 100">100 <small>/ 100</small></span></div>
+   <div class="en-messages">
+    <article class="en-message" data-message="m0001"><div class="en-message-meta"><span>Клиент</span><time>00:00</time></div><p>Здравствуйте! Где посмотреть общие тарифы?</p></article>
+    <article class="en-message" data-message="m0002" data-linked="true"><div class="en-message-meta"><span>Оператор</span><time>00:20</time></div><p>Здравствуйте! Меня зовут Алия. Общие тарифы доступны на официальном сайте в разделе «Тарифы».</p></article>
+    <article class="en-message" data-message="m0003"><div class="en-message-meta"><span>Клиент</span><time>00:35</time></div><p>Спасибо, нашёл.</p></article>
+    <article class="en-message" data-message="m0004"><div class="en-message-meta"><span>Оператор</span><time>00:40</time></div><p>Рада помочь! Если появятся вопросы, обращайтесь. До свидания!</p></article>
+   </div>
+   <div class="en-criteria" role="group" aria-label="Выбор критерия"><button type="button" class="cursor-interaction" data-criterion="contact" aria-pressed="false">Контакт</button><button type="button" class="cursor-interaction" data-criterion="consultation" aria-pressed="true">Консультация</button><button type="button" class="cursor-interaction" data-criterion="closing" aria-pressed="false">Завершение</button></div>
+   <p class="en-evidence-label" data-evidence aria-live="polite">Корректная консультация · m0002</p>
+  </section>
+ </section>
+</template>
+<script>
+(() => {
+ const root=document.getElementById('eva-navigation-options');
+ const template=document.getElementById('eva-navigation-content');
+ const apps=[...root.querySelectorAll('.en-app')];
+ apps.forEach(app=>app.querySelector('[data-content]').append(template.content.cloneNode(true)));
+ const criteria={contact:{name:'Установление контакта',message:'m0002'},consultation:{name:'Корректная консультация',message:'m0002'},closing:{name:'Завершение диалога',message:'m0004'}};
+ let theme='light',screen='checklists',criterion='consultation';
+ function render(){
+  apps.forEach(app=>{
+   app.dataset.theme=theme;
+   app.querySelectorAll('[data-theme-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.themeChoice===theme)));
+   const toggle=app.querySelector('[data-toggle-theme]');if(toggle){toggle.setAttribute('aria-label',theme==='light'?'Включить тёмную тему':'Включить светлую тему');app.querySelector('[data-theme-name]').textContent=theme==='light'?'Светлая':'Тёмная';}
+   app.querySelectorAll('[data-screen]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.screen===screen)));
+   app.querySelectorAll('[data-screen-panel]').forEach(panel=>panel.hidden=panel.dataset.screenPanel!==screen);
+   app.querySelector('[data-breadcrumb]').textContent='Рабочее место / '+(screen==='dialogs'?'Диалоги':'Чек-листы');
+   app.querySelectorAll('[data-criterion]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.criterion===criterion)));
+   app.querySelectorAll('[data-message]').forEach(message=>message.dataset.linked=String(message.dataset.message===criteria[criterion].message));
+   app.querySelector('[data-evidence]').textContent=criteria[criterion].name+' · '+criteria[criterion].message;
+  });
+ }
+ function save(app){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{project:'EVA',kind:'navigation-options',theme,screen,layout:app.closest('[data-variant]').dataset.variant},privateContent:{criterion}}).catch(()=>{});}
+ function restore(state){theme=state?.modelContent?.theme==='dark'?'dark':'light';screen=state?.modelContent?.screen==='dialogs'?'dialogs':'checklists';criterion=criteria[state?.privateContent?.criterion]?state.privateContent.criterion:'consultation';render();}
+ root.addEventListener('click',event=>{
+  const app=event.target.closest('.en-app');if(!app)return;
+  const mode=event.target.closest('[data-theme-choice]');const toggle=event.target.closest('[data-toggle-theme]');const nav=event.target.closest('[data-screen]');const selection=event.target.closest('[data-criterion]');const example=event.target.closest('[data-open-criterion]');
+  if(mode)theme=mode.dataset.themeChoice;else if(toggle)theme=theme==='light'?'dark':'light';else if(nav)screen=nav.dataset.screen;else if(selection)criterion=selection.dataset.criterion;else if(example){criterion=example.dataset.openCriterion;screen='dialogs';}else return;
+  render();if(example)app.querySelector('[data-criterion="'+criterion+'"]').focus();save(app);
+ });
+ restore(window.openai?.widgetState);window.addEventListener('openai:set_globals',event=>{if(event.detail?.globals?.widgetState)restore(event.detail.globals.widgetState);});
+ if(globalThis.Tweak){apps.forEach(app=>{const state={radius:20};const tweak=new Tweak({container:app,onChange:()=>app.style.setProperty('--en-radius',state.radius+'px')});tweak.addSlider(state,'radius',{label:'Скругления карточек',min:12,max:28,step:2,unit:'px',reference:'--en-radius'});});}
+})();
+</script>
+</div>

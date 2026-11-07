@@ -1,0 +1,140 @@
+<div id="eva-root">
+<style>
+#eva-root .ef-app {--ef-brand:#51af3d;--ef-green:#8bdc72;--ef-black:#080b09;--ef-ground:#0b0e0c;--ef-paper:#151a16;--ef-ink:#edf2e9;--ef-muted:#a1ada0;--ef-line:#2b352c;--ef-soft:#1a2b1b;--ef-radius:16px;color-scheme:dark;font:14px/1.55 'Segoe UI',Arial,sans-serif;color:var(--ef-ink);background:var(--ef-ground);overflow-wrap:anywhere;}
+#eva-root .ef-app *,#eva-root .ef-app *::before,#eva-root .ef-app *::after {box-sizing:border-box;}
+#eva-root .ef-app h1,#eva-root .ef-app h2,#eva-root .ef-app h3,#eva-root .ef-app p,#eva-root .ef-app blockquote {margin:0;}
+#eva-root .ef-app h1 {font-size:32px;font-weight:600;line-height:1.2;letter-spacing:-1px;}
+#eva-root .ef-app h2 {font-size:17px;font-weight:600;line-height:1.4;}
+#eva-root .ef-app h3 {font-size:17px;font-weight:600;line-height:1.4;}
+#eva-root .ef-app strong {font-weight:600;}
+#eva-root .ef-app button {font:inherit;color:inherit;}
+#eva-root .ef-app small {font-size:12px;color:var(--ef-muted);}
+#eva-root .ef-top {display:flex;align-items:center;gap:44px;min-height:76px;padding:16px 30px;background:var(--ef-black);color:var(--ef-ink);border-top:4px solid var(--ef-brand);border-bottom:1px solid var(--ef-line);}
+#eva-root .ef-brand {display:flex;align-items:center;gap:10px;font-size:24px;font-weight:600;letter-spacing:1px;}
+#eva-root .ef-mark {display:flex;align-items:center;gap:3px;height:25px;}
+#eva-root .ef-mark b {display:block;width:4px;height:15px;border-radius:2px;background:var(--ef-brand);}
+#eva-root .ef-mark b:nth-child(2) {height:25px;}
+#eva-root .ef-mark b:nth-child(3) {height:10px;}
+#eva-root .ef-top nav {display:flex;gap:24px;align-self:stretch;align-items:center;font-size:13px;}
+#eva-root .ef-nav-active {color:#8bdc72;position:relative;}
+#eva-root .ef-nav-active::after {content:'';position:absolute;bottom:-22px;left:0;right:0;height:2px;background:var(--ef-brand);}
+#eva-root .ef-demo {margin-left:auto;color:#bac4b6;font-size:11px;}
+#eva-root .ef-work {padding:26px 30px 28px;}
+#eva-root .ef-heading {display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px;}
+#eva-root .ef-eyebrow {font-size:11px;color:var(--ef-muted);margin-bottom:8px!important;}
+#eva-root .ef-subtitle {font-size:13px;color:var(--ef-muted);margin-top:10px!important;}
+#eva-root .ef-status {display:inline-flex;align-items:center;gap:8px;color:var(--ef-green);font-size:12px;}
+#eva-root .ef-status::before {content:'';width:7px;height:7px;border-radius:50%;background:var(--ef-brand);}
+#eva-root .ef-criteria {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px;}
+#eva-root .ef-criterion {display:flex;align-items:center;gap:12px;min-height:66px;min-width:0;padding:12px 16px;background:var(--ef-paper);border:1px solid var(--ef-line);border-radius:12px;text-align:left;}
+#eva-root .ef-criterion[aria-pressed=true] {background:var(--ef-soft);border-color:var(--ef-brand);}
+#eva-root .ef-criterion-num {display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;border-radius:10px;background:var(--ef-ground);font-size:12px;color:var(--ef-muted);}
+#eva-root .ef-criterion[aria-pressed=true] .ef-criterion-num {background:var(--ef-brand);color:var(--ef-black);}
+#eva-root .ef-criterion-label {display:block;font-size:13px;font-weight:600;}
+#eva-root .ef-criterion small {display:block;font-size:11px;}
+#eva-root .ef-columns {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:20px;align-items:start;}
+#eva-root .ef-panel {min-width:0;background:var(--ef-paper);border:1px solid var(--ef-line);border-radius:var(--ef-radius);padding:24px;}
+#eva-root .ef-panel-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--ef-line);}
+#eva-root .ef-messages {display:grid;gap:20px;}
+#eva-root .ef-message {display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;position:relative;}
+#eva-root .ef-avatar {display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:50%;background:var(--ef-ground);color:var(--ef-muted);font-size:11px;}
+#eva-root .ef-operator .ef-avatar {background:var(--ef-soft);color:var(--ef-green);}
+#eva-root .ef-message:not(:last-child)::after {content:'';position:absolute;left:14px;top:36px;bottom:-12px;border-left:1px solid var(--ef-line);}
+#eva-root .ef-message-meta {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;font-size:11px;color:var(--ef-muted);}
+#eva-root .ef-message p {font-size:14px;line-height:1.65;padding:4px 0;}
+#eva-root .ef-message.ef-linked p {padding:12px 14px;background:var(--ef-soft);border-left:3px solid var(--ef-brand);border-radius:0 10px 10px 0;}
+#eva-root .ef-message.ef-revealed p {outline:2px solid var(--ef-green);outline-offset:3px;}
+#eva-root .ef-marker {display:none;font-size:11px;color:var(--ef-green);margin-top:7px;}
+#eva-root .ef-linked .ef-marker {display:block;}
+#eva-root .ef-inspector {display:grid;gap:16px;min-width:0;}
+#eva-root .ef-score {background:#111a12;color:var(--ef-ink);padding:22px 24px;border:1px solid #334b2c;border-radius:var(--ef-radius);}
+#eva-root .ef-score-heading {display:flex;justify-content:space-between;gap:12px;font-size:12px;}
+#eva-root .ef-score-label {color:#bac4b6;font-size:11px;}
+#eva-root .ef-total {display:flex;align-items:baseline;gap:10px;margin-top:8px;}
+#eva-root .ef-total strong {font-size:58px;font-weight:500;line-height:1.1;letter-spacing:-3px;color:#79cf5b;font-variant-numeric:tabular-nums;}
+#eva-root .ef-total span {color:#b8c3b0;font-size:14px;}
+#eva-root .ef-score-footer {padding-top:14px;margin-top:16px!important;border-top:1px solid #35412e;display:flex;justify-content:space-between;gap:10px;font-size:11px;color:#bac4b6;}
+#eva-root .ef-score-footer strong {color:#e1ecd9;font-weight:400;}
+#eva-root .ef-evidence-heading {display:flex;align-items:center;gap:8px;color:var(--ef-green);font-size:12px;margin-bottom:14px;}
+#eva-root .ef-letter {display:grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--ef-soft);font-weight:600;}
+#eva-root .ef-excerpt {margin-top:14px!important;font-size:14px;line-height:1.7;color:var(--ef-muted);}
+#eva-root .ef-evidence-meta {margin-top:14px!important;font-size:11px;color:var(--ef-muted);}
+#eva-root .ef-action {display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;margin-top:22px;padding:11px 14px;min-height:44px;border:0;border-radius:9px;background:var(--ef-brand);color:#10200c!important;font-weight:600!important;font-size:13px!important;text-align:left;}
+#eva-root .ef-footer {display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 18px;padding-top:22px;font-size:11px;color:var(--ef-muted);}
+@media(max-width:800px){
+ #eva-root .ef-top {padding:16px 22px;gap:28px;}
+ #eva-root .ef-work {padding:24px 20px;}
+ #eva-root .ef-columns {grid-template-columns:minmax(0,1.3fr) minmax(240px,1fr);gap:14px;}
+ #eva-root .ef-panel {padding:20px;}
+ #eva-root .ef-criterion {padding:12px;gap:8px;}
+ #eva-root .ef-message {grid-template-columns:minmax(0,1fr);}
+ #eva-root .ef-avatar,#eva-root .ef-message::after {display:none;}
+}
+@media(max-width:620px){
+ #eva-root .ef-top {flex-wrap:wrap;gap:14px 24px;padding:16px;}
+ #eva-root .ef-top nav {margin-left:auto;gap:18px;}
+ #eva-root .ef-nav-active::after {bottom:-8px;}
+ #eva-root .ef-demo {flex-basis:100%;margin:0;}
+ #eva-root .ef-work {padding:22px 16px;}
+ #eva-root .ef-heading {flex-wrap:wrap;gap:12px;}
+ #eva-root .ef-app h1 {font-size:28px;}
+ #eva-root .ef-criteria {gap:7px;}
+ #eva-root .ef-criterion {flex-direction:column;align-items:flex-start;gap:8px;padding:10px 8px;}
+ #eva-root .ef-criterion-label {font-size:11px;}
+ #eva-root .ef-criterion small {font-size:11px;}
+ #eva-root .ef-columns {grid-template-columns:minmax(0,1fr);gap:16px;}
+ #eva-root .ef-panel {padding:20px 16px;}
+ #eva-root .ef-panel-heading {gap:8px;flex-wrap:wrap;}
+}
+@media(hover:hover){#eva-root .ef-criterion:not([aria-pressed=true]):hover {background:var(--ef-soft);} #eva-root .ef-action:hover {background:#65bf4e;}}
+@media(prefers-reduced-motion:no-preference){#eva-root .ef-criterion,#eva-root .ef-action {transition:background-color 140ms ease;}}
+</style>
+<div id="eva-freedom-dark" class="ef-app" aria-label="EVA — чёрная тема с зелёными акцентами">
+ <header class="ef-top"><span class="ef-brand"><span class="ef-mark" aria-hidden="true"><b></b><b></b><b></b></span>EVA</span><nav aria-label="Разделы макета"><span class="ef-nav-active">Диалоги</span><span>Чек-листы</span></nav><span class="ef-demo">Демо · ручная оценка</span></header>
+ <main class="ef-work">
+  <header class="ef-heading"><div><p class="ef-eyebrow">ДИАЛОГИ / DEMO-RU-001</p><h1>Диалог в деталях</h1><p class="ef-subtitle">Чат · Русский · 4 сообщения</p></div><span class="ef-status">Оценка готова</span></header>
+  <div class="ef-criteria" role="group" aria-label="Показать основание выбранного критерия">
+   <button type="button" class="ef-criterion cursor-interaction" data-criterion="contact" aria-pressed="false"><span class="ef-criterion-num">01</span><span><span class="ef-criterion-label">Контакт</span><small>Выполнен</small></span></button>
+   <button type="button" class="ef-criterion cursor-interaction" data-criterion="consultation" aria-pressed="true"><span class="ef-criterion-num">04</span><span><span class="ef-criterion-label">Консультация</span><small>20 / 20</small></span></button>
+   <button type="button" class="ef-criterion cursor-interaction" data-criterion="closing" aria-pressed="false"><span class="ef-criterion-num">07</span><span><span class="ef-criterion-label">Завершение</span><small>Выполнен</small></span></button>
+  </div>
+  <div class="ef-columns">
+   <section class="ef-panel"><div class="ef-panel-heading"><h2>Ход разговора</h2><small>00:00—00:40</small></div><div class="ef-messages">
+    <article class="ef-message" data-message="m0001"><span class="ef-avatar" aria-hidden="true">К</span><div><div class="ef-message-meta"><span>Клиент</span><time>00:00</time></div><p>Здравствуйте! Где посмотреть общие тарифы?</p></div></article>
+    <article class="ef-message ef-operator ef-linked" data-message="m0002"><span class="ef-avatar" aria-hidden="true">О</span><div><div class="ef-message-meta"><span>Оператор</span><time>00:20</time></div><p>Здравствуйте! Меня зовут Алия. Общие тарифы доступны на официальном сайте в разделе «Тарифы».</p><span class="ef-marker">A · основание выбранного критерия</span></div></article>
+    <article class="ef-message" data-message="m0003"><span class="ef-avatar" aria-hidden="true">К</span><div><div class="ef-message-meta"><span>Клиент</span><time>00:35</time></div><p>Спасибо, нашёл.</p></div></article>
+    <article class="ef-message ef-operator" data-message="m0004"><span class="ef-avatar" aria-hidden="true">О</span><div><div class="ef-message-meta"><span>Оператор</span><time>00:40</time></div><p>Рада помочь! Если появятся вопросы, обращайтесь. До свидания!</p><span class="ef-marker">A · основание выбранного критерия</span></div></article>
+   </div></section>
+   <aside class="ef-inspector"><section class="ef-score"><div class="ef-score-heading"><span>Качество диалога</span><span class="ef-score-label">Демо</span></div><div class="ef-total"><strong>100</strong><span>/ 100</span></div><p class="ef-score-footer"><span>Грубые ошибки</span><strong>Не обнаружены</strong></p></section>
+    <section class="ef-panel" aria-live="polite"><div class="ef-evidence-heading"><span class="ef-letter">A</span><span data-result>20 / 20 · выполнен</span></div><h3 data-title>Корректная консультация</h3><blockquote class="ef-excerpt" data-quote>«Общие тарифы доступны на официальном сайте в разделе “Тарифы”».</blockquote><p class="ef-evidence-meta" data-meta>Оператор · 00:20 · m0002</p><button type="button" class="ef-action cursor-interaction" data-reveal>Показать основание <span aria-hidden="true">↗</span></button></section>
+   </aside>
+  </div>
+  <footer class="ef-footer"><span>Качество чатов · Freedom Broker · v1</span><span>Синтетический пример · 3 из 8 критериев показаны в макете</span></footer>
+ </main>
+</div>
+<script>
+(() => {
+ const root=document.getElementById('eva-freedom-dark');
+ const criteria={
+  contact:{title:'Установление контакта',quote:'«Здравствуйте! Меня зовут Алия».',meta:'Оператор · 00:20 · m0002',id:'m0002',result:'Выполнен'},
+  consultation:{title:'Корректная консультация',quote:'«Общие тарифы доступны на официальном сайте в разделе “Тарифы”».',meta:'Оператор · 00:20 · m0002',id:'m0002',result:'20 / 20 · выполнен'},
+  closing:{title:'Завершение диалога',quote:'«Рада помочь! Если появятся вопросы, обращайтесь. До свидания!»',meta:'Оператор · 00:40 · m0004',id:'m0004',result:'Выполнен'}
+ };
+ let selected='consultation';
+ function select(key){
+  const item=criteria[key];if(!item)return;selected=key;
+  root.querySelectorAll('[data-criterion]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.criterion===key)));
+  root.querySelector('[data-title]').textContent=item.title;root.querySelector('[data-quote]').textContent=item.quote;root.querySelector('[data-meta]').textContent=item.meta;root.querySelector('[data-result]').textContent=item.result;
+  root.querySelectorAll('[data-message]').forEach(message=>{message.classList.toggle('ef-linked',message.dataset.message===item.id);message.classList.remove('ef-revealed');});
+ }
+ root.addEventListener('click',event=>{
+  const button=event.target.closest('[data-criterion]');
+  if(button){select(button.dataset.criterion);if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{project:'EVA',kind:'freedom-dark',base:'Графический',palette:'чёрная тема с зелёными акцентами'},privateContent:{criterion:selected}}).catch(()=>{});}
+  if(event.target.closest('[data-reveal]')){const message=root.querySelector('.ef-linked');message.classList.add('ef-revealed');const rect=message.getBoundingClientRect();if(rect.top<0||rect.bottom>innerHeight)message.scrollIntoView({block:'nearest',behavior:'instant'});}
+ });
+ function restore(state){select(criteria[state?.privateContent?.criterion]?state.privateContent.criterion:'consultation');}
+ restore(window.openai?.widgetState);window.addEventListener('openai:set_globals',event=>restore(event.detail?.globals?.widgetState));
+ if(globalThis.Tweak){const state={radius:16};const tweak=new Tweak({container:root,onChange:()=>root.style.setProperty('--ef-radius',state.radius+'px')});tweak.addSlider(state,'radius',{label:'Скругления панелей',min:8,max:24,step:2,unit:'px',reference:'--ef-radius'});}
+})();
+</script>
+</div>

@@ -1,0 +1,222 @@
+<div id="eva-root">
+<style>
+#eva-root .ev-product { --ev-bg:light-dark(#f1f3f7,#171c26); --ev-paper:light-dark(#fff,#222936); --ev-text:light-dark(#202736,#edf0f6); --ev-muted:light-dark(#657084,#acb6c8); --ev-line:light-dark(#dfe4ed,#3a4455); --ev-accent:light-dark(#2459c4,#a9c4ff); --ev-soft:light-dark(#edf2ff,#2b3b58); --ev-on:light-dark(#fff,#152443); --ev-pad:22px; --ev-radius:14px; box-sizing:border-box; height:730px; color:var(--ev-text); background:var(--ev-bg); font:14px/1.55 'Segoe UI',Arial,sans-serif; overflow-wrap:anywhere; }
+#eva-root .ev-product *, #eva-root .ev-product *::before, #eva-root .ev-product *::after { box-sizing:border-box; }
+#eva-root .ev-product h1, #eva-root .ev-product h2, #eva-root .ev-product h3, #eva-root .ev-product p, #eva-root .ev-product blockquote { margin:0; }
+#eva-root .ev-product h1 { font-size:27px; line-height:1.2; font-weight:500; letter-spacing:-.6px; }
+#eva-root .ev-product h2 { font-size:16px; line-height:1.35; font-weight:500; }
+#eva-root .ev-product h3 { font-size:15px; font-weight:500; line-height:1.4; }
+#eva-root .ev-product strong { font-weight:500; }
+#eva-root .ev-product small, #eva-root .ev-label { font-size:12px; color:var(--ev-muted); }
+#eva-root .ev-product button { font:inherit; color:inherit; }
+#eva-root .ev-top { display:flex; align-items:center; justify-content:space-between; gap:16px; height:62px; padding:0 22px; border-bottom:1px solid var(--ev-line); background:var(--ev-paper); }
+#eva-root .ev-brand { display:flex; align-items:center; gap:12px; font-size:21px; font-weight:500; letter-spacing:1px; white-space:nowrap; }
+#eva-root .ev-brand i { color:var(--ev-accent); }
+#eva-root .ev-nav { display:flex; gap:24px; font-size:13px; }
+#eva-root .ev-nav .ev-selected { color:var(--ev-accent); }
+#eva-root .ev-demo { color:var(--ev-muted); font-size:11px; }
+#eva-root .ev-shell { display:grid; grid-template-columns:154px minmax(0,1fr); height:668px; }
+#eva-root .ev-sidebar { padding:26px 14px; background:var(--ev-paper); border-right:1px solid var(--ev-line); }
+#eva-root .ev-sidebar > p { padding:10px 12px; font-size:13px; color:var(--ev-muted); }
+#eva-root .ev-sidebar > p.ev-selected { background:var(--ev-soft); color:var(--ev-accent); border-radius:8px; }
+#eva-root .ev-sidebar small { display:block; margin:32px 12px 12px; }
+#eva-root .ev-sidebar .ev-queue { margin:0; padding:12px; border-left:2px solid var(--ev-accent); background:var(--ev-soft); font-size:12px; }
+#eva-root .ev-work { min-width:0; padding:26px; }
+#eva-root .ev-pagehead { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:22px; }
+#eva-root .ev-pagehead .ev-label { display:block; margin-bottom:6px; }
+#eva-root .ev-status { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ev-accent); }
+#eva-root .ev-status::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+#eva-root .ev-columns { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(215px,1fr); gap:18px; align-items:start; }
+#eva-root .ev-panel { min-width:0; padding:var(--ev-pad); border-radius:var(--ev-radius); background:var(--ev-paper); border:1px solid var(--ev-line); }
+#eva-root .ev-panelhead { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+#eva-root .ev-messages { display:grid; gap:14px; }
+#eva-root .ev-message { padding:12px 14px; background:var(--ev-bg); border-radius:10px; min-width:0; }
+#eva-root .ev-message.ev-operator { margin-left:22px; }
+#eva-root .ev-message.ev-linked { background:var(--ev-soft); box-shadow:inset 3px 0 var(--ev-accent); }
+#eva-root .ev-message-meta { display:flex; justify-content:space-between; gap:10px; margin-bottom:6px; font-size:11px; color:var(--ev-muted); }
+#eva-root .ev-message p { font-size:13px; line-height:1.65; }
+#eva-root .ev-total { display:flex; align-items:baseline; gap:8px; margin:10px 0 4px; }
+#eva-root .ev-total strong { font-size:45px; letter-spacing:-2px; line-height:1.15; font-variant-numeric:tabular-nums; }
+#eva-root .ev-score-caption { padding-bottom:16px; border-bottom:1px solid var(--ev-line); color:var(--ev-muted); font-size:12px; }
+#eva-root .ev-criteria { display:grid; gap:3px; margin:15px 0; }
+#eva-root .ev-criterion { display:flex; justify-content:space-between; align-items:center; gap:10px; width:100%; min-height:40px; padding:8px 10px; border:0; border-radius:6px; background:transparent; text-align:left; font-size:12px!important; }
+#eva-root .ev-criterion span:last-child { white-space:nowrap; color:var(--ev-muted); }
+#eva-root .ev-criterion[aria-pressed=true] { background:var(--ev-soft); color:var(--ev-accent); }
+#eva-root .ev-detail { padding-top:14px; border-top:1px solid var(--ev-line); }
+#eva-root .ev-detail h3 { margin:4px 0 10px; }
+#eva-root .ev-detail blockquote { padding-left:12px; border-left:2px solid var(--ev-accent); font-size:12px; color:var(--ev-muted); line-height:1.6; }
+#eva-root .ev-caption { margin-top:16px!important; color:var(--ev-muted); font-size:11px; }
+#eva-root .ev-main-action { min-height:40px; padding:8px 14px; border:0; border-radius:7px; background:var(--ev-accent); color:var(--ev-on)!important; }
+#eva-root .ev-graphite { --ev-bg:light-dark(#1a2024,#13191d); --ev-paper:light-dark(#232b30,#1c2429); --ev-text:light-dark(#e6eeef,#eaf2f2); --ev-muted:light-dark(#a1b1b6,#a7b7bd); --ev-line:light-dark(#39464c,#36444a); --ev-accent:light-dark(#b3dc91,#bde6a0); --ev-soft:light-dark(#303e33,#2c3a2e); --ev-on:#17211b; --ev-radius:0px; --ev-pad:18px; }
+#eva-root .ev-graphite .ev-top { background:var(--ev-bg); }
+#eva-root .ev-graphite .ev-shell { grid-template-columns:190px minmax(0,1fr); }
+#eva-root .ev-graphite .ev-work { padding:0; }
+#eva-root .ev-graphite .ev-pagehead { margin:0; padding:22px; border-bottom:1px solid var(--ev-line); }
+#eva-root .ev-graphite h1 { font-size:21px; }
+#eva-root .ev-graphite .ev-columns { gap:0; grid-template-columns:minmax(0,1.35fr) minmax(238px,1fr); align-items:stretch; }
+#eva-root .ev-graphite .ev-panel { border:0; background:transparent; }
+#eva-root .ev-graphite .ev-panel + .ev-panel { border-left:1px solid var(--ev-line); }
+#eva-root .ev-graphite .ev-sidebar { padding:18px 14px; background:var(--ev-bg); }
+#eva-root .ev-graphite .ev-message { background:transparent; border-radius:0; padding:14px 8px; border-bottom:1px solid var(--ev-line); }
+#eva-root .ev-graphite .ev-message.ev-operator { margin-left:0; }
+#eva-root .ev-graphite .ev-message.ev-linked { background:var(--ev-soft); }
+#eva-root .ev-graphite .ev-messages { gap:0; }
+#eva-root .ev-graphite .ev-total strong { font-family:Consolas,monospace; font-size:42px; }
+#eva-root .ev-key { display:inline-block; padding:2px 6px; border:1px solid var(--ev-line); border-radius:4px; font:11px/1.4 Consolas,monospace; color:var(--ev-muted); }
+#eva-root .ev-dossier { --ev-bg:light-dark(#ede9e1,#211f1d); --ev-paper:light-dark(#faf8f2,#2c2824); --ev-text:light-dark(#302d29,#efe7dc); --ev-muted:light-dark(#716a60,#bcb0a0); --ev-line:light-dark(#d7d0c4,#51483d); --ev-accent:light-dark(#923f3d,#e9aaa1); --ev-soft:light-dark(#f1e5de,#49332e); --ev-on:light-dark(#fff,#32201e); --ev-radius:0px; }
+#eva-root .ev-dossier .ev-top { background:transparent; }
+#eva-root .ev-document { margin:24px 34px; padding:26px 34px; background:var(--ev-paper); border-top:3px solid var(--ev-accent); }
+#eva-root .ev-dossier h1 { font-family:Georgia,'Times New Roman',serif; font-size:34px; letter-spacing:-.8px; }
+#eva-root .ev-dossier .ev-pagehead { padding-bottom:22px; border-bottom:1px solid var(--ev-line); margin-bottom:24px; }
+#eva-root .ev-dossier .ev-panel { border:0; padding:0; }
+#eva-root .ev-dossier .ev-columns { grid-template-columns:minmax(0,1.8fr) minmax(210px,1fr); gap:32px; }
+#eva-root .ev-dossier .ev-message { border-radius:0; background:transparent; border-bottom:1px solid var(--ev-line); padding:12px 10px; }
+#eva-root .ev-dossier .ev-message.ev-operator { margin-left:0; }
+#eva-root .ev-dossier .ev-message.ev-linked { background:var(--ev-soft); }
+#eva-root .ev-dossier .ev-messages { gap:2px; }
+#eva-root .ev-dossier .ev-total { margin:0; }
+#eva-root .ev-dossier .ev-total strong { font-family:Georgia,'Times New Roman',serif; }
+#eva-root .ev-dossier .ev-criterion { border-radius:0; }
+#eva-root .ev-focus { --ev-bg:light-dark(#f0f0f5,#1e202a); --ev-paper:light-dark(#fff,#292c39); --ev-text:light-dark(#26253a,#efedfa); --ev-muted:light-dark(#706c85,#b6b2cb); --ev-line:light-dark(#dfdce9,#484359); --ev-accent:light-dark(#67529b,#c7b8ec); --ev-soft:light-dark(#f0ebf9,#3a314e); --ev-on:light-dark(#fff,#271e3a); }
+#eva-root .ev-focus .ev-shell { grid-template-columns:238px minmax(0,1fr); }
+#eva-root .ev-focus .ev-sidebar { padding:26px 18px; }
+#eva-root .ev-focus .ev-criteria { gap:8px; }
+#eva-root .ev-focus .ev-criterion { min-height:52px; }
+#eva-root .ev-focus .ev-work { padding:28px 38px; }
+#eva-root .ev-focus .ev-focus-content { max-width:640px; margin:0 auto; }
+#eva-root .ev-focus .ev-focus-content h1 { font-size:30px; max-width:500px; margin:12px 0; }
+#eva-root .ev-focus .ev-question { color:var(--ev-muted); margin:0 0 24px; }
+#eva-root .ev-focus .ev-panel { padding:22px; }
+#eva-root .ev-focus .ev-detail { border:0; padding:0; }
+#eva-root .ev-focus .ev-detail blockquote { padding:18px; background:var(--ev-soft); border-left:0; border-radius:8px; font-size:15px; color:var(--ev-text); }
+#eva-root .ev-focus .ev-footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; margin-top:22px; }
+#eva-root .ev-focus .ev-result-line { display:flex; justify-content:space-between; align-items:center; gap:14px; padding-bottom:18px; margin-bottom:20px; border-bottom:1px solid var(--ev-line); }
+#eva-root .ev-focus .ev-result-line strong { font-size:25px; font-variant-numeric:tabular-nums; }
+#eva-root .ev-product [hidden] { display:none!important; }
+@media(max-width:800px) {
+ #eva-root .ev-shell { grid-template-columns:128px minmax(0,1fr); }
+ #eva-root .ev-work { padding:22px 16px; }
+ #eva-root .ev-columns { gap:12px; grid-template-columns:minmax(0,1.2fr) minmax(200px,1fr); }
+ #eva-root .ev-graphite .ev-shell { grid-template-columns:140px minmax(0,1fr); }
+ #eva-root .ev-graphite .ev-columns { grid-template-columns:minmax(0,1.2fr) minmax(200px,1fr); }
+ #eva-root .ev-focus .ev-shell { grid-template-columns:200px minmax(0,1fr); }
+ #eva-root .ev-focus .ev-work { padding:24px; }
+ #eva-root .ev-document { margin:20px; padding:24px; }
+}
+@media(max-width:650px) {
+ #eva-root .ev-product { height:1280px; }
+ #eva-root .ev-top { height:auto; min-height:76px; padding:14px 16px; flex-wrap:wrap; gap:8px 16px; }
+ #eva-root .ev-top .ev-demo { flex-basis:100%; }
+ #eva-root .ev-nav { gap:16px; font-size:12px; }
+ #eva-root .ev-shell, #eva-root .ev-graphite .ev-shell, #eva-root .ev-focus .ev-shell { height:auto; grid-template-columns:minmax(0,1fr); }
+ #eva-root .ev-sidebar, #eva-root .ev-graphite .ev-sidebar { display:none; }
+ #eva-root .ev-columns, #eva-root .ev-graphite .ev-columns, #eva-root .ev-dossier .ev-columns { grid-template-columns:minmax(0,1fr); gap:16px; }
+ #eva-root .ev-product h1 { font-size:24px; }
+ #eva-root .ev-pagehead { flex-wrap:wrap; margin-bottom:16px; }
+ #eva-root .ev-graphite .ev-panel + .ev-panel { border-left:0; border-top:1px solid var(--ev-line); }
+ #eva-root .ev-panel { padding:18px; }
+ #eva-root .ev-document { margin:16px 10px; padding:22px 16px; }
+ #eva-root .ev-dossier .ev-pagehead { gap:16px; }
+ #eva-root .ev-focus .ev-sidebar { display:block; padding:12px 16px; border:0; }
+ #eva-root .ev-focus .ev-sidebar > h2, #eva-root .ev-focus .ev-sidebar > small, #eva-root .ev-focus .ev-sidebar > p { display:none; }
+ #eva-root .ev-focus .ev-criteria { margin:0; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; }
+ #eva-root .ev-focus .ev-criterion { display:block; padding:8px; font-size:11px!important; }
+ #eva-root .ev-focus .ev-criterion span:last-child { display:block; margin-top:4px; }
+ #eva-root .ev-focus .ev-work { padding:26px 16px; }
+ #eva-root .ev-focus .ev-focus-content h1 { font-size:28px; }
+ #eva-root .ev-criterion, #eva-root .ev-main-action { min-height:44px; }
+}
+@media(max-width:380px) { #eva-root .ev-product { height:1440px; } #eva-root .ev-message.ev-operator { margin-left:10px; } }
+</style>
+<div id="eva-redesign-options" class="viz-carousel" aria-label="Новый дизайн EVA" data-previous-label="Предыдущий вариант" data-next-label="Следующий вариант">
+ <section data-variant="Светлый кабинет" aria-label="Светлый кабинет">
+  <div class="ev-product ev-light" aria-label="Светлый кабинет — оформление">
+   <header class="ev-top"><span class="ev-brand"><i data-lucide="audio-lines" aria-hidden="true"></i>EVA</span><span class="ev-demo">Синтетический пример · ручная оценка</span></header>
+   <div class="ev-shell"><aside class="ev-sidebar"><p class="ev-selected">Диалоги</p><p>Чек-листы</p><small>ОТКРЫТЫЙ ДИАЛОГ</small><div class="ev-queue">demo-ru-001<br><small>Чат · Русский</small></div></aside>
+    <main class="ev-work"><header class="ev-pagehead"><div><span class="ev-label">Диалоги / demo-ru-001</span><h1>Разбор диалога</h1></div><span class="ev-status">Оценка готова</span></header>
+     <div class="ev-columns"><section class="ev-panel"><div class="ev-panelhead"><h2>Переписка</h2><small>4 сообщения</small></div><div data-slot="messages"></div></section><aside class="ev-panel"><h2>Качество диалога</h2><div class="ev-total"><strong>100</strong><small>/ 100</small></div><p class="ev-score-caption">Ручная демооценка</p><div data-slot="criteria"></div><div data-slot="detail"></div></aside></div>
+    </main></div>
+  </div>
+ </section>
+ <section data-variant="Графит" aria-label="Графит" hidden>
+  <div class="ev-product ev-graphite" aria-label="Графит — оформление">
+   <header class="ev-top"><span class="ev-brand"><i data-lucide="audio-lines" aria-hidden="true"></i>EVA</span><div class="ev-nav"><span class="ev-selected">Диалоги</span><span>Чек-листы</span></div><span class="ev-demo">Демо · ручная оценка</span></header>
+   <div class="ev-shell"><aside class="ev-sidebar"><h2>Очередь</h2><small>1 ДИАЛОГ</small><div class="ev-queue">demo-ru-001<br><small>Чат · 4 сообщения</small></div><p class="ev-caption">Синтетические данные</p></aside>
+    <main class="ev-work"><header class="ev-pagehead"><div><span class="ev-label">Чат / Русский</span><h1>demo-ru-001</h1></div><span class="ev-status">Готово</span></header><div class="ev-columns"><section class="ev-panel"><div class="ev-panelhead"><h2>Переписка</h2><span class="ev-key">RU</span></div><div data-slot="messages"></div></section><aside class="ev-panel"><span class="ev-label">КАЧЕСТВО ДИАЛОГА</span><div class="ev-total"><strong>100</strong><small>/ 100</small></div><p class="ev-score-caption">Грубые ошибки не обнаружены</p><div data-slot="criteria"></div><div data-slot="detail"></div></aside></div></main>
+   </div>
+  </div>
+ </section>
+ <section data-variant="Досье" aria-label="Досье" hidden>
+  <div class="ev-product ev-dossier" aria-label="Досье — оформление">
+   <header class="ev-top"><span class="ev-brand">EVA <small>Контроль качества</small></span><div class="ev-nav"><span class="ev-selected">Диалоги</span><span>Чек-листы</span></div><span class="ev-demo">Демо · ручная оценка</span></header>
+   <main class="ev-document"><header class="ev-pagehead"><div><span class="ev-label">РАЗБОР / DEMO-RU-001</span><h1>Диалог с клиентом</h1><small>Чат · Русский · 4 сообщения</small></div><div><div class="ev-total"><strong>100</strong><small>/ 100</small></div><small>Ручная демооценка</small></div></header>
+    <div class="ev-columns"><section class="ev-panel"><div class="ev-panelhead"><h2>Текст разговора</h2><small>Синтетический пример</small></div><div data-slot="messages"></div></section><aside class="ev-panel"><h2>Заключение</h2><p class="ev-caption">Критерий и основание</p><div data-slot="criteria"></div><div data-slot="detail"></div></aside></div>
+   </main>
+  </div>
+ </section>
+ <section data-variant="Фокус" aria-label="Фокус" hidden>
+  <div class="ev-product ev-focus" aria-label="Фокус — оформление">
+   <header class="ev-top"><span class="ev-brand"><i data-lucide="audio-lines" aria-hidden="true"></i>EVA</span><span class="ev-label">Диалог demo-ru-001</span><span class="ev-demo">Демо · ручная оценка</span></header>
+   <div class="ev-shell"><aside class="ev-sidebar"><h2>Критерии</h2><small>ВЫБРАННЫЕ ДЛЯ МАКЕТА</small><div data-slot="criteria"></div><p class="ev-caption">В полном чек-листе — 8 критериев.</p></aside>
+    <main class="ev-work"><div class="ev-focus-content"><span class="ev-label">ПРОВЕРКА КРИТЕРИЯ</span><h1 data-focus-title>Корректная консультация</h1><p class="ev-question" data-focus-question>Оператор дал корректный следующий шаг?</p><section class="ev-panel"><div class="ev-result-line"><span class="ev-status">Выполнен</span><strong data-focus-value>20 / 20</strong></div><div data-slot="detail"></div><p class="ev-caption">Синтетическая реплика · ручная разметка</p></section><div class="ev-footer"><span><small>Качество диалога</small><br><strong>100 / 100</strong></span><button type="button" class="ev-main-action cursor-interaction" data-next-criterion>Следующий критерий →</button></div></div></main>
+   </div>
+  </div>
+ </section>
+</div>
+<template id="eva-options-messages"><div class="ev-messages">
+ <article class="ev-message" data-message="m0001"><div class="ev-message-meta"><span>Клиент</span><time>00:00</time></div><p>Здравствуйте! Где посмотреть общие тарифы?</p></article>
+ <article class="ev-message ev-operator ev-linked" data-message="m0002"><div class="ev-message-meta"><span>Оператор</span><time>00:20</time></div><p>Здравствуйте! Меня зовут Алия. Общие тарифы доступны на официальном сайте в разделе «Тарифы».</p></article>
+ <article class="ev-message" data-message="m0003"><div class="ev-message-meta"><span>Клиент</span><time>00:35</time></div><p>Спасибо, нашёл.</p></article>
+ <article class="ev-message ev-operator" data-message="m0004"><div class="ev-message-meta"><span>Оператор</span><time>00:40</time></div><p>Рада помочь! Если появятся вопросы, обращайтесь. До свидания!</p></article>
+</div></template>
+<template id="eva-options-criteria"><div class="ev-criteria" role="group" aria-label="Показать основание критерия">
+ <button class="ev-criterion cursor-interaction" type="button" data-criterion="contact" aria-pressed="false"><span>Контакт</span><span>Выполнен</span></button>
+ <button class="ev-criterion cursor-interaction" type="button" data-criterion="consultation" aria-pressed="true"><span>Консультация</span><span>20 / 20</span></button>
+ <button class="ev-criterion cursor-interaction" type="button" data-criterion="closing" aria-pressed="false"><span>Завершение</span><span>Выполнен</span></button>
+</div></template>
+<template id="eva-options-detail"><section class="ev-detail" aria-live="polite"><span class="ev-label">ОСНОВАНИЕ</span><h3 data-detail-title>Корректная консультация</h3><blockquote data-detail-quote>«Общие тарифы доступны на официальном сайте в разделе “Тарифы”».</blockquote><p class="ev-caption" data-detail-meta>Оператор · 00:20 · m0002</p></section></template>
+<script>
+(() => {
+ const root = document.getElementById('eva-redesign-options');
+ const criteria = {
+  contact: { title:'Установление контакта', question:'Оператор поздоровался и представился?', quote:'«Здравствуйте! Меня зовут Алия».' , message:'m0002', meta:'Оператор · 00:20 · m0002', value:'Выполнен' },
+  consultation: { title:'Корректная консультация', question:'Оператор дал корректный следующий шаг?', quote:'«Общие тарифы доступны на официальном сайте в разделе “Тарифы”».' , message:'m0002', meta:'Оператор · 00:20 · m0002', value:'20 / 20' },
+  closing: { title:'Завершение диалога', question:'Оператор предложил помощь и попрощался?', quote:'«Рада помочь! Если появятся вопросы, обращайтесь. До свидания!»', message:'m0004', meta:'Оператор · 00:40 · m0004', value:'Выполнен' }
+ };
+ const selected = {};
+ function choose(product, key) {
+  const item = criteria[key]; if (!item) return;
+  const name = product.parentElement.dataset.variant; selected[name] = key;
+  product.querySelectorAll('[data-criterion]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.criterion === key)));
+  product.querySelector('[data-detail-title]').textContent = item.title;
+  product.querySelector('[data-detail-quote]').textContent = item.quote;
+  product.querySelector('[data-detail-meta]').textContent = item.meta;
+  product.querySelectorAll('[data-message]').forEach(message => message.classList.toggle('ev-linked', message.dataset.message === item.message));
+  if (product.querySelector('[data-focus-title]')) {
+   product.querySelector('[data-focus-title]').textContent = item.title;
+   product.querySelector('[data-focus-question]').textContent = item.question;
+   product.querySelector('[data-focus-value]').textContent = item.value;
+  }
+ }
+ function save() { if (window.openai?.setWidgetState) window.openai.setWidgetState({ modelContent:{ project:'EVA', kind:'redesign-options', directions:['Светлый кабинет','Графит','Досье','Фокус'] }, privateContent:{ criteria:selected } }).catch(() => {}); }
+ root.querySelectorAll('.ev-product').forEach(product => {
+  product.querySelectorAll('[data-slot]').forEach(slot => slot.append(document.getElementById('eva-options-' + slot.dataset.slot).content.cloneNode(true)));
+  choose(product, 'consultation');
+  product.addEventListener('click', event => {
+   const button = event.target.closest('[data-criterion]');
+   if (button) { choose(product, button.dataset.criterion); save(); }
+   if (event.target.closest('[data-next-criterion]')) { const keys=Object.keys(criteria); choose(product, keys[(keys.indexOf(selected[product.parentElement.dataset.variant])+1)%keys.length]); save(); }
+  });
+  if (globalThis.Tweak && (product.classList.contains('ev-light') || product.classList.contains('ev-graphite'))) {
+   const settings = { padding: product.classList.contains('ev-graphite') ? 18 : 22 };
+   const tweak = new Tweak({ container:product, onChange:() => product.style.setProperty('--ev-pad', settings.padding + 'px') });
+   tweak.addSlider(settings, 'padding', { label:'Отступы панелей', min:14, max:28, step:2, unit:'px', reference:'--ev-pad' });
+  }
+ });
+ function restore(state) { root.querySelectorAll('.ev-product').forEach(product => { const key=state?.privateContent?.criteria?.[product.parentElement.dataset.variant]; if (criteria[key]) choose(product,key); }); }
+ restore(window.openai?.widgetState);
+ window.addEventListener('openai:set_globals', event => restore(event.detail?.globals?.widgetState));
+ if (globalThis.lucide) lucide.createIcons({attrs:{width:20,height:20}});
+})();
+</script>
+</div>

@@ -1,0 +1,192 @@
+<div id="eva-root">
+<style>
+#eva-root .ec-app { --ec-bg:#f0f3fa;--ec-paper:#fff;--ec-ink:#192339;--ec-muted:#65718a;--ec-line:#e0e6f0;--ec-blue:#305eea;--ec-soft:#edf2ff;--ec-radius:18px; color-scheme:light; color:var(--ec-ink);background:var(--ec-bg);font:14px/1.5 'Segoe UI',Arial,sans-serif;height:760px;overflow-wrap:anywhere; }
+#eva-root .ec-app *,#eva-root .ec-app *::before,#eva-root .ec-app *::after {box-sizing:border-box;}
+#eva-root .ec-app h1,#eva-root .ec-app h2,#eva-root .ec-app h3,#eva-root .ec-app p,#eva-root .ec-app blockquote {margin:0;}
+#eva-root .ec-app h1 {font-size:32px;line-height:1.15;letter-spacing:-1px;font-weight:600;}
+#eva-root .ec-app h2 {font-size:17px;font-weight:600;line-height:1.35;}
+#eva-root .ec-app h3 {font-size:16px;font-weight:600;line-height:1.35;}
+#eva-root .ec-app small,#eva-root .ec-muted {color:var(--ec-muted);font-size:12px;}
+#eva-root .ec-app button {font:inherit;color:inherit;}
+#eva-root .ec-app strong {font-weight:600;}
+#eva-root .ec-chrome {display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 28px;border-bottom:1px solid var(--ec-line);min-height:68px;}
+#eva-root .ec-brand {font-size:24px;letter-spacing:1px;font-weight:600;}
+#eva-root .ec-chrome nav {display:flex;gap:24px;font-size:13px;}
+#eva-root .ec-chrome nav span:first-child {color:var(--ec-blue);font-weight:600;}
+#eva-root .ec-layout {display:grid;grid-template-columns:86px minmax(0,1fr);height:800px;}
+#eva-root .ec-rail {background:#15213a;color:#d7dfef;padding:24px 8px;display:flex;align-items:center;flex-direction:column;gap:34px;}
+#eva-root .ec-rail .ec-brand {color:#fff;font-size:22px;}
+#eva-root .ec-rail-item {width:100%;display:flex;align-items:center;flex-direction:column;gap:8px;padding:12px 2px;font-size:11px;}
+#eva-root .ec-rail-item.ec-current {background:#2a3c61;color:#fff;border-radius:12px;}
+#eva-root .ec-rail-item i {display:block;min-height:20px;}
+#eva-root .ec-rail .ec-monogram {margin-top:auto;display:grid;place-items:center;width:36px;height:36px;border:1px solid #516284;border-radius:50%;font-size:12px;}
+#eva-root .ec-work {min-width:0;padding:26px 30px;}
+#eva-root .ec-breadcrumb {display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--ec-muted);margin-bottom:24px;}
+#eva-root .ec-heading {display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px;}
+#eva-root .ec-heading p {margin-top:8px;font-size:13px;color:var(--ec-muted);}
+#eva-root .ec-chip {display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:20px;background:var(--ec-paper);font-size:11px;white-space:nowrap;}
+#eva-root .ec-chip::before {content:'';width:6px;height:6px;border-radius:50%;background:var(--ec-blue);}
+#eva-root .ec-columns {display:grid;grid-template-columns:minmax(0,1.4fr) minmax(258px,1fr);gap:20px;align-items:start;}
+#eva-root .ec-sheet {min-width:0;padding:22px;border-radius:var(--ec-radius);background:var(--ec-paper);}
+#eva-root .ec-sheet-head {display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:18px;border-bottom:1px solid var(--ec-line);margin-bottom:16px;}
+#eva-root .ec-message-list {display:grid;gap:18px;}
+#eva-root .ec-message {display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;position:relative;}
+#eva-root .ec-avatar {display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ec-bg);color:var(--ec-muted);font-size:11px;}
+#eva-root .ec-operator .ec-avatar {background:var(--ec-soft);color:var(--ec-blue);}
+#eva-root .ec-message-meta {display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:11px;color:var(--ec-muted);}
+#eva-root .ec-message p {padding:10px 12px;background:var(--ec-bg);border-radius:3px 12px 12px 12px;font-size:13px;line-height:1.65;}
+#eva-root .ec-message.ec-linked p {background:var(--ec-soft);box-shadow:inset 3px 0 var(--ec-blue);}
+#eva-root .ec-evidence-marker {display:none;font-weight:600;color:var(--ec-blue);font-size:11px;margin-top:5px;}
+#eva-root .ec-linked .ec-evidence-marker {display:block;}
+#eva-root .ec-inspector {min-width:0;}
+#eva-root .ec-score {padding:18px 22px;background:var(--ec-blue);color:#fff;border-radius:var(--ec-radius);margin-bottom:16px;}
+#eva-root .ec-score-head {display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:12px;}
+#eva-root .ec-score-number {display:flex;align-items:baseline;gap:10px;margin-top:6px;}
+#eva-root .ec-score-number strong {font-size:58px;line-height:1.1;letter-spacing:-3px;font-weight:500;font-variant-numeric:tabular-nums;}
+#eva-root .ec-score-number span {font-size:14px;}
+#eva-root .ec-score small {display:block;color:inherit;opacity:.85;margin-top:8px;font-size:11px;}
+#eva-root .ec-criteria {display:flex;gap:4px;margin:0 0 18px;padding:4px;background:var(--ec-bg);border-radius:10px;}
+#eva-root .ec-criterion {flex:1;min-width:0;min-height:38px;padding:7px 6px;border:0;border-radius:7px;background:transparent;font-size:11px!important;text-align:center;}
+#eva-root .ec-criterion[aria-pressed=true] {background:var(--ec-paper);color:var(--ec-blue);box-shadow:0 2px 5px #16203a0c;}
+#eva-root .ec-criterion .ec-step-number {display:none;}
+#eva-root .ec-evidence h3 {margin:8px 0 10px;}
+#eva-root .ec-evidence-label {display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ec-blue);}
+#eva-root .ec-link-number {display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--ec-soft);font-weight:600;}
+#eva-root .ec-excerpt {font-size:13px;line-height:1.7;color:var(--ec-muted);}
+#eva-root .ec-evidence-meta {margin-top:12px!important;font-size:11px;color:var(--ec-muted);}
+#eva-root .ec-text-action {display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:8px 0;background:transparent;border:0;color:var(--ec-blue)!important;font-size:12px!important;min-height:36px;}
+#eva-root .ec-message.ec-revealed p {outline:2px solid var(--ec-blue);outline-offset:3px;}
+#eva-root .ec-message.ec-revealed .ec-evidence-marker {font-weight:600;}
+#eva-root .ec-warm {--ec-bg:#f3efe8;--ec-paper:#fffdf9;--ec-ink:#35332e;--ec-muted:#776f64;--ec-line:#e5ded3;--ec-blue:#965438;--ec-soft:#f5e9df;--ec-radius:22px;}
+#eva-root .ec-warm .ec-chrome {padding:18px 32px;}
+#eva-root .ec-warm .ec-work {padding:26px 32px;}
+#eva-root .ec-warm h1 {font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:34px;}
+#eva-root .ec-warm .ec-heading {padding-bottom:22px;border-bottom:1px solid var(--ec-line);}
+#eva-root .ec-warm .ec-heading .ec-score {margin:0;padding:0;background:transparent;color:var(--ec-ink);border-radius:0;}
+#eva-root .ec-warm .ec-score-number {margin:0;}
+#eva-root .ec-warm .ec-score-number strong {font-size:46px;font-family:Georgia,serif;}
+#eva-root .ec-warm .ec-columns {grid-template-columns:minmax(0,1.55fr) minmax(260px,1fr);gap:24px;}
+#eva-root .ec-warm .ec-message p {background:transparent;padding:6px 0;border-radius:0;}
+#eva-root .ec-warm .ec-message.ec-linked p {background:var(--ec-soft);box-shadow:none;padding:10px 12px;border-radius:12px;}
+#eva-root .ec-warm .ec-sheet {border:1px solid var(--ec-line);}
+#eva-root .ec-warm .ec-evidence {padding:10px 2px 12px;}
+#eva-root .ec-warm .ec-excerpt {font-family:Georgia,serif;font-size:18px;line-height:1.6;}
+#eva-root .ec-warm .ec-criteria {display:grid;grid-template-columns:minmax(0,1fr);background:transparent;border:0;padding:0;gap:2px;border-bottom:1px solid var(--ec-line);border-radius:0;padding-bottom:16px;}
+#eva-root .ec-warm .ec-criterion {text-align:left;min-height:40px;padding:10px 12px;font-size:13px!important;}
+#eva-root .ec-warm .ec-criterion[aria-pressed=true] {background:var(--ec-soft);box-shadow:none;}
+#eva-root .ec-graphic {--ec-bg:#f7f9fd;--ec-blue:#224ccd;--ec-soft:#e9efff;--ec-radius:12px;}
+#eva-root .ec-graphic .ec-chrome {background:var(--ec-paper);border-top:5px solid var(--ec-blue);}
+#eva-root .ec-graphic .ec-work {padding:24px 30px;}
+#eva-root .ec-graphic .ec-heading {margin-bottom:20px;}
+#eva-root .ec-graphic .ec-compact-score {display:flex;align-items:center;gap:14px;padding-left:22px;border-left:1px solid var(--ec-line);}
+#eva-root .ec-graphic .ec-score-number {color:var(--ec-blue);margin:0;}
+#eva-root .ec-graphic .ec-score-number strong {font-size:46px;}
+#eva-root .ec-graphic .ec-criteria {background:transparent;padding:0;gap:12px;margin-bottom:20px;}
+#eva-root .ec-graphic .ec-criterion {display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:13px 16px;font-size:13px!important;background:var(--ec-paper);border:1px solid var(--ec-line);}
+#eva-root .ec-graphic .ec-criterion .ec-step-number {display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--ec-bg);font-size:12px;flex-shrink:0;}
+#eva-root .ec-graphic .ec-criterion[aria-pressed=true] {border-color:var(--ec-blue);box-shadow:none;}
+#eva-root .ec-graphic .ec-criterion[aria-pressed=true] .ec-step-number {background:var(--ec-blue);color:#fff;}
+#eva-root .ec-graphic .ec-columns {grid-template-columns:minmax(0,1.6fr) minmax(250px,1fr);}
+#eva-root .ec-graphic .ec-sheet {border:1px solid var(--ec-line);}
+#eva-root .ec-graphic .ec-message-list {gap:12px;}
+#eva-root .ec-graphic .ec-message p {background:transparent;padding:6px 0;}
+#eva-root .ec-graphic .ec-message.ec-linked p {background:var(--ec-soft);padding:10px 12px;border-radius:6px;}
+#eva-root .ec-graphic .ec-message:not(:last-child)::after {content:'';position:absolute;left:13px;top:34px;bottom:-8px;border-left:1px solid var(--ec-line);}
+#eva-root .ec-graphic .ec-sheet.ec-evidence {border-top:4px solid var(--ec-blue);}
+#eva-root .ec-graphic .ec-excerpt {font-size:15px;}
+#eva-root .ec-graphic .ec-large-letter {font-size:12px;color:var(--ec-blue);background:var(--ec-soft);padding:12px;border-radius:8px;margin-bottom:22px;}
+#eva-root .ec-app [hidden] {display:none!important;}
+#eva-root .ec-app {height:800px;}
+@media(max-width:820px){
+ #eva-root .ec-work,#eva-root .ec-warm .ec-work,#eva-root .ec-graphic .ec-work {padding:22px 18px;}
+ #eva-root .ec-layout {grid-template-columns:72px minmax(0,1fr);}
+ #eva-root .ec-columns,#eva-root .ec-warm .ec-columns,#eva-root .ec-graphic .ec-columns {grid-template-columns:minmax(0,1.3fr) minmax(230px,1fr);gap:14px;}
+ #eva-root .ec-sheet {padding:18px;}
+ #eva-root .ec-message {grid-template-columns:minmax(0,1fr);}
+ #eva-root .ec-avatar {display:none;}
+ #eva-root .ec-graphic .ec-message::after {display:none;}
+ #eva-root .ec-chrome {padding:16px 20px;}
+}
+@media(max-width:650px){
+ #eva-root .ec-app {height:1450px;}
+ #eva-root .ec-layout {height:auto;grid-template-columns:minmax(0,1fr);}
+ #eva-root .ec-rail {flex-direction:row;padding:14px 16px;gap:18px;}
+ #eva-root .ec-rail-item {width:auto;padding:6px 10px;font-size:12px;}
+ #eva-root .ec-rail-item i,#eva-root .ec-rail .ec-monogram {display:none;}
+ #eva-root .ec-chrome {flex-wrap:wrap;gap:10px;}
+ #eva-root .ec-chrome > small {flex-basis:100%;}
+ #eva-root .ec-chrome nav {font-size:12px;gap:16px;}
+ #eva-root .ec-work,#eva-root .ec-warm .ec-work,#eva-root .ec-graphic .ec-work {padding:22px 16px;}
+ #eva-root .ec-heading {align-items:flex-start;flex-wrap:wrap;}
+ #eva-root .ec-app h1,#eva-root .ec-warm h1 {font-size:28px;}
+ #eva-root .ec-columns,#eva-root .ec-warm .ec-columns,#eva-root .ec-graphic .ec-columns {grid-template-columns:minmax(0,1fr);gap:18px;}
+ #eva-root .ec-breadcrumb {margin-bottom:18px;}
+ #eva-root .ec-graphic .ec-compact-score {border:0;padding:0;}
+ #eva-root .ec-graphic .ec-criterion {flex-direction:column;gap:8px;padding:10px 4px;font-size:11px!important;}
+ #eva-root .ec-criterion,#eva-root .ec-text-action {min-height:44px;}
+ #eva-root .ec-warm .ec-heading .ec-score {display:flex;align-items:center;gap:14px;}
+}
+@media(prefers-reduced-motion:no-preference){#eva-root .ec-criterion,#eva-root .ec-text-action {transition:background-color 140ms ease,color 140ms ease;} }
+</style>
+<div id="eva-light-character" class="viz-carousel" aria-label="Светлый кабинет с характером" data-previous-label="Предыдущий вариант" data-next-label="Следующий вариант">
+ <section data-variant="Контрастный" aria-label="Контрастный светлый кабинет">
+  <div class="ec-app ec-contrast" aria-label="Контрастный — оформление"><div class="ec-layout">
+   <aside class="ec-rail"><span class="ec-brand">EVA</span><span class="ec-rail-item ec-current"><i data-lucide="messages-square" aria-hidden="true"></i>Диалоги</span><span class="ec-rail-item"><i data-lucide="list-checks" aria-hidden="true"></i>Правила</span><span class="ec-monogram">QA</span></aside>
+   <main class="ec-work"><div class="ec-breadcrumb"><span>Диалоги / demo-ru-001</span><span>Синтетический пример · ручная оценка</span></div><header class="ec-heading"><div><h1>Разбор диалога</h1><p>Чат · Русский · 4 сообщения</p></div><span class="ec-chip">Оценка готова</span></header>
+    <div class="ec-columns"><section class="ec-sheet"><div class="ec-sheet-head"><h2>Переписка</h2><small>00:00—00:40</small></div><div data-slot="messages"></div></section><aside class="ec-inspector"><div class="ec-score"><div class="ec-score-head"><span>Качество диалога</span><span>Демо</span></div><div class="ec-score-number"><strong>100</strong><span>/ 100</span></div><small>Грубые ошибки не обнаружены</small></div><section class="ec-sheet"><div data-slot="criteria"></div><div data-slot="evidence"></div></section></aside></div>
+   </main></div></div>
+ </section>
+ <section data-variant="Тёплый" aria-label="Тёплый светлый кабинет" hidden>
+  <div class="ec-app ec-warm" aria-label="Тёплый — оформление"><header class="ec-chrome"><span class="ec-brand">EVA.</span><nav aria-label="Разделы макета"><span>Диалоги</span><span>Чек-листы</span></nav><small>Демо · ручная оценка</small></header>
+   <main class="ec-work"><header class="ec-heading"><div><h1>Внимание к разговору.</h1><p>demo-ru-001 · Чат · Русский</p></div><div class="ec-score"><div class="ec-score-number"><strong>100</strong><span>/ 100</span></div><small>Качество диалога</small></div></header><div class="ec-columns"><section class="ec-sheet"><div class="ec-sheet-head"><h2>Переписка</h2><small>4 сообщения</small></div><div data-slot="messages"></div></section><aside class="ec-sheet"><div class="ec-sheet-head"><h2>Разбор по критериям</h2></div><div data-slot="criteria"></div><div data-slot="evidence"></div></aside></div></main>
+  </div>
+ </section>
+ <section data-variant="Графический" aria-label="Графический светлый кабинет" hidden>
+  <div class="ec-app ec-graphic" aria-label="Графический — оформление"><header class="ec-chrome"><span class="ec-brand">EVA /</span><nav aria-label="Разделы макета"><span>Диалоги</span><span>Чек-листы</span></nav><small>Демо · ручная оценка</small></header>
+   <main class="ec-work"><header class="ec-heading"><div><h1>Диалог в деталях</h1><p>demo-ru-001 · Чат · Русский</p></div><div class="ec-compact-score"><div class="ec-score-number"><strong>100</strong><span>/ 100</span></div><small>Качество<br>диалога</small></div></header><div data-slot="criteria"></div><div class="ec-columns"><section class="ec-sheet"><div class="ec-sheet-head"><h2>Ход разговора</h2><small>4 сообщения</small></div><div data-slot="messages"></div></section><aside class="ec-sheet ec-evidence"><div class="ec-large-letter">Связь критерия с репликой</div><div data-slot="evidence"></div></aside></div></main>
+  </div>
+ </section>
+</div>
+<template id="ec-messages"><div class="ec-message-list">
+ <article class="ec-message" data-message="m0001"><span class="ec-avatar" aria-hidden="true">К</span><div><div class="ec-message-meta"><span>Клиент</span><time>00:00</time></div><p>Здравствуйте! Где посмотреть общие тарифы?</p></div></article>
+ <article class="ec-message ec-operator ec-linked" data-message="m0002"><span class="ec-avatar" aria-hidden="true">О</span><div><div class="ec-message-meta"><span>Оператор</span><time>00:20</time></div><p>Здравствуйте! Меня зовут Алия. Общие тарифы доступны на официальном сайте в разделе «Тарифы».</p><span class="ec-evidence-marker">A · основание выбранного критерия</span></div></article>
+ <article class="ec-message" data-message="m0003"><span class="ec-avatar" aria-hidden="true">К</span><div><div class="ec-message-meta"><span>Клиент</span><time>00:35</time></div><p>Спасибо, нашёл.</p></div></article>
+ <article class="ec-message ec-operator" data-message="m0004"><span class="ec-avatar" aria-hidden="true">О</span><div><div class="ec-message-meta"><span>Оператор</span><time>00:40</time></div><p>Рада помочь! Если появятся вопросы, обращайтесь. До свидания!</p><span class="ec-evidence-marker">A · основание выбранного критерия</span></div></article>
+</div></template>
+<template id="ec-criteria"><div class="ec-criteria" role="group" aria-label="Выбранные критерии для макета">
+ <button type="button" class="ec-criterion cursor-interaction" aria-pressed="false" data-criterion="contact"><span class="ec-step-number">01</span><span>Контакт</span></button>
+ <button type="button" class="ec-criterion cursor-interaction" aria-pressed="true" data-criterion="consultation"><span class="ec-step-number">04</span><span>Консультация</span></button>
+ <button type="button" class="ec-criterion cursor-interaction" aria-pressed="false" data-criterion="closing"><span class="ec-step-number">07</span><span>Завершение</span></button>
+</div></template>
+<template id="ec-evidence"><section class="ec-evidence" aria-live="polite"><div class="ec-evidence-label"><span class="ec-link-number">A</span><span data-result>20 / 20 · выполнен</span></div><h3 data-title>Корректная консультация</h3><blockquote class="ec-excerpt" data-quote>«Общие тарифы доступны на официальном сайте в разделе “Тарифы”».</blockquote><p class="ec-evidence-meta" data-meta>Оператор · 00:20 · m0002</p><button type="button" class="ec-text-action cursor-interaction" data-reveal>Показать основание <span aria-hidden="true">↗</span></button></section></template>
+<script>
+(() => {
+ const root=document.getElementById('eva-light-character');
+ const data={
+  contact:{title:'Установление контакта',quote:'«Здравствуйте! Меня зовут Алия».',meta:'Оператор · 00:20 · m0002',id:'m0002',result:'Выполнен'},
+  consultation:{title:'Корректная консультация',quote:'«Общие тарифы доступны на официальном сайте в разделе “Тарифы”».',meta:'Оператор · 00:20 · m0002',id:'m0002',result:'20 / 20 · выполнен'},
+  closing:{title:'Завершение диалога',quote:'«Рада помочь! Если появятся вопросы, обращайтесь. До свидания!»',meta:'Оператор · 00:40 · m0004',id:'m0004',result:'Выполнен'}
+ };
+ const selection={};
+ function select(app,key){
+  const item=data[key];if(!item)return;selection[app.parentElement.dataset.variant]=key;
+  app.querySelectorAll('[data-criterion]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.criterion===key)));
+  app.querySelector('[data-title]').textContent=item.title;app.querySelector('[data-quote]').textContent=item.quote;app.querySelector('[data-meta]').textContent=item.meta;app.querySelector('[data-result]').textContent=item.result;
+  app.querySelectorAll('[data-message]').forEach(message=>{message.classList.toggle('ec-linked',message.dataset.message===item.id);message.classList.remove('ec-revealed');});
+ }
+ function save(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{project:'EVA',kind:'light-character',base:'Светлый кабинет',directions:['Контрастный','Тёплый','Графический']},privateContent:{selection}}).catch(()=>{});}
+ root.querySelectorAll('.ec-app').forEach(app=>{
+  app.querySelectorAll('[data-slot]').forEach(slot=>slot.append(document.getElementById('ec-'+slot.dataset.slot).content.cloneNode(true)));
+  select(app,'consultation');
+  app.addEventListener('click',event=>{
+   const criterion=event.target.closest('[data-criterion]');if(criterion){select(app,criterion.dataset.criterion);save();}
+   if(event.target.closest('[data-reveal]')){const message=app.querySelector('.ec-linked');message.classList.add('ec-revealed');const box=message.getBoundingClientRect();if(box.top<0||box.bottom>innerHeight)message.scrollIntoView({block:'nearest',behavior:'instant'});}
+  });
+  if(globalThis.Tweak){const state={radius:app.classList.contains('ec-warm')?22:app.classList.contains('ec-graphic')?12:18};const tweak=new Tweak({container:app,onChange:()=>app.style.setProperty('--ec-radius',state.radius+'px')});tweak.addSlider(state,'radius',{label:'Скругления панелей',min:8,max:24,step:2,unit:'px',reference:'--ec-radius'});}
+ });
+ function restore(state){root.querySelectorAll('.ec-app').forEach(app=>{const key=state?.privateContent?.selection?.[app.parentElement.dataset.variant];if(data[key])select(app,key);});}
+ restore(window.openai?.widgetState);window.addEventListener('openai:set_globals',event=>restore(event.detail?.globals?.widgetState));
+ if(globalThis.lucide)lucide.createIcons({attrs:{width:20,height:20}});
+})();
+</script>
+</div>
