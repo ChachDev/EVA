@@ -227,12 +227,15 @@ class EvaluationStore:
                 audit_runs.c.evaluation_id == evaluation_id)).scalar_one_or_none()
         return json.loads(body) if body else None
 
-    def create(self, record: dict, request_snapshot: dict | None = None, audit: dict | None = None) -> None:
+    def create(self, record: dict, request_snapshot: dict | None = None, audit: dict | None = None, batch_claim=None) -> None:
         payload = _document(record)
         snapshot = _document(request_snapshot) if request_snapshot is not None else None
         original = record.get("original", {})
         try:
             with self._write_connection() as connection:
+                if batch_claim is not None:
+                    from .batches import BatchStore
+                    BatchStore.finish_in(connection,batch_claim,"done")
                 connection.execute(insert(evaluations).values(
                     id=record["id"], created_at=record["created_at"], payload=payload,
                     conversation_id=original.get("conversation_id"),

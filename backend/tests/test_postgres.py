@@ -47,6 +47,28 @@ def postgres_store(postgres_url):
 def unique_id():
     return "synthetic-pg-" + uuid4().hex
 
+def test_batch_workers_claim_distinct_items_and_restart(postgres_store,postgres_url,contracts):
+    from app.batches import BatchStore,Start
+    q=BatchStore(postgres_store);q.initialize()
+    check=contracts.example("checklist");postgres_store.seed_checklist(check)
+    group=unique_id()
+    conv=[dict(contracts.example("conversation"),id=unique_id()) for _ in range(4)]
+    postgres_store.import_conversations(group,conv)
+    job=q.start(Start(group_id=group,checklist_id=check["id"],checklist_version=1),"baseline")
+    barrier=Barrier(4)
+    def claim(_):
+        barrier.wait();return q.claim("baseline",120)
+    with ThreadPoolExecutor(max_workers=4) as executor:claimed=list(executor.map(claim,range(4)))
+    assert {x["cid"] for x in claimed}=={c["id"] for c in conv}
+    for x in claimed:q.finish(x,"failed","Synthetic failure")
+    another=EvaluationStore(postgres_url)
+    try:
+        resumed=BatchStore(another)
+        assert resumed.get(job["id"])["counts"]=={"failed":4}
+        assert resumed.retry(job["id"])["counts"]=={"queued":4}
+        for _ in range(4):resumed.finish(resumed.claim("baseline",120),"failed","Synthetic failure")
+    finally:another.close()
+
 
 def test_postgres_migrations_are_idempotent(postgres_store):
     assert postgres_store.engine.dialect.name == "postgresql"

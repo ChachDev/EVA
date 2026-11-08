@@ -16,6 +16,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from starlette.responses import JSONResponse
 
 from . import audit as audit_api
+from . import batches
 from .config import Settings
 from .contracts import ContractError, Contracts
 from .ml_client import MLClient, MLContextLimitExceeded, MLInvalidResponse, MLUnavailable
@@ -44,12 +45,14 @@ def create_app(settings: Settings | None = None,
     settings = settings or Settings()
     contracts = Contracts(settings.contracts_dir)
     store = EvaluationStore(settings.effective_database_url)
+    batch_store = batches.BatchStore(store,settings.batch_revision)
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         try:
             try:
                 await run_in_threadpool(store.initialize)
+                await run_in_threadpool(batch_store.initialize)
                 if settings.audit_mode != "baseline":
                     await run_in_threadpool(store.initialize_audit)
                 if settings.seed_demo:
@@ -71,9 +74,15 @@ def create_app(settings: Settings | None = None,
                 )
                 worker = (asyncio.create_task(run_transcription_worker(application.state.media, settings))
                           if start_workers and settings.asr_url else None)
+                batch_worker = (asyncio.create_task(batches.run_worker(batch_store,settings,batch_eval))
+                                if start_workers and settings.batch_worker else None)
                 try:
                     yield
                 finally:
+                    if batch_worker is not None:
+                        batch_worker.cancel()
+                        with suppress(asyncio.CancelledError):
+                            await batch_worker
                     if worker is not None:
                         worker.cancel()
                         with suppress(asyncio.CancelledError):
@@ -142,7 +151,11 @@ def create_app(settings: Settings | None = None,
             sidecar.update(status="failed",reason="Candidate unavailable or invalid.")
         await run_in_threadpool(store.save_shadow,record_id,sidecar)
 
-    async def evaluate_and_store(body: CreateEvaluation, background_tasks: BackgroundTasks):
+    async def batch_eval(claim,tasks):
+        body=CreateEvaluation(conversation_id=claim["cid"],checklist_id=claim["checklist_id"],checklist_version=claim["version"])
+        return await evaluate_and_store(body,tasks,claim)
+
+    async def evaluate_and_store(body: CreateEvaluation, background_tasks: BackgroundTasks, claim=None):
         contracts.validate("evaluation-create", body.model_dump())
         conversation = await run_in_threadpool(store.get_conversation, body.conversation_id)
         checklist = await run_in_threadpool(store.get_checklist, body.checklist_id, body.checklist_version)
@@ -184,19 +197,23 @@ def create_app(settings: Settings | None = None,
         scoring = score(request, original)
         contracts.validate("score-summary", scoring)
         record = {
-            "id": str(uuid4()),
+            "id": claim["id"] if claim else str(uuid4()),
             "status": "completed" if scoring["status"] == "complete" else "needs_review",
             "created_at": datetime.now(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z"),
             "original": original,
             "scoring": scoring,
         }
         contracts.validate("evaluation-record", record)
-        await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion)
+        if claim:
+            await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion,batch_claim=claim)
+        else:
+            await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion)
         if settings.audit_mode == "shadow":
             background_tasks.add_task(shadow,record["id"],request,original)
         return record
 
     install_workflow_routes(application, contracts, store, settings)
+    batches.install(application,batch_store,settings,contracts)
     audit_api.install(application,contracts,store,settings)
     install_media_routes(application, contracts, store, settings)
 

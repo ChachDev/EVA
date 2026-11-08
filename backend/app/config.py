@@ -54,6 +54,8 @@ class Settings:
     reviewer_id: str = field(default_factory=lambda: os.getenv("REVIEWER_ID", "local-reviewer"))
     audit_mode: str = field(default_factory=lambda: os.getenv("EVA_AUDIT_MODE", "baseline"))
     audit_review: bool = field(default_factory=lambda: _environment_bool("EVA_AUDIT_REVIEW","true"))
+    batch_worker: bool = field(default_factory=lambda: _environment_bool("EVA_BATCH_WORKER","true"))
+    batch_revision: str = field(default_factory=lambda: os.getenv("EVA_BATCH_REVISION","local-v1"))
     cors_origins: tuple[str, ...] = field(default_factory=lambda: tuple(
         origin.strip() for origin in os.getenv(
             "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
