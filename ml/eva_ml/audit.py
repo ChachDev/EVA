@@ -116,7 +116,7 @@ class Auditor:
         self.revision=digest([*(Path(__file__).with_name(f).read_text(encoding="utf8") for f in source_files),
                               scorer.read_text(encoding="utf8"),BASE_SYSTEM,TABLES])
 
-    def evaluate(self, request, *, canonical=True):
+    def evaluate(self, request, *, canonical=True, saved_baseline=None):
         started=perf_counter()
         if canonical:
             request=json.loads(json.dumps(request,ensure_ascii=False,sort_keys=True))
@@ -127,6 +127,8 @@ class Auditor:
                   "model_revision":self.model_revision,"generation":{"seed":42,"temperature":0,"thinking":False},
                   "components":sorted(self.components),"checklist":digest(request["checklist"]),
                   "rules":{k:v["hash"] for k,v in rules.items()},"transcript":trace.hash}
+        if saved_baseline is not None:
+            versions["saved_baseline"]=digest(saved_baseline)
         if not canonical:
             versions["caller_wire_order"]=hashlib.sha256(json.dumps(request,ensure_ascii=False,separators=(",",":")).encode()).hexdigest()
         key=digest(versions)
@@ -135,17 +137,24 @@ class Auditor:
             if cached: self.cache.move_to_end(key)
         if cached:
             cached["audit"].update(run_id=str(uuid4()),cache_hit=True,seconds=perf_counter()-started,calls=0,tokens=0)
+            for stage in cached["audit"].get("stage_usage",{}).values():
+                stage.update(seconds=0,calls=0,tokens=0)
             return cached
         with inference_usage() as usage:
-            result=self._evaluate(request,trace,rules,versions)
+            result=(self._evaluate(request,trace,rules,versions) if saved_baseline is None else
+                    self._verify_saved(request,trace,rules,versions,saved_baseline))
         if isinstance(getattr(self.base,"engine",None),LocalEngine):
             result["audit"].update(calls=usage["calls"],tokens=usage["tokens"] if usage["has_usage"] else None)
         result["audit"].update(run_id=str(uuid4()),cache_key=key,cache_hit=False,seconds=perf_counter()-started)
-        if self.cache_size and all(row["status"]=="scored" for row in result["response"]["criteria"]):
+        verification_ok=result["audit"].get("verification",{}).get("state") not in {"partial","unavailable"}
+        if self.cache_size and verification_ok and all(row["status"]=="scored" for row in result["response"]["criteria"]):
             with self.lock:
                 self.cache[key]=deepcopy(result)
                 while len(self.cache)>self.cache_size: self.cache.popitem(last=False)
         return result
+
+    def _verify_saved(self,req,trace,rules,versions,saved_baseline):
+        raise ValueError("This audit profile does not accept saved baseline decisions.")
 
     def _evaluate(self,req,trace,rules,versions):
         fields, instructions, slots, fallback = {}, {}, {}, []

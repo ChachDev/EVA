@@ -16,7 +16,7 @@ from eva_ml.audit import COMPONENTS
 from eva_ml.audit_events import select_auditor
 from eva_ml.contracts import ContractError, Contracts
 from eva_ml.engine import EngineError, loaded_engine
-from eva_ml.issai import InvalidDecision
+from eva_ml.issai import InvalidDecision, digest
 from eva_ml.consultation_v11 import select_provider
 
 
@@ -98,6 +98,37 @@ def evaluate(request: Request, payload: Annotated[Any, Body()]) -> Any:
         # Do not pass malformed provider data or conversation text to callers/logs.
         return JSONResponse(status_code=500, content={"error": "invalid_provider_response"})
     return result
+
+
+@app.post("/v1/verify")
+def verify(request: Request, envelope: Annotated[Any, Body()]) -> Any:
+    if not isinstance(envelope,dict) or set(envelope)!={"request","baseline","request_hash"}:
+        return JSONResponse(status_code=422,content={"error":"invalid_verification_request"})
+    payload=envelope["request"]
+    base=envelope["baseline"]
+    contracts=request.app.state.contracts
+    try:
+        contracts.validate_request(payload)
+        contracts.validate_response(payload,base)
+    except ContractError:
+        return JSONResponse(status_code=422,content={"error":"invalid_verification_request"})
+    if digest(payload)!=envelope["request_hash"]:
+        return JSONResponse(status_code=422,content={"error":"snapshot_mismatch"})
+    auditor=getattr(request.app.state,"auditor",None)
+    if auditor is None:
+        return JSONResponse(status_code=503,content={"error":"real_evaluator_required"})
+    if (base["model"],base["provider"])!=(auditor.base.model,auditor.base.name):
+        return JSONResponse(status_code=422,content={"error":"baseline_model_mismatch"})
+    if not getattr(auditor,"reuses_baseline",False):
+        return audit(request,payload)
+    try:
+        result=auditor.evaluate(payload,saved_baseline=base)
+        contracts.validate_response(payload,result["response"])
+        return result
+    except EngineError:
+        return JSONResponse(status_code=503,content={"error":"local_engine_unavailable"})
+    except (ContractError, InvalidDecision):
+        return JSONResponse(status_code=500,content={"error":"invalid_provider_response"})
 
 
 @app.post("/v1/audit")
