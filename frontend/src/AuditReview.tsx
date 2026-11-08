@@ -65,6 +65,12 @@ export default function AuditReview({evaluation,review,jump}:{evaluation:Evaluat
               {check.outcome!=='retained' && candidate.audit.criteria[key]?.evidence.map(e=><button className="evidence-link" key={e.utterance_id} onClick={()=>jump([e.utterance_id])}>{e.utterance_id} · «{e.quote}»</button>)}</div>;
           })}</details>}
         {candidate && <><h3>EVA Sentinel · нарушения</h3><p>Флаги этого автоматического запуска. Действующий итог учитывает решения проверяющего.</p>
+          {candidate.audit.verification && !candidate.audit.sentinel.length && <p>
+            {candidate.audit.verification.checks.gross_errors
+              ? 'Раздельные выводы по нарушениям требуют сверки.'
+              : 'Дополнительная проверка грубых нарушений не запускалась.'}
+            {' '}Исходный флаг · {answer(candidate.audit.verification.baseline.criteria.find(r=>r.criterion_id==='gross_errors'))}
+          </p>}
           {candidate.audit.sentinel.map(f=><div key={f.rule_id}><strong>{names[f.rule_id] ?? f.rule_id}</strong> · {f.status==='needs_review'?'Нужна проверка':display(f.decision)}
             <p>{f.uncertainty ?? f.action}</p>{f.evidence.map((e,i)=><button className="evidence-link" key={i} onClick={()=>jump([e.utterance_id])}>{e.utterance_id} · «{e.quote}»</button>)}</div>)}
           <details><summary>EVA Score · решения эксперимента</summary>
