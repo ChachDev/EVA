@@ -4,14 +4,15 @@ import { api, ApiError } from './api/client';
 import type { Checklist, Conversation, Evaluation, EvaluationSnapshot, ReviewCase, TranscriptionJob } from './api/types';
 import { EvaLogo, FreedomLogo, EmptyState, StatusBadge, Score } from './eva-ui';
 import LiveDetail from './LiveDetail';
+import BatchPanel from './BatchPanel';
 import { ImportDialog, ChecklistEditor, AppealDialog, AudioDialog } from './LiveForms';
 import { displayTime } from './server-input';
 
-type Tab = 'overview' | 'dialogs' | 'checklists' | 'appeals' | 'audio';
+type Tab = 'overview' | 'dialogs' | 'checklists' | 'appeals' | 'audio' | 'batches';
 type Route = { tab: Tab; id: string; evaluation: string };
 type Workspace = { conversations: Conversation[]; checklists: Checklist[]; evaluations: Evaluation[]; reviews: Record<string, ReviewCase> };
-const navigation = [{ id: 'overview', title: 'Обзор', icon: LayoutDashboard }, { id: 'dialogs', title: 'Диалоги', icon: MessagesSquare }, { id: 'checklists', title: 'Чек-листы', icon: ClipboardList }, { id: 'appeals', title: 'Апелляции', icon: GitPullRequest }, { id: 'audio', title: 'Аудиозаписи', icon: Headphones }] as const;
-const titles = { overview: 'Рабочее пространство', dialogs: 'Диалоги', checklists: 'Чек-листы', appeals: 'Апелляции', audio: 'Распознавание аудио' };
+const navigation = [{ id: 'overview', title: 'Обзор', icon: LayoutDashboard }, { id: 'dialogs', title: 'Диалоги', icon: MessagesSquare }, { id:'batches', title:'Наборы', icon:ClipboardList },{ id: 'checklists', title: 'Чек-листы', icon: ClipboardList }, { id: 'appeals', title: 'Апелляции', icon: GitPullRequest }, { id: 'audio', title: 'Аудиозаписи', icon: Headphones }] as const;
+const titles = { overview: 'Рабочее пространство', dialogs: 'Диалоги', batches:'Наборы и разметка',checklists: 'Чек-листы', appeals: 'Апелляции', audio: 'Распознавание аудио' };
 const blank: Workspace = { conversations: [], checklists: [], evaluations: [], reviews: {} };
 function readRoute(): Route {
   const [path, query] = location.hash.replace(/^#\/?/, '').split('?');
@@ -187,6 +188,7 @@ export default function LiveApp() {
       {error && <div className="live-error" role="alert"><strong>Не удалось обновить данные.</strong> {error} Ранее загруженные данные могут быть устаревшими.</div>}
       {notice && <div className="live-notice" role="status">{notice}<button className="icon-button" aria-label="Закрыть уведомление" onClick={() => setNotice('')}><X/></button></div>}
       <div className="page-heading"><div><div className="eyebrow"><span className="status-dot"/>FREEDOM WORKSPACE</div><h1>{titles[route.tab]}</h1><p>{route.tab === 'overview' ? 'Диалоги, оценки и решения вашей команды.' : 'Сохранённые данные и действия на сервере.'}</p></div><div className="heading-actions"><button className="button secondary" onClick={() => setModal('audio')}><Headphones/>Аудио</button><button className="button primary" onClick={() => setModal('import')}><Plus/>Новый диалог</button></div></div>
+      {route.tab === 'batches' && <BatchPanel checklist={chosen} selector={selector}/>}
       {route.tab === 'overview' && <>
         <div className="live-metrics">{[['Диалоги', workspace.conversations.length], ['Звонки', workspace.conversations.filter(c => c.channel === 'voice_call').length], ['Сохранённые оценки', workspace.evaluations.length], ['Открытые апелляции', openAppeals.length]].map(([title, count]) => <section className="panel live-metric" key={title}><span>{title}</span><strong>{loading && !workspace.conversations.length ? '—' : count}</strong></section>)}</div>
         <div className="live-notice">Каждую оценку должен утвердить человек. Отдельный этап утверждения ещё не реализован: все показанные баллы предварительные.</div>

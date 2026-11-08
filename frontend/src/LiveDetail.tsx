@@ -4,6 +4,7 @@ import {
   GitPullRequest, Headphones, Info, MessageSquare, Minus, ShieldCheck,
 } from "lucide-react";
 import AuditReview from './AuditReview';
+import official from '../../contracts/examples/checklist.json' with {type:'json'};
 import type { Checklist, Conversation, Evaluation, EvaluationResponse, ReviewCase } from "./api/types";
 
 export type LiveDetailProps = {
@@ -201,6 +202,16 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
             {open && <div className="criterion-detail">
               <p><strong>Правило · v{checklist?.version}</strong> {criterion.instruction}</p>
               <p>{row?.reason}</p>
+              {!pending && !na && !positive && official.criteria.some(r=>r.id===criterion.id && r.instruction===criterion.instruction && r.type===criterion.type) && !!row?.evidence.some(e=>e.message_ids.length>0) && <p><strong>Что попробовать:</strong> {({
+                contact:'В первом ответе поздоровайтесь и представьтесь.',
+                needs:'Спросите, на каком шаге возникает затруднение, и используйте ответ клиента.',
+                identity:'Перед обсуждением защищённых сведений проверьте подтверждённое событие идентификации.',
+                consultation:'Перечислите вопросы клиента и дайте ответ или проверяемый следующий шаг по каждому.',
+                empathy:'Назовите конкретное неудобство клиента и объясните, чем можете помочь.',
+                dialogue:'Объясните шаги по порядку, затем уточните, какая часть осталась непонятной.',
+                closing:'Подведите итог, предложите дальнейшую помощь и попрощайтесь.',
+                gross_errors:'Разберите отмеченную реплику с проверяющим и согласуйте безопасную формулировку.',
+              } as Record<string,string>)[criterion.id]??'Сверьте действие и процитированную реплику с правилом.'}</p>}
               {row?.evidence.map((entry, index) => <div key={index}>
                 <p className="muted">EVA Trace · {evidenceKinds[entry.kind]}</p>
                 {entry.message_ids.map(id => {

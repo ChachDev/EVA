@@ -62,8 +62,9 @@ export default function AuditReview({evaluation,review,jump}:{evaluation:Evaluat
             const after=candidate.response.criteria.find(r=>r.criterion_id===key);
             return <div key={key}><p><strong>{checklistName(data,key)}</strong> · {answer(before)} → {answer(after)} · {check.reason}
               {check.suggested!==undefined && <> Предложение для сверки: {display(check.suggested)}.</>}</p>
-              {check.outcome!=='retained' && candidate.audit.criteria[key]?.evidence.map(e=><button className="evidence-link" key={e.utterance_id} onClick={()=>jump([e.utterance_id])}>{e.utterance_id} · «{e.quote}»</button>)}</div>;
+              {check.outcome!=='retained' && candidate.audit.criteria[key]?.evidence.map((e,i)=><button className="evidence-link" key={i} onClick={()=>jump([e.utterance_id])}>{e.utterance_id} · «{e.quote}»</button>)}</div>;
           })}</details>}
+        {candidate?.audit.question_map && <details open><summary>Вопросы клиента и ответы оператора</summary>{candidate.audit.question_map.items.map((x,i)=><div key={i}><button className="evidence-link" onClick={()=>jump([x.question.utterance_id])}>Клиент: «{x.question.quote}»</button>{x.answer?<button className="evidence-link" onClick={()=>jump([x.answer!.utterance_id])}>Оператор: «{x.answer.quote}»</button>:<p>{x.status==='open'?'Ответ не найден':'Недостаточно данных'} · проверены реплики {candidate.audit.question_map!.scope.first} → {candidate.audit.question_map!.scope.last}</p>}</div>)}</details>}
         {candidate && <><h3>EVA Sentinel · нарушения</h3><p>Флаги этого автоматического запуска. Действующий итог учитывает решения проверяющего.</p>
           {candidate.audit.verification && !candidate.audit.sentinel.length && <p>
             {candidate.audit.verification.checks.gross_errors
