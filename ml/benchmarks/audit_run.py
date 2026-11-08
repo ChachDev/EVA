@@ -61,7 +61,7 @@ def main():
     parser.add_argument("--port",type=int,required=True)
     parser.add_argument("--file-order",action="store_true",help="Historical diagnostic: do not normalize like backend storage")
     parser.add_argument("--variant",required=True)
-    parser.add_argument("--profile",choices=["rubric-v1","events-v2","source-events","baseline-plus"],default="rubric-v1")
+    parser.add_argument("--profile",choices=["rubric-v1","events-v2","source-events","baseline-plus","baseline-plus-targeted"],default="rubric-v1")
     parser.add_argument("--pairs",action="store_true")
     parser.add_argument("--voices",action="store_true",help="Technical pilot only, no human reference for these calls")
     parser.add_argument("--ablation",action="store_true",help="Fixed six paired examples across three languages")

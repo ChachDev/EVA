@@ -41,7 +41,7 @@ $env:ML_TIMEOUT_SECONDS='90'  # только для эксперименталь
 
 ```powershell
 $env:EVA_CONSULTATION_VARIANT='consultation-v1.1'
-$env:EVA_AUDIT_PROFILE='baseline-plus' # доступны также source-events, events-v2, rubric-v1
+$env:EVA_AUDIT_PROFILE='baseline-plus' # также: baseline-plus-targeted, source-events, events-v2, rubric-v1
 $env:EVA_AUDIT_COMPONENTS='trace,policy,score,sentinel'
 ```
 
@@ -54,6 +54,8 @@ $env:EVA_AUDIT_COMPONENTS='trace,policy,score,sentinel'
 - **Экспорт**: `GET /api/v1/evaluations/{id}/audit` (`eva.review.v1`). Экспорт может содержать клиентский текст и предназначен для разрешённого локального использования. Производственный ASR и внешние LLM не подключались.
 
 ## Откат
+
+Для испытания адресных проверок структуры диалога, потребности, идентификации, консультации и завершения установите на ML `EVA_AUDIT_PROFILE=baseline-plus-targeted`, на Backend — `EVA_AUDIT_MODE=shadow`. Эта комбинация сохраняет первичный ответ consultation-v1.1. Профиль и объяснения каждой поправки доступны в экспорте EVA Review. Для отключения адресных проверок верните прежний профиль ML либо режим `baseline` на Backend. [Раздельные измерения на разработке и других размеченных чатах](../ml/audit/TARGETED.md).
 
 Для оперативного отката верните `EVA_AUDIT_MODE=baseline` и перезапустите Backend. Для отключения дополнительного интерфейса задайте `EVA_AUDIT_REVIEW=false`. Кэш исчезает при перезапуске ML. Для повторного запуска измерений выбирайте новые имена результатов: программа специально не перезаписывает существующие файлы. Новая таблица `eva_audit_runs` создаётся только при включении эксперимента. Исходная оценка, снимок и дополнение эксперимента записываются в одной транзакции. Схемы существующих таблиц и Alembic head не изменены. Откат не требует удаления таблицы, очистки хранилища, downgrade или правки ранее сохранённых решений.
 

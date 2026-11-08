@@ -1,0 +1,458 @@
+{
+  "develop": {
+    "conversations": 9,
+    "decisions": {
+      "previous_profile_correct": 50,
+      "n": 72,
+      "baseline": 50,
+      "candidate": 57,
+      "fixed": 7,
+      "regressed": 0,
+      "chats_same": 6,
+      "supplemental_calls": 9,
+      "supplemental_tokens": 15072,
+      "chats_up": 3
+    },
+    "criteria": {
+      "contact": {
+        "n": 9,
+        "baseline": 9,
+        "candidate": 9,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "needs": {
+        "n": 9,
+        "baseline": 5,
+        "candidate": 6,
+        "fixed": 1,
+        "regressed": 0
+      },
+      "identity": {
+        "n": 9,
+        "baseline": 6,
+        "candidate": 8,
+        "fixed": 2,
+        "regressed": 0
+      },
+      "consultation": {
+        "n": 9,
+        "baseline": 5,
+        "candidate": 7,
+        "fixed": 2,
+        "regressed": 0
+      },
+      "empathy": {
+        "n": 9,
+        "baseline": 7,
+        "candidate": 7,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "dialogue": {
+        "n": 9,
+        "baseline": 4,
+        "candidate": 5,
+        "fixed": 1,
+        "regressed": 0
+      },
+      "closing": {
+        "n": 9,
+        "baseline": 5,
+        "candidate": 6,
+        "fixed": 1,
+        "regressed": 0
+      },
+      "gross_errors": {
+        "n": 9,
+        "baseline": 9,
+        "candidate": 9,
+        "fixed": 0,
+        "regressed": 0
+      }
+    },
+    "languages": {
+      "RU": {
+        "n": 24,
+        "baseline": 13,
+        "candidate": 18,
+        "fixed": 5,
+        "regressed": 0
+      },
+      "KZ": {
+        "n": 24,
+        "baseline": 21,
+        "candidate": 23,
+        "fixed": 2,
+        "regressed": 0
+      },
+      "EN": {
+        "n": 24,
+        "baseline": 16,
+        "candidate": 16,
+        "fixed": 0,
+        "regressed": 0
+      }
+    },
+    "baseline": {
+      "scored": 71,
+      "false_na": 4,
+      "missed_na": 5,
+      "gross_positive": 1,
+      "false_accusations": 0,
+      "missed_violations": 0,
+      "complete": 8
+    },
+    "candidate": {
+      "scored": 72,
+      "false_na": 3,
+      "missed_na": 2,
+      "gross_positive": 1,
+      "false_accusations": 0,
+      "missed_violations": 0,
+      "complete": 9
+    },
+    "common_numeric": 8,
+    "common_mae": [
+      14.797,
+      8.326
+    ],
+    "verification_median_seconds": 7.54,
+    "verification_p95_seconds": 9.43,
+    "verification_states": {
+      "ok": 9
+    }
+  },
+  "reserved": {
+    "conversations": 6,
+    "decisions": {
+      "previous_profile_correct": 39,
+      "n": 48,
+      "baseline": 39,
+      "candidate": 39,
+      "fixed": 0,
+      "regressed": 0,
+      "chats_same": 6,
+      "supplemental_calls": 6,
+      "supplemental_tokens": 9728
+    },
+    "criteria": {
+      "contact": {
+        "n": 6,
+        "baseline": 5,
+        "candidate": 5,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "needs": {
+        "n": 6,
+        "baseline": 4,
+        "candidate": 4,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "identity": {
+        "n": 6,
+        "baseline": 4,
+        "candidate": 4,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "consultation": {
+        "n": 6,
+        "baseline": 5,
+        "candidate": 5,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "empathy": {
+        "n": 6,
+        "baseline": 6,
+        "candidate": 6,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "dialogue": {
+        "n": 6,
+        "baseline": 4,
+        "candidate": 4,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "closing": {
+        "n": 6,
+        "baseline": 5,
+        "candidate": 5,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "gross_errors": {
+        "n": 6,
+        "baseline": 6,
+        "candidate": 6,
+        "fixed": 0,
+        "regressed": 0
+      }
+    },
+    "languages": {
+      "RU": {
+        "n": 16,
+        "baseline": 10,
+        "candidate": 10,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "KZ": {
+        "n": 16,
+        "baseline": 14,
+        "candidate": 14,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "EN": {
+        "n": 16,
+        "baseline": 15,
+        "candidate": 15,
+        "fixed": 0,
+        "regressed": 0
+      }
+    },
+    "baseline": {
+      "scored": 46,
+      "false_na": 3,
+      "missed_na": 2,
+      "gross_positive": 1,
+      "false_accusations": 0,
+      "missed_violations": 0,
+      "complete": 4
+    },
+    "candidate": {
+      "scored": 46,
+      "false_na": 3,
+      "missed_na": 2,
+      "gross_positive": 1,
+      "false_accusations": 0,
+      "missed_violations": 0,
+      "complete": 4
+    },
+    "common_numeric": 4,
+    "common_mae": [
+      4.608,
+      2.875
+    ],
+    "verification_median_seconds": 8.04,
+    "verification_p95_seconds": 10.88,
+    "verification_states": {
+      "ok": 6
+    }
+  },
+  "pilot": {
+    "conversations": 12,
+    "decisions": {
+      "previous_profile_correct": 78,
+      "n": 96,
+      "baseline": 78,
+      "candidate": 78,
+      "fixed": 2,
+      "regressed": 2,
+      "chats_same": 9,
+      "supplemental_calls": 12,
+      "supplemental_tokens": 21687,
+      "chats_up": 2,
+      "chats_down": 1
+    },
+    "criteria": {
+      "contact": {
+        "n": 12,
+        "baseline": 12,
+        "candidate": 12,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "needs": {
+        "n": 12,
+        "baseline": 6,
+        "candidate": 7,
+        "fixed": 2,
+        "regressed": 1
+      },
+      "identity": {
+        "n": 12,
+        "baseline": 11,
+        "candidate": 10,
+        "fixed": 0,
+        "regressed": 1
+      },
+      "consultation": {
+        "n": 12,
+        "baseline": 10,
+        "candidate": 10,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "empathy": {
+        "n": 12,
+        "baseline": 11,
+        "candidate": 11,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "dialogue": {
+        "n": 12,
+        "baseline": 9,
+        "candidate": 9,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "closing": {
+        "n": 12,
+        "baseline": 7,
+        "candidate": 7,
+        "fixed": 0,
+        "regressed": 0
+      },
+      "gross_errors": {
+        "n": 12,
+        "baseline": 12,
+        "candidate": 12,
+        "fixed": 0,
+        "regressed": 0
+      }
+    },
+    "languages": {
+      "RU": {
+        "n": 32,
+        "baseline": 23,
+        "candidate": 24,
+        "fixed": 1,
+        "regressed": 0
+      },
+      "KZ": {
+        "n": 32,
+        "baseline": 25,
+        "candidate": 24,
+        "fixed": 1,
+        "regressed": 2
+      },
+      "EN": {
+        "n": 32,
+        "baseline": 30,
+        "candidate": 30,
+        "fixed": 0,
+        "regressed": 0
+      }
+    },
+    "baseline": {
+      "scored": 93,
+      "false_na": 4,
+      "missed_na": 6,
+      "gross_positive": 0,
+      "false_accusations": 0,
+      "missed_violations": 0,
+      "complete": 10
+    },
+    "candidate": {
+      "scored": 93,
+      "false_na": 6,
+      "missed_na": 4,
+      "gross_positive": 0,
+      "false_accusations": 0,
+      "missed_violations": 0,
+      "complete": 10
+    },
+    "common_numeric": 10,
+    "common_mae": [
+      8.393,
+      8.393
+    ],
+    "verification_median_seconds": 8.41,
+    "verification_p95_seconds": 11.87,
+    "verification_states": {
+      "ok": 12
+    }
+  },
+  "pairs": {
+    "conversations": 18,
+    "decisions": {
+      "previous_profile_correct": 18,
+      "n": 18,
+      "baseline": 10,
+      "candidate": 18,
+      "fixed": 8,
+      "regressed": 0,
+      "chats_up": 8,
+      "supplemental_calls": 12,
+      "supplemental_tokens": 10856,
+      "chats_same": 10
+    },
+    "criteria": {
+      "identity": {
+        "n": 6,
+        "baseline": 1,
+        "candidate": 6,
+        "fixed": 5,
+        "regressed": 0
+      },
+      "gross_errors": {
+        "n": 12,
+        "baseline": 9,
+        "candidate": 12,
+        "fixed": 3,
+        "regressed": 0
+      }
+    },
+    "languages": {
+      "RU": {
+        "n": 6,
+        "baseline": 4,
+        "candidate": 6,
+        "fixed": 2,
+        "regressed": 0
+      },
+      "KZ": {
+        "n": 6,
+        "baseline": 3,
+        "candidate": 6,
+        "fixed": 3,
+        "regressed": 0
+      },
+      "EN": {
+        "n": 6,
+        "baseline": 3,
+        "candidate": 6,
+        "fixed": 3,
+        "regressed": 0
+      }
+    },
+    "baseline": {
+      "scored": 17,
+      "false_na": 4,
+      "missed_na": 0,
+      "complete": 11,
+      "gross_positive": 6,
+      "false_accusations": 1,
+      "missed_violations": 1
+    },
+    "candidate": {
+      "scored": 18,
+      "false_na": 0,
+      "missed_na": 0,
+      "complete": 11,
+      "gross_positive": 6,
+      "false_accusations": 0,
+      "missed_violations": 0
+    },
+    "common_numeric": 0,
+    "common_mae": [
+      null,
+      null
+    ],
+    "verification_median_seconds": 6.31,
+    "verification_p95_seconds": 10.49,
+    "verification_states": {
+      "not_needed": 6,
+      "ok": 12
+    }
+  },
+  "revision": "7e401836e342e0b70dfdb162967174ad9d923e690269d4e298fc7034156e535b"
+}
