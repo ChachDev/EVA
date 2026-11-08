@@ -59,7 +59,7 @@ function jsonBody(payload: unknown): string {
 }
 
 export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
-  const baseUrl = (options.baseUrl ?? (environment.VITE_API_URL || DEFAULT_API_URL)).replace(/\/+$/, '');
+  const baseUrl = (options.baseUrl ?? (environment.VITE_API_URL || (environment.PROD ? '' : DEFAULT_API_URL))).replace(/\/+$/, '');
   const fetcher = options.fetch ?? globalThis.fetch.bind(globalThis);
   const timeoutMs = options.timeoutMs ?? Number(environment.VITE_API_TIMEOUT_MS || 30_000);
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('API timeout must be positive.');
@@ -69,7 +69,7 @@ export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
     const timer = globalThis.setTimeout(() => controller.abort(), timeoutMs);
     try {
       const response = await fetcher(baseUrl + path, {
-        ...init, signal: controller.signal, redirect: 'error', credentials: 'omit',
+        ...init, signal: controller.signal, redirect: 'error', credentials: baseUrl === '' ? 'same-origin' : 'omit',
       });
       if (!response.ok) {
         let message = errorMessages[response.status] ?? 'Не удалось выполнить запрос. Проверьте состояние сервиса.';
@@ -111,6 +111,7 @@ export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
         }
         throw new ApiError(message, response.status);
       }
+      if (response.status === 204) return undefined as T;
       try { return await response.json() as T; }
       catch (error) {
         if (controller.signal.aborted) throw error;
@@ -192,13 +193,19 @@ export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
         throw new ApiError('Аудиофайл должен быть непустым и не превышать 25 МиБ.', 413, 'invalid_input');
       }
       return request('/api/v1/audio-assets', {
-        method: 'POST', headers: { 'Content-Type': mime, 'Idempotency-Key': operationId }, body: blob,
+        method: 'POST', headers: { 'Content-Type': mime, 'Idempotency-Key': operationId,
+          ...(typeof File !== 'undefined' && blob instanceof File ? { 'X-Audio-Filename': encodeURIComponent(blob.name) } : {}) }, body: blob,
       });
     },
     getAudioAsset: id => request('/api/v1/audio-assets/' + pathId(id)),
     audioContentUrl: id => baseUrl + '/api/v1/audio-assets/' + pathId(id) + '/content',
     createTranscription: payload => post('/api/v1/transcriptions', payload),
     getTranscription: id => request('/api/v1/transcriptions/' + pathId(id)),
+    transcriptionHistory: offset => request('/api/v1/transcriptions?limit=20&offset=' + offset),
+    exportTranscript: id => request('/api/v1/transcriptions/' + pathId(id) + '/export'),
+    deleteConversation: id => request('/api/v1/conversations/' + pathId(id), {method:'DELETE'}),
+    deleteEvaluation: id => request('/api/v1/evaluations/' + pathId(id), {method:'DELETE'}),
+    deleteChecklist: (id,version) => request('/api/v1/checklists/' + pathId(id) + '/versions/' + version, {method:'DELETE'}),
     reviewTranscription: (id, payload) => post('/api/v1/transcriptions/' + pathId(id) + '/review', payload),
   };
 }
@@ -240,6 +247,11 @@ const demoApi: CqaApi = {
   audioContentUrl: () => demoUnavailable(),
   createTranscription: async () => demoUnavailable(),
   getTranscription: async () => demoUnavailable(),
+  transcriptionHistory: async () => demoUnavailable(),
+  exportTranscript: async () => demoUnavailable(),
+  deleteConversation: async () => demoUnavailable(),
+  deleteEvaluation: async () => demoUnavailable(),
+  deleteChecklist: async () => demoUnavailable(),
   reviewTranscription: async () => demoUnavailable(),
 };
 

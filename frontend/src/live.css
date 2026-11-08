@@ -1,4 +1,7 @@
 #eva-root .live-workspace .live-panel { padding: 24px; }
+#eva-root .audio-history { list-style: none; padding: 0; display: grid; gap: 8px; }
+#eva-root .audio-history button { width: 100%; height: auto; padding: 12px; display: grid; text-align: left; justify-content: start; white-space: normal; overflow-wrap: anywhere; }
+#eva-root .audio-history button span { color: var(--muted); font-size: 12px; }
 #eva-root .live-workspace .live-panel > .panel-heading { padding: 0 0 20px; }
 #eva-root .live-workspace .live-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-bottom: 24px; }
 #eva-root .live-workspace .live-metric { padding: 22px; display: grid; gap: 12px; }

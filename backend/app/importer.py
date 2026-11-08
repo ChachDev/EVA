@@ -120,6 +120,10 @@ def _conversation(record: object, contracts: Contracts, *, manual: bool = False)
         offset: int | None = None
         if timestamp is None:
             offset = None
+        elif channel == "voice call" and manual and _CHAT_TIMESTAMP.fullmatch(timestamp) and message.get("offset_seconds") is not None:
+            offset = _chat_offset(timestamp)
+            if int(message["offset_seconds"]) != offset:
+                raise DatasetImportError("Audio timestamp disagrees with the segment offset.")
         elif channel == "agent chat":
             offset = _chat_offset(timestamp)
         else:

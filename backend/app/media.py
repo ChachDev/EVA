@@ -50,6 +50,7 @@ media_assets = Table(
     Column("duration_seconds", Float),
     Column("created_at", Text, nullable=False),
     Column("relative_path", Text, nullable=False, unique=True),
+    Column("display_name", Text),
 )
 
 transcription_jobs = Table(
@@ -119,6 +120,16 @@ def _job(row):
     )}, "result": json.loads(row["result_payload"]) if row["result_payload"] is not None else None}
 
 
+def segment_messages(segments, roles=None):
+    messages = []
+    for i, segment in enumerate(segments):
+        seconds = math.floor(segment["start_seconds"])
+        messages.append({"speaker": roles[i] if roles is not None else segment["speaker"], "text": segment["text"],
+                         "timestamp": f"{seconds // 60:02d}:{seconds % 60:02d}",
+                         "offset_seconds": segment["start_seconds"], "end_seconds": segment["end_seconds"]})
+    return messages
+
+
 def _content_type(content_type):
     if type(content_type) is not str:
         raise MediaInvalid("Audio Content-Type is required.")
@@ -186,7 +197,7 @@ class MediaService:
         self.root = Path(media_root).resolve()
         if not self.root.is_relative_to(BACKEND_ROOT):
             raise ValueError("Media storage must stay inside backend.")
-        if media_base_url is not None:
+        if media_base_url not in (None, "/"):
             parts = urlsplit(media_base_url)
             if (parts.scheme != "http" or parts.hostname not in {"127.0.0.1", "localhost", "::1"}
                     or parts.username or parts.password or parts.query or parts.fragment or parts.path not in {"", "/"}):
@@ -203,7 +214,7 @@ class MediaService:
         if connection.dialect.name == "postgresql":
             connection.exec_driver_sql("SELECT pg_advisory_xact_lock(630487203)")
 
-    def upload(self, data: bytes, content_type: str, operation_id: str) -> dict:
+    def upload(self, data: bytes, content_type: str, operation_id: str, display_name=None) -> dict:
         operation_id = _uuid(operation_id)
         if type(data) is not bytes or not data:
             raise MediaInvalid("Audio upload must contain bytes.")
@@ -223,7 +234,9 @@ class MediaService:
         relative = identifier + "." + _FORMATS[content_type]
         final = self.root / relative
         temporary = self.root / (".tmp-" + str(uuid4()))
-        item = {"id": identifier, "operation_id": operation_id, "content_type": content_type,
+        name = (display_name or "").replace("\\", "/").split("/")[-1]
+        name = "".join(c for c in name if c.isprintable()).strip()[:180] or None
+        item = {"id": identifier, "operation_id": operation_id, "content_type": content_type, "display_name": name,
                 "size_bytes": len(data), "sha256": digest, "duration_seconds": duration,
                 "created_at": _stamp(_now()), "relative_path": relative}
         committed = False
@@ -361,14 +374,8 @@ class MediaService:
 
     def _create_conversation(self, connection, row, result, roles=None):
         identifier = "audio-" + row["id"]
-        messages = []
-        for index, segment in enumerate(result["segments"], start=1):
-            seconds = math.floor(segment["start_seconds"])
-            messages.append({"id": f"m{index:04d}",
-                             "speaker": roles[index - 1] if roles is not None else segment["speaker"],
-                             "text": segment["text"], "timestamp": f"{seconds // 60:02d}:{seconds % 60:02d}",
-                             "offset_seconds": segment["start_seconds"], "end_seconds": segment["end_seconds"]})
-        audio_url = (self.base_url + f"/api/v1/audio-assets/{row['asset_id']}/content") if self.base_url else None
+        messages = [dict(m, id=f"m{i:04d}") for i, m in enumerate(segment_messages(result["segments"], roles), 1)]
+        audio_url = (self.base_url + f"/api/v1/audio-assets/{row['asset_id']}/content") if self.base_url is not None else None
         conversation = {"id": identifier, "channel": "voice_call", "language": row["language"],
                         "messages": messages, "audio_url": audio_url}
         self.contracts.validate("conversation", conversation)
@@ -377,6 +384,28 @@ class MediaService:
             id=identifier, group_id="audio-transcriptions", payload=document,
             raw_payload=_document(result), content_hash=hashlib.sha256(document.encode()).hexdigest()))
         return identifier
+
+    def history(self, limit, offset):
+        jobs = transcription_jobs.c
+        stmt = select(jobs.id, jobs.asset_id, jobs.status, jobs.created_at, jobs.language, jobs.conversation_id,
+                      media_assets.c.display_name).join(media_assets, media_assets.c.id == jobs.asset_id).order_by(
+                          jobs.created_at.desc(), jobs.id.desc()).offset(offset).limit(limit + 1)
+        with self.store.engine.connect() as conn:
+            rows = conn.execute(stmt).mappings().all()
+        return {"items": [dict(r) for r in rows[:limit]], "has_more": len(rows) > limit}
+
+    def export_transcript(self, job_id):
+        with self.store.engine.connect() as conn:
+            row = conn.execute(select(transcription_jobs).where(transcription_jobs.c.id == _uuid(job_id))).mappings().one_or_none()
+            if row is None:
+                raise MediaNotFound()
+            if row["result_payload"] is None:
+                raise MediaConflict()
+            roles = conn.execute(select(transcription_reviews.c.roles_payload).where(
+                transcription_reviews.c.job_id == row["id"])).scalar_one_or_none()
+            segments = json.loads(row["result_payload"])["segments"]
+            return {"channel": "voice_call", "language": row["language"],
+                    "messages": segment_messages(segments, json.loads(roles) if roles else None)}
 
     def complete_job(self, job_id: str, lease_token: str, result: dict) -> dict:
         try:

@@ -77,7 +77,7 @@ def test_postgres_migrations_are_idempotent(postgres_store):
         inspect(postgres_store.engine).get_table_names()
     )
     with postgres_store.engine.connect() as connection:
-        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0003_media"
+        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0004_audio_filename"
 
 
 def test_postgres_competing_migrators_are_serialized(postgres_url, postgres_store):

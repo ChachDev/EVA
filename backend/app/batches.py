@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import Column, Integer, MetaData, Table, Text, insert, or_, select, update
 from sqlalchemy.exc import SQLAlchemyError
 
-from .models import conversations
+from .models import conversations, checklist_versions
 from .storage import StorageConflict
 
 meta=MetaData()
@@ -67,9 +67,12 @@ class BatchStore:
         with self.store.engine.connect() as c:
             return sorted(c.execute(select(conversations.c.group_id).distinct()).scalars())
     def start(self,body,mode):
-        if not self.store.get_checklist(body.checklist_id,body.checklist_version):raise HTTPException(404,"Unknown checklist.")
         with self.store._write_connection() as c:
             guard(c,self.store)
+            if not c.execute(select(checklist_versions.c.checklist_id).where(
+                    checklist_versions.c.checklist_id==body.checklist_id, checklist_versions.c.version==body.checklist_version,
+                    checklist_versions.c.archived.is_(False))).first():
+                raise HTTPException(404,"Unknown checklist.")
             ids=list(c.execute(select(conversations.c.id).where(conversations.c.group_id==body.group_id).order_by(conversations.c.id)).scalars())
             if not ids:raise HTTPException(404,"Unknown dataset.")
             # Retrying the same launch after a lost HTTP response resumes the same manifest.
@@ -111,7 +114,18 @@ class BatchStore:
         with self.store._write_connection() as c:self.finish_in(c,claim,state,error)
     def retry(self,jid):
         with self.store._write_connection() as c:
-            c.execute(update(items).where(items.c.job==jid,items.c.state=="failed").values(state="queued",error=None))
+            guard(c,self.store)
+            job=c.execute(select(jobs).where(jobs.c.id==jid)).mappings().first()
+            if not job:
+                raise HTTPException(404,"Unknown batch.")
+            active=c.execute(select(checklist_versions.c.version).where(
+                checklist_versions.c.checklist_id==job["checklist_id"],checklist_versions.c.version==job["version"],
+                checklist_versions.c.archived.is_(False))).first()
+            if not active:
+                raise HTTPException(409,"The batch checklist is archived.")
+            c.execute(update(items).where(items.c.job==jid,items.c.state=="failed",
+                (items.c.error.is_(None) | items.c.error.not_in(("conversation_deleted","evaluation_deleted")))
+            ).values(state="queued",error=None))
         return self.get(jid)
 
 async def run_worker(queue,settings,evaluate):

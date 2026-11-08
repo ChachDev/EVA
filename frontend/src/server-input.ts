@@ -2,7 +2,7 @@ import { translate as t, formatDate, formatNumber as localNumber } from "./i18n-
 import type { ConversationCreate } from './api/types';
 
 const roles: Record<string, ConversationCreate['messages'][number]['speaker']> = {
-  client: 'client', клиент: 'client', operator: 'operator', оператор: 'operator',
+  client: 'client', клиент: 'client', operator: 'operator', оператор: 'operator', unknown: 'unknown',
   bot: 'bot', бот: 'bot', system: 'system', система: 'system', клиенті: 'client', жүйе: 'system',
 };
 
@@ -36,9 +36,9 @@ export function parseTranscript(raw: string, channel?: ConversationCreate['chann
     const role = m.speaker ?? m.role;
     const key = typeof role === 'string' ? role.toLowerCase().trim() : '';
     const speaker = Object.hasOwn(roles, key) ? roles[key] : undefined;
-    const timestamp = m.timestamp ?? m.time;
+    const timestamp = 'timestamp' in m ? m.timestamp : m.time ?? null;
     if (!speaker) throw new Error(t('Реплика {index}: укажите client, operator, bot или system.', {index: i + 1}));
-    if (typeof timestamp !== 'string' || !timestamp.trim() || timestamp.length > 128) {
+    if (timestamp !== null && (typeof timestamp !== 'string' || !timestamp.trim() || timestamp.length > 128)) {
       throw new Error(t('Реплика {index}: нужна исходная метка времени.', {index: i + 1}));
     }
     const chatTime = timestamp === null || /^[0-9]{2,}:[0-5][0-9]$/.test(timestamp);
@@ -47,7 +47,18 @@ export function parseTranscript(raw: string, channel?: ConversationCreate['chann
     const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
     const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     const voiceTime = !!iso && year >= 1 && month >= 1 && month <= 12 && day >= 1 && day <= days[month - 1] && Number(iso[4]) < 24 && Number(iso[5]) < 60 && Number(iso[6] ?? 0) < 60;
-    if (channel === 'agent_chat' ? !chatTime : channel === 'voice_call' ? !voiceTime : !chatTime && !voiceTime) {
+    const relative = timestamp !== null && chatTime && typeof m.offset_seconds === 'number'
+      && Math.floor(m.offset_seconds) === timestamp.split(':').reduce((total, part) => total * 60 + Number(part), 0);
+    for (const key of ['offset_seconds', 'end_seconds']) {
+      const seconds = m[key];
+      if (seconds != null && (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds < 0)) {
+        throw new Error(t('Реплика {index}: некорректные границы аудио.', {index: i + 1}));
+      }
+    }
+    if (typeof m.end_seconds === 'number' && typeof m.offset_seconds === 'number' && m.end_seconds < m.offset_seconds) {
+      throw new Error(t('Реплика {index}: некорректные границы аудио.', {index: i + 1}));
+    }
+    if (timestamp !== null && (channel === 'agent_chat' ? !chatTime : channel === 'voice_call' ? !voiceTime && !relative : !chatTime && !voiceTime)) {
       throw new Error(t('Реплика {index}: для чата нужно MM:SS, для звонка — корректное ISO-время с часовым поясом.', {index: i + 1}));
     }
     if (typeof m.text !== 'string' || !m.text.trim() || m.text.length > 100000) {

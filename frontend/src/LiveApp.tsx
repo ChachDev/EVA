@@ -11,6 +11,8 @@ import { hasOpenAppeal } from './workspace-analytics';
 import LiveDetail from './LiveDetail';
 import { ImportDialog, ChecklistEditor, AppealDialog, AudioDialog } from './LiveForms';
 import { displayTime } from './server-input';
+import AudioHistory from './AudioHistory';
+import type { TranscriptDownload } from './api/types';
 
 type Tab = 'overview' | 'dialogs' | 'checklists' | 'appeals' | 'audio' | 'brand';
 type Route = { tab: Tab; id: string; evaluation: string };
@@ -29,7 +31,7 @@ function readRoute(): Route {
 function go(tab: Tab, id = '', evaluation = '') { location.hash = '/' + tab + (id ? '/' + encodeURIComponent(id) : '') + (evaluation ? '?evaluation=' + encodeURIComponent(evaluation) : ''); }
 function saveJson(name: string, value: unknown) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' }));
-  const link = document.createElement('a'); link.href = url; link.download = name; link.click(); URL.revokeObjectURL(url);
+  const link = document.createElement('a'); link.href = url; link.download = name; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 const message = (error: unknown) => error instanceof Error ? error.message : 'Не удалось выполнить действие.';
 async function reviewMap(evaluations: Evaluation[]): Promise<Record<string, ReviewCase>> {
@@ -68,7 +70,8 @@ export default function LiveApp() {
   const [job, setJob] = useState<TranscriptionJob | null>(null);
   const [jobError, setJobError] = useState('');
   const [jobBusy, setJobBusy] = useState(false);
-  const [jobLookup, setJobLookup] = useState('');
+  const [importSeed, setImportSeed] = useState<TranscriptDownload>();
+  const [removing, setRemoving] = useState(false);
   const [roles, setRoles] = useState<Array<'client' | 'operator' | ''>>([]);
   const roleOperation = useRef({ signature: '', id: '' });
 
@@ -130,6 +133,25 @@ export default function LiveApp() {
     void poll();
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [route.tab, route.id, revision]);
+
+  async function removeRecord(prompt: string, remove: () => Promise<void>, next: () => void) {
+    if (removing || !window.confirm(t(prompt))) return;
+    setRemoving(true);
+    try { await remove(); next(); await reload(); }
+    catch (reason) { setError(message(reason)); }
+    finally { setRemoving(false); }
+  }
+
+  async function useTranscript(download: boolean) {
+    if (!job || jobBusy) return;
+    setJobBusy(true); setJobError('');
+    try {
+      const data = await api.exportTranscript(job.id);
+      if (download) saveJson(`EVA_audio_${job.id}.json`, data);
+      else { setImportSeed(data); setModal('import'); }
+    } catch (reason) { setJobError(message(reason)); }
+    finally { setJobBusy(false); }
+  }
 
   async function evaluate() {
     if (!conversation || !chosen || evaluationLock.current) return;
@@ -204,28 +226,30 @@ export default function LiveApp() {
     <main id="workspace-content" tabIndex={-1}>
       {error && <div className="live-error" role="alert"><strong>{t("Не удалось обновить данные.")}</strong> {t(error)} {" "}{t("Ранее загруженные данные могут быть устаревшими.")}</div>}
       {notice && <div className="live-notice" role="status">{typeof notice === "string" ? t(notice) : t(notice.source, notice.params)}<button className="icon-button" aria-label={t("Закрыть уведомление")} onClick={() => setNotice('')}><X/></button></div>}
-      <div className="page-heading"><div><div className="eyebrow"><span className="status-dot"/>FREEDOM WORKSPACE<span className="workspace-mode">{t('Сервер')}</span></div><h1>{t(titles[route.tab])}</h1><p>{t(subtitles[route.tab])}</p></div><div className="heading-actions">{route.tab === 'checklists' ? chosen && <button type="submit" form="eva-checklist-editor" className="button primary"><Check/>{t('Сохранить чек-лист')}</button> : route.tab === 'brand' ? <a href="/brand/eva-logo.png" download className="button primary"><Download/>{t('Логотип EVA')}</a> : route.tab === 'audio' ? <button className="button primary" onClick={() => setModal('audio')}><Headphones/>{t('Загрузить аудиозапись')}</button> : <button className="button primary" onClick={() => setModal('import')}><Plus/>{t('Новый диалог')}</button>}</div></div>
+      <div className="page-heading"><div><div className="eyebrow"><span className="status-dot"/>FREEDOM WORKSPACE<span className="workspace-mode">{t('Сервер')}</span></div><h1>{t(titles[route.tab])}</h1><p>{t(subtitles[route.tab])}</p></div><div className="heading-actions">{route.tab === 'checklists' ? chosen && <button type="submit" form="eva-checklist-editor" className="button primary"><Check/>{t('Сохранить чек-лист')}</button> : route.tab === 'brand' ? <a href="/brand/eva-logo.png" download className="button primary"><Download/>{t('Логотип EVA')}</a> : route.tab === 'audio' ? <button className="button primary" onClick={() => setModal('audio')}><Headphones/>{t('Загрузить аудиозапись')}</button> : <button className="button primary" onClick={() => { setImportSeed(undefined); setModal('import'); }}><Plus/>{t('Новый диалог')}</button>}</div></div>
       {route.tab === 'overview' && <>
         <LiveOverview conversations={workspace.conversations} evaluations={workspace.evaluations} reviews={workspace.reviews} loading={loading} onOpen={id => go('dialogs', id)} onDialogs={openAllDialogs} onViolations={() => { setDialogFilter('violation'); setQuery(''); setLanguage('all'); setChannel('all'); go('dialogs'); }} onAppeals={() => go('appeals')}/>
         <section className="panel live-dialog-panel"><div className="panel-heading"><div><h2>{t('Сохранённые диалоги')} <span className="count-badge">{number(workspace.conversations.length)}</span></h2></div><button className="text-button" onClick={openAllDialogs}>{t('Все диалоги')}<ArrowUpRight/></button></div>{table(workspace.conversations.slice(0, 6))}<div className="table-caption"><span>{t('Данные рабочего пространства')}</span><span><Check/>{t('Оценки с обоснованием')}</span></div></section>
       </>}
       {route.tab === 'dialogs' && !route.id && <section className="panel live-dialog-panel"><div className="workspace-table-toolbar"><div className="filter-tabs dialog-tabs" role="group" aria-label={t('Статус диалогов')}>{(['all', 'appealed', 'violation'] as const).map(filter => <button key={filter} aria-pressed={dialogFilter === filter} className={dialogFilter === filter ? 'selected' : ''} onClick={() => setDialogFilter(filter)}>{t({ all: 'Все диалоги', appealed: 'На пересмотре', violation: 'Нарушения' }[filter])}<span>{number(dialogCounts[filter])}</span></button>)}</div><button className="button secondary small" disabled={!filtered.length} onClick={() => saveJson('EVA_dialogs.json', { conversations: filtered, evaluations: workspace.evaluations.filter(record => filtered.some(c => c.id === record.original.conversation_id)).map(record => ({ original: record, review: workspace.reviews[record.id] ?? null })) })}><Download/>{t('Экспорт')}</button></div><div className="filter-bar"><label className="search-field"><Search/><input aria-label={t('ID или текст диалога')} value={query} onChange={e => setQuery(e.target.value)} placeholder={t('ID или текст диалога')}/></label><label><span className="sr-only">{t('Язык')}</span><select aria-label={t('Язык диалога')} value={language} onChange={e => setLanguage(e.target.value)}><option value="all">{t('Все языки')}</option>{['RU','KZ','EN'].map(l => <option key={l}>{l}</option>)}</select></label><label><span className="sr-only">{t('Канал')}</span><select aria-label={t('Канал')} value={channel} onChange={e => setChannel(e.target.value)}><option value="all">{t('Все каналы')}</option><option value="agent_chat">{t('Чаты')}</option><option value="voice_call">{t('Звонки')}</option></select></label>{(query || language !== 'all' || channel !== 'all') && <button className="text-button" onClick={() => { setQuery(''); setLanguage('all'); setChannel('all'); }}>{t('Сбросить фильтры')}</button>}</div>{table(filtered)}<div className="table-caption"><span>{t('Показано {count} из {total}', { count: number(filtered.length), total: number(workspace.conversations.length) })}</span><span>{t('Серверные данные')}</span></div></section>}
       {route.tab === 'dialogs' && route.id && (conversation ? <>
-        <div className="live-controls"><button className="button secondary" onClick={() => go('dialogs')}>{t("Все диалоги")}</button>{selector}<label className="form-label live-select">{t("История оценок")}<select value={evaluationId} disabled={evaluating || !history.length} onChange={e => go('dialogs', conversation.id, e.target.value)}>{!history.length && <option value="">{t("Оценок пока нет")}</option>}{history.map(e => <option value={e.id} key={e.id}>{displayTime(e.created_at)} · v{e.original.checklist_version} · {e.id.slice(0, 8)}</option>)}</select></label>{currentSelection && <button className="button secondary" onClick={() => saveJson(`EVA_${conversation.id}.json`, { snapshot: currentSelection.snapshot, review: currentSelection.review })}><Download/>{t("Экспорт")}</button>}</div>
+        <div className="live-controls"><button className="button secondary" onClick={() => go('dialogs')}>{t("Все диалоги")}</button>{selector}<label className="form-label live-select">{t("История оценок")}<select value={evaluationId} disabled={evaluating || !history.length} onChange={e => go('dialogs', conversation.id, e.target.value)}>{!history.length && <option value="">{t("Оценок пока нет")}</option>}{history.map(e => <option value={e.id} key={e.id}>{displayTime(e.created_at)} · v{e.original.checklist_version} · {e.id.slice(0, 8)}</option>)}</select></label>{currentSelection && <button className="button secondary" onClick={() => saveJson(`EVA_${conversation.id}.json`, { snapshot: currentSelection.snapshot, review: currentSelection.review })}><Download/>{t("Экспорт")}</button>}<button className="button secondary" disabled={evaluating || removing} onClick={() => void removeRecord('Удалить диалог со всеми оценками и апелляциями?', () => api.deleteConversation(conversation.id), () => go('dialogs'))}>{t('Удалить диалог')}</button>{evaluationId && <button className="button secondary" disabled={evaluating || removing} onClick={() => void removeRecord('Удалить выбранную оценку и её апелляции?', () => api.deleteEvaluation(evaluationId), () => go('dialogs', conversation.id))}>{t('Удалить оценку')}</button>}</div>
         {route.evaluation && !evaluation && <div className="live-error" role="alert">{t("Выбранная оценка не найдена у этого диалога.")}</div>}
         {detailLoading && <p role="status">{t("Загружаем сохранённые входы и текущий результат…")}</p>}
         <LiveDetail conversation={currentSelection?.snapshot.conversation ?? conversation} checklist={displayChecklist} evaluation={evaluation} review={currentSelection?.review ?? legacy} busy={evaluating} canEvaluate={!detailLoading && !loading && !!chosen} error={t(detailError)} onEvaluate={() => void evaluate()} onAppeal={criterionId => evaluation && void openAppeal(evaluation.id, criterionId)}/>
       </> : <EmptyState title={loading ? t("Загрузка…") : t("Диалог не найден")}>{t("Проверьте адрес или обновите список.")}</EmptyState>)}
-      {route.tab === 'checklists' && <div className="workspace-checklists"><div className="workspace-version-selector">{selector}</div>{chosen ? <ChecklistEditor key={`${chosen.id}:${chosen.version}`} checklist={chosen} onSaved={c => { setWorkspace(w => ({ ...w, checklists: [c, ...w.checklists] })); setChecklistKey(`${c.id}:${c.version}`); setNotice({ source: 'Версия {version} сохранена на сервере.', params: { version: c.version } }); }}/> : <section className="panel"><EmptyState title={t('Чек-листов пока нет')}>{t('Нужна первоначальная версия на backend.')}</EmptyState></section>}</div>}
+      {route.tab === 'checklists' && <div className="workspace-checklists"><div className="workspace-version-selector">{selector}{chosen && !(chosen.id === 'freedom-cqa' && chosen.version === 1) && <button className="button secondary" disabled={removing} onClick={() => void removeRecord('Убрать версию чек-листа из выбора? Старые оценки сохранятся.', () => api.deleteChecklist(chosen.id, chosen.version), () => setChecklistKey(''))}>{t('Удалить версию')}</button>}</div>{chosen ? <ChecklistEditor key={`${chosen.id}:${chosen.version}`} checklist={chosen} onSaved={c => { setWorkspace(w => ({ ...w, checklists: [c, ...w.checklists] })); setChecklistKey(`${c.id}:${c.version}`); setNotice({ source: 'Версия {version} сохранена на сервере.', params: { version: c.version } }); }}/> : <section className="panel"><EmptyState title={t('Чек-листов пока нет')}>{t('Нужна первоначальная версия на backend.')}</EmptyState></section>}</div>}
       {route.tab === 'appeals' && <WorkspaceAppeals reviews={workspace.reviews} checklists={workspace.checklists} onOpen={(id, evaluation) => go('dialogs', id, evaluation)} onReview={(evaluation, criterion, appeal) => void openAppeal(evaluation, criterion, appeal)}/>}
       {route.tab === 'brand' && <WorkspaceBrand/>}
-      {route.tab === 'audio' && <section className="panel live-panel"><div className="panel-heading"><div><h2>{t("Задание распознавания")}</h2><p>{t("Загрузка файла и получение транскрипта — отдельные этапы. Сохраните адрес задания для возвращения к нему.")}</p></div></div><form className="live-controls" onSubmit={e => { e.preventDefault(); if (jobLookup.trim()) go('audio', jobLookup.trim()); }}><label className="form-label live-select">{t("ID сохранённого задания")}<input value={jobLookup} onChange={e => setJobLookup(e.target.value)} placeholder={t("Вставьте ID задания")}/></label><button className="button secondary">{t("Открыть задание")}</button></form>
+      {route.tab === 'audio' && !route.id && <AudioHistory revision={revision} open={id => go('audio', id)}/>}
+      {route.tab === 'audio' && route.id && <section className="panel live-panel"><div className="panel-heading"><h2>{t('Задание распознавания')}</h2><button className="button secondary" onClick={() => go('audio')}>{t('История распознавания')}</button></div>
         {jobError && <p role="alert" className="live-error">{t(jobError)}</p>}
         {route.id && !job && !jobError && <p role="status">{t("Загружаем задание…")}</p>}
         {job && <><p><b>ID:</b> {job.id}</p><StatusBadge>{({ queued: t("В очереди"), running: t("Распознаётся"), completed: t("Транскрипт готов"), needs_review: t("Нужно определить роли"), failed: t("Ошибка распознавания") } as const)[job.status]}</StatusBadge>
           <audio controls preload="none" src={api.audioContentUrl(job.asset_id)} className="live-audio"/>
           {job.error_code && <p className="live-error">{t("Распознавание не завершено. Код: {code}. Оценка не создавалась.", { code: job.error_code })}</p>}
           {job.status === 'needs_review' && job.result && <><p className="live-notice">{t("Подтвердите роли всех реплик. После сохранения появится разговор для оценки.")}</p>{job.result.segments.map((s, i) => <label className="form-label" key={i}>{t("{start}–{end} сек.", { start: number(s.start_seconds), end: number(s.end_seconds) })} · {s.text}<select value={roles[i] ?? ''} disabled={jobBusy} onChange={e => setRoles(prev => prev.map((r, j) => i === j ? e.target.value as typeof r : r))}><option value="">{t("Выберите роль")}</option><option value="client">{t("Клиент")}</option><option value="operator">{t("Оператор")}</option></select></label>)}<button className="button primary" disabled={jobBusy || roles.some(r => !r)} onClick={() => void confirmRoles()}>{t("Подтвердить роли")}</button></>}
+          {job.result && <div className="live-controls"><button className="button secondary" disabled={jobBusy} onClick={() => void useTranscript(true)}><Download/>{t('Скачать JSON')}</button><button className="button secondary" disabled={jobBusy} onClick={() => void useTranscript(false)}><Plus/>{t('Новый диалог из записи')}</button></div>}
           {job.conversation_id && <button className="button primary" onClick={async () => { await reload(); go('dialogs', job.conversation_id!); }}>{t("Открыть транскрипт для оценки")}</button>}
         </>}
       </section>}
@@ -233,7 +257,7 @@ export default function LiveApp() {
     </main></div>
     {modal === 'help' && <WorkspaceHelp onClose={() => setModal(null)} onStart={() => { setModal(null); openAllDialogs(); }}/>}
     {modal === 'search' && <WorkspaceSearch conversations={workspace.conversations} onClose={() => setModal(null)} onOpen={id => { setModal(null); go('dialogs', id); }}/>}
-    {modal === 'import' && <ImportDialog onClose={() => setModal(null)} onSaved={c => { setWorkspace(w => ({ ...w, conversations: [c, ...w.conversations.filter(old => old.id !== c.id)] })); setModal(null); go('dialogs', c.id); }}/ >}
+    {modal === 'import' && <ImportDialog initial={importSeed} onClose={() => setModal(null)} onSaved={c => { setWorkspace(w => ({ ...w, conversations: [c, ...w.conversations.filter(old => old.id !== c.id)] })); setModal(null); go('dialogs', c.id); }}/ >}
     {modal === 'audio' && <AudioDialog onClose={() => setModal(null)} onJob={j => { setModal(null); go('audio', j.id); }}/ >}
     {appealContext && <AppealDialog key={`${appealContext.review.evaluation_id}:${appealContext.review.revision}:${appealContext.criterionId}`} review={appealContext.review} conversation={appealContext.snapshot.conversation} checklist={appealContext.snapshot.checklist} criterionId={appealContext.criterionId} appealId={appealContext.appealId} onClose={() => setAppealContext(null)} onSaved={savedReview}/>}
   </div>;

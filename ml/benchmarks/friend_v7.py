@@ -3,6 +3,7 @@ import argparse
 import ast
 from copy import deepcopy
 from hashlib import sha256
+from io import BytesIO
 import json
 from pathlib import Path
 import subprocess
@@ -28,10 +29,11 @@ MODULES=("issai","consultation_v11","applicability","applicability_v2","applicab
          "resolution_v7","banking_events","transcript_quality")
 
 
-def stage(target):
-    if sha256(ARCHIVE.read_bytes()).hexdigest()!=PIN:
+def stage(target, archive=ARCHIVE):
+    payload = archive.read_bytes()
+    if sha256(payload).hexdigest()!=PIN:
         raise ValueError("Unexpected archive")
-    with ZipFile(ARCHIVE) as z:
+    with ZipFile(BytesIO(payload)) as z:
         manifest=json.loads(z.read("EVA/TRANSFER_MANIFEST.json"))
         paths=[f"ml/eva_ml/{m}.py" for m in MODULES]+["ml/benchmarks/fact_rules.py","ml/benchmarks/frozen_checklist.json",
                "contracts/examples/checklist.json"]

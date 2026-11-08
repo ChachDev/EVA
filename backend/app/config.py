@@ -85,7 +85,8 @@ class Settings:
         except Exception:
             raise ValueError("DATABASE_URL must select local PostgreSQL or an explicit SQLite file inside backend.") from None
         _local_origin(self.ml_url, "ML_URL")
-        _local_origin(self.media_base_url, "MEDIA_BASE_URL")
+        if self.media_base_url != "/":
+            _local_origin(self.media_base_url, "MEDIA_BASE_URL")
         if self.asr_url is not None:
             _local_origin(self.asr_url, "ASR_URL")
         if (type(self.ml_timeout_seconds) not in {int, float}

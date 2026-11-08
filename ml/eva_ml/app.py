@@ -33,8 +33,18 @@ async def lifespan(application: FastAPI):
         started = time.monotonic()
         worker = loaded_engine()
         engine = await run_in_threadpool(worker.__enter__)
+        v7_provider = None
         try:
             application.state.provider = select_provider(engine, os.getenv("EVA_CONSULTATION_VARIANT", "consultation-v1.1"))
+            v7_mode = os.getenv("EVA_V7_MODE", "off")
+            if v7_mode != "off":
+                from .v7_fusion import V7Fusion
+                from .v7_grounded import V7Grounded
+                profiles = {"evidence": V7Fusion, "grounded": V7Grounded}
+                if v7_mode not in profiles or not os.getenv("EVA_V7_ARCHIVE"):
+                    raise ValueError("Set EVA_V7_MODE=evidence or grounded and provide the pinned EVA_V7_ARCHIVE.")
+                v7_provider = await run_in_threadpool(profiles[v7_mode], application.state.provider, Path(os.environ["EVA_V7_ARCHIVE"]))
+                application.state.provider = v7_provider
             configured = os.getenv("EVA_AUDIT_COMPONENTS", ",".join(sorted(COMPONENTS)))
             keys=set() if configured.strip().lower()=="off" else {key.strip() for key in configured.split(",") if key.strip()}
             try:
@@ -47,7 +57,11 @@ async def lifespan(application: FastAPI):
             yield
         finally:
             application.state.auditor = None
-            await run_in_threadpool(worker.__exit__, None, None, None)
+            try:
+                if v7_provider is not None:
+                    await run_in_threadpool(v7_provider.close)
+            finally:
+                await run_in_threadpool(worker.__exit__, None, None, None)
     else:
         raise RuntimeError("Unknown EVA_ML_PROVIDER")
 

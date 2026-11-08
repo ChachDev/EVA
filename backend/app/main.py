@@ -17,6 +17,7 @@ from starlette.responses import JSONResponse
 
 from . import audit as audit_api
 from . import batches
+from . import removals
 from .config import Settings
 from .contracts import ContractError, Contracts
 from .ml_client import MLClient, MLContextLimitExceeded, MLInvalidResponse, MLUnavailable
@@ -92,6 +93,7 @@ def create_app(settings: Settings | None = None,
 
     application = FastAPI(title="EVA local backend", version="0.1.0", lifespan=lifespan)
     application.state.store = store
+    removals.install(application, store)
     application.add_exception_handler(RequestValidationError, sanitized_validation_exception_handler)
     application.add_exception_handler(Exception, sanitized_server_error_handler)
 
@@ -108,8 +110,8 @@ def create_app(settings: Settings | None = None,
     )
     application.add_middleware(
         CORSMiddleware, allow_origins=list(settings.cors_origins),
-        allow_credentials=False, allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type", "Idempotency-Key", "Range", "If-Range"],
+        allow_credentials=False, allow_methods=["GET", "POST", "DELETE"],
+        allow_headers=["Content-Type", "Idempotency-Key", "Range", "If-Range", "X-Audio-Filename"],
         expose_headers=["X-Request-ID", "Content-Range", "Accept-Ranges", "ETag", "Retry-After"],
     )
 
@@ -205,9 +207,9 @@ def create_app(settings: Settings | None = None,
         }
         contracts.validate("evaluation-record", record)
         if claim:
-            await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion,batch_claim=claim)
+            await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion,batch_claim=claim,require_active=True)
         else:
-            await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion)
+            await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion,require_active=True)
         if settings.audit_mode == "shadow":
             background_tasks.add_task(shadow,record["id"],request,original)
         return record

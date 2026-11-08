@@ -153,3 +153,11 @@ test('keeps an unknown speaker, mixed language and explicitly absent time', () =
 test('an invalid later message rejects the whole transcript', () => {
   assert.throws(() => parseJson([message(), message({ speaker: 'unmapped' }), message()]));
 });
+
+test('Whisper JSON round-trips relative times, roles and original segment bounds', () => {
+  const row = {speaker:'unknown', text:'Hello', timestamp:'01:02', offset_seconds:62.25, end_seconds:63.8};
+  const data = (changes = {}) => JSON.stringify({channel:'voice_call',language:'EN',messages:[{...row,...changes}]});
+  assert.deepEqual(parseTranscript(data(), 'voice_call'), [row]);
+  assert.throws(() => parseTranscript(data({timestamp:'01:03'}), 'voice_call'));
+  assert.throws(() => parseTranscript(data({end_seconds:61}), 'voice_call'));
+});

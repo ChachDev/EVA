@@ -1,17 +1,33 @@
 """Local audio intake and durable transcription jobs."""
 
 from functools import partial
+from urllib.parse import unquote
 from typing import Annotated, Any
 
-from fastapi import Body, Header, HTTPException, Request
+from fastapi import Body, Header, HTTPException, Query, Request
 from fastapi.concurrency import run_in_threadpool
-from starlette.responses import FileResponse
-
+from starlette.responses import FileResponse, JSONResponse
+from pydantic import BaseModel
 from .contracts import ContractError
 from .media import (
     MediaService, MediaInvalid, MediaNotFound, MediaConflict,
     MediaStorageError, MediaBacklogFull,
 )
+
+
+class HistoryItem(BaseModel):
+    id: str
+    asset_id: str
+    status: str
+    created_at: str
+    language: str
+    conversation_id: str | None
+    display_name: str | None
+
+
+class TranscriptionHistory(BaseModel):
+    items: list[HistoryItem]
+    has_more: bool
 
 
 def install_media_routes(application, contracts, store, settings):
@@ -46,7 +62,8 @@ def install_media_routes(application, contracts, store, settings):
         content_type = request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
         if content_type not in {"audio/wav", "audio/x-wav", "audio/mpeg", "audio/flac", "audio/ogg"}:
             raise HTTPException(415, "Supported audio types: WAV, MP3, FLAC and Ogg.")
-        asset = await call(media.upload, await request.body(), content_type, idempotency_key)
+        asset = await call(media.upload, await request.body(), content_type, idempotency_key,
+                           unquote(request.headers.get("x-audio-filename", "")))
         contracts.validate("audio-asset", asset)
         return asset
 
@@ -78,6 +95,16 @@ def install_media_routes(application, contracts, store, settings):
         job = await call(media.create_job, body["asset_id"], body["language"], body["operation_id"])
         contracts.validate("transcription-job", job)
         return job
+
+    @application.get("/api/v1/transcriptions", response_model=TranscriptionHistory)
+    async def transcription_history(limit: int = Query(20, ge=1, le=100), offset: int = Query(0, ge=0)):
+        return await call(media.history, limit, offset)
+
+    @application.get("/api/v1/transcriptions/{job_id}/export")
+    async def export_transcript(job_id: str):
+        data = await call(media.export_transcript, job_id)
+        return JSONResponse(data, headers={"Content-Disposition": f'attachment; filename="EVA-{job_id}.json"',
+                                           "Cache-Control": "private, no-store"})
 
     @application.get("/api/v1/transcriptions/{job_id}")
     async def get_transcription(job_id: str):

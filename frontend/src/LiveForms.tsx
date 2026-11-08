@@ -17,13 +17,13 @@ function useOperation() {
 const speakerLabels = { operator: 'Оператор', client: 'Клиент', bot: 'Бот', system: 'Система', unknown: 'Роль неизвестна' };
 const errorText = (error: unknown) => error instanceof Error ? error.message : 'Не удалось сохранить. Попробуйте обновить данные.';
 
-export function ImportDialog({ onClose, onSaved }: { onClose: () => void; onSaved: (c: Conversation) => void }) {
+export function ImportDialog({ initial, onClose, onSaved }: { initial?: Omit<ConversationCreate,'operation_id'>; onClose: () => void; onSaved: (c: Conversation) => void }) {
   const { t } = useI18n();
-  const [text, setText] = useState('');
+  const [text, setText] = useState(initial ? JSON.stringify(initial, null, 2) : '');
   const [fileName, setFileName] = useState('');
   const fileNameId = useId();
-  const [language, setLanguage] = useState<Conversation['language']>('RU');
-  const [channel, setChannel] = useState<Conversation['channel']>('agent_chat');
+  const [language, setLanguage] = useState<Conversation['language']>(initial?.language ?? 'RU');
+  const [channel, setChannel] = useState<Conversation['channel']>(initial?.channel ?? 'agent_chat');
   const [operator,setOperator]=useState('');
   const [lostStart,setLostStart]=useState(false);
   const [lostEnd,setLostEnd]=useState(false);
@@ -52,13 +52,22 @@ export function ImportDialog({ onClose, onSaved }: { onClose: () => void; onSave
         <label><input type="checkbox" checked={lostStart} disabled={busy} onChange={e=>setLostStart(e.target.checked)}/>{t("Начало записи отсутствует")}</label>
         <label><input type="checkbox" checked={lostEnd} disabled={busy} onChange={e=>setLostEnd(e.target.checked)}/>{t("Конец записи отсутствует")}</label>
       </details>
-      <div className="live-fields"><label className="form-label">{t("Язык")}<select value={language} disabled={busy} onChange={e => setLanguage(e.target.value as Conversation['language'])}>{['RU','KZ','EN'].map(l => <option key={l}>{l}</option>)}</select></label>
-      <label className="form-label">{t("Канал")}<select value={channel} disabled={busy} onChange={e => setChannel(e.target.value as Conversation['channel'])}><option value="agent_chat">{t("Чат поддержки")}</option><option value="voice_call">{t("Готовый транскрипт звонка")}</option></select></label></div>
+      <div className="live-fields"><label className="form-label">{t("Язык")}<select aria-label={t("Язык")} value={language} disabled={busy} onChange={e => setLanguage(e.target.value as Conversation['language'])}>{['RU','KZ','EN'].map(l => <option key={l}>{l}</option>)}</select></label>
+      <label className="form-label">{t("Канал")}<select aria-label={t("Канал")} value={channel} disabled={busy} onChange={e => setChannel(e.target.value as Conversation['channel'])}><option value="agent_chat">{t("Чат поддержки")}</option><option value="voice_call">{t("Готовый транскрипт звонка")}</option></select></label></div>
       <label className="form-label">{t("JSON или TXT, до 1 МБ")}<span className="live-file-picker" data-disabled={busy || undefined}><input className="sr-only" aria-label={t('Выбрать файл переписки')} aria-describedby={fileNameId} disabled={busy} type="file" accept=".json,.txt" onChange={async e => {
         const sequence = ++fileSequence.current;
         const file = e.target.files?.[0]; setFileName(file?.name ?? ''); if (!file) return;
         if (file.size > 1048576) { setError('Файл превышает 1 МБ.'); return; }
-        try { const text = await file.text(); if (sequence === fileSequence.current) { setText(text); setError(''); } } catch { if (sequence === fileSequence.current) setError('Не удалось прочитать файл.'); }
+        try {
+          const raw = await file.text();
+          if (sequence !== fileSequence.current) return;
+          setText(raw); setError('');
+          if (raw.trimStart().startsWith('{')) {
+            const data = JSON.parse(raw);
+            if (['RU','KZ','EN'].includes(data.language)) setLanguage(data.language);
+            if (['voice_call','agent_chat'].includes(data.channel)) setChannel(data.channel);
+          }
+        } catch { if (sequence === fileSequence.current) setError('Не удалось прочитать файл.'); }
       }}/><span className="button secondary small" aria-hidden="true">{t('Выбрать файл')}</span><span id={fileNameId} className="live-file-name" aria-live="polite">{fileName || t('Файл не выбран')}</span></span></label>
       <label className="form-label">{t("Переписка")}<textarea rows={10} value={text} disabled={busy} onChange={e => { fileSequence.current++; setText(e.target.value); }} placeholder={t("[00:00] клиент: Здравствуйте!\n[00:05] оператор: Здравствуйте! Чем помочь?")} required/></label>
       <p className="form-hint">{t("TXT: [время] клиент / оператор / бот / система: текст. JSON: массив messages или transcript с полями timestamp, speaker, text. Для чата время MM:SS; для звонка ISO с часовым поясом, например 2026-11-08T10:00:00+05:00.")}</p>

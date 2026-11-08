@@ -117,7 +117,7 @@ class EvaluationStore:
 
     def list_checklists(self) -> list[dict]:
         with self.engine.connect() as connection:
-            payloads = connection.execute(select(checklist_versions.c.payload).order_by(
+            payloads = connection.execute(select(checklist_versions.c.payload).where(checklist_versions.c.archived.is_(False)).order_by(
                 checklist_versions.c.checklist_id, checklist_versions.c.version,
             )).scalars().all()
         return [json.loads(payload) for payload in payloads]
@@ -127,6 +127,7 @@ class EvaluationStore:
             payload = connection.execute(select(checklist_versions.c.payload).where(
                 checklist_versions.c.checklist_id == checklist_id,
                 checklist_versions.c.version == version,
+                checklist_versions.c.archived.is_(False),
             )).scalar_one_or_none()
         return json.loads(payload) if payload is not None else None
 
@@ -227,12 +228,22 @@ class EvaluationStore:
                 audit_runs.c.evaluation_id == evaluation_id)).scalar_one_or_none()
         return json.loads(body) if body else None
 
-    def create(self, record: dict, request_snapshot: dict | None = None, audit: dict | None = None, batch_claim=None) -> None:
+    def create(self, record: dict, request_snapshot: dict | None = None, audit: dict | None = None, batch_claim=None, *, require_active=False) -> None:
         payload = _document(record)
         snapshot = _document(request_snapshot) if request_snapshot is not None else None
         original = record.get("original", {})
         try:
             with self._write_connection() as connection:
+                if require_active:
+                    from .batches import guard
+                    guard(connection, self)
+                    present = connection.execute(select(conversation_rows.c.id).where(
+                        conversation_rows.c.id == original["conversation_id"]).with_for_update()).first()
+                    active = connection.execute(select(checklist_versions.c.version).where(
+                        checklist_versions.c.checklist_id == original["checklist_id"],
+                        checklist_versions.c.version == original["checklist_version"], checklist_versions.c.archived.is_(False)).with_for_update()).first()
+                    if not present or not active:
+                        raise StorageConflict("The conversation or checklist was removed during evaluation.")
                 if batch_claim is not None:
                     from .batches import BatchStore
                     BatchStore.finish_in(connection,batch_claim,"done")

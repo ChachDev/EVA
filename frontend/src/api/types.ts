@@ -230,6 +230,9 @@ export interface TranscriptionReview {
   roles: TranscriptRole[];
 }
 
+export type TranscriptDownload = Omit<ConversationCreate, 'operation_id'>;
+export type TranscriptionSummary = Pick<TranscriptionJob, 'id' | 'language' | 'status' | 'created_at' | 'conversation_id'> & {display_name: string | null};
+
 export interface BackendHealth {
   status: string;
   service?: 'backend';
@@ -290,5 +293,10 @@ export interface CqaApi {
   audioContentUrl(id: string): string;
   createTranscription(payload: TranscriptionCreate): Promise<TranscriptionJob>;
   getTranscription(id: string): Promise<TranscriptionJob>;
+  transcriptionHistory(offset: number): Promise<{items: TranscriptionSummary[]; has_more: boolean}>;
+  exportTranscript(id: string): Promise<TranscriptDownload>;
+  deleteConversation(id: string): Promise<void>;
+  deleteEvaluation(id: string): Promise<void>;
+  deleteChecklist(id: string, version: number): Promise<void>;
   reviewTranscription(id: string, payload: TranscriptionReview): Promise<TranscriptionJob>;
 }

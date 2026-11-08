@@ -263,7 +263,7 @@ def install(app, contracts, store, settings):
                "scoring":summary,"status":"completed" if summary["status"]=="complete" else "needs_review"}
         contracts.validate("evaluation-record",saved)
         try:
-            await run_in_threadpool(store.create,saved,request,companion)
+            await run_in_threadpool(store.create,saved,request,companion,require_active=True)
         except StorageConflict:
             existing=await run_in_threadpool(store.get,derived_id)
             if existing is None: raise

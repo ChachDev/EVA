@@ -61,6 +61,9 @@ def test_actual_routes_have_documented_requests_and_success_responses(applicatio
         for method in route.methods:
             operation = document["paths"][route.path][method.lower()]
             response = operation["responses"][str(route.status_code or 200)]
+            if route.status_code == 204:
+                assert "content" not in response, (route.path, method)
+                continue
             assert response["content"], (route.path, method)
             for media_type in response["content"].values():
                 assert media_type["schema"], (route.path, method)

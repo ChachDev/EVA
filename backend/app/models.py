@@ -1,6 +1,6 @@
 """Internal SQL tables; HTTP JSON Schemas remain the canonical public format."""
 
-from sqlalchemy import CheckConstraint, Column, ForeignKey, Index, Integer, MetaData, Table, Text
+from sqlalchemy import Boolean, CheckConstraint, Column, ForeignKey, Index, Integer, MetaData, Table, Text, false
 
 
 metadata = MetaData()
@@ -47,6 +47,7 @@ checklist_versions = Table(
     Column("version", Integer, primary_key=True),
     Column("payload", Text, nullable=False),
     Column("content_hash", Text, nullable=False),
+    Column("archived", Boolean, nullable=False, server_default=false()),
 )
 
 review_cases = Table(

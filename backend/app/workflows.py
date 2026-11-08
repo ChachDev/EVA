@@ -86,6 +86,8 @@ class WorkflowService:
             raise WorkflowInvalid("Invalid checklist configuration.") from None
         try:
             with self.store._write_connection() as connection:
+                from .batches import guard
+                guard(connection, self.store)
                 latest_query = select(checklist_versions.c.version).where(
                     checklist_versions.c.checklist_id == checklist_id,
                 ).order_by(checklist_versions.c.version.desc()).limit(1)
@@ -93,12 +95,13 @@ class WorkflowService:
                 if exists is None and base_version != 0:
                     raise WorkflowNotFound("Checklist was not found.")
                 # Read again after acquiring the lock: another publication may have just committed.
-                latest = connection.execute(latest_query).scalar_one_or_none() or 0
+                latest = connection.execute(latest_query.where(checklist_versions.c.archived.is_(False))).scalar_one_or_none() or 0
                 if latest != base_version:
                     raise WorkflowConflict("The checklist base version is no longer current.")
+                checklist["version"] = (exists or 0) + 1
                 payload = _document(checklist)
                 connection.execute(insert(checklist_versions).values(
-                    checklist_id=checklist_id, version=base_version + 1,
+                    checklist_id=checklist_id, version=checklist["version"],
                     payload=payload, content_hash=_digest(payload),
                 ))
         except IntegrityError:

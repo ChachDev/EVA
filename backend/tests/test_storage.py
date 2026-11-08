@@ -38,7 +38,7 @@ def test_initialize_migrates_and_is_idempotent(store):
         "media_assets", "transcription_jobs", "transcription_reviews",
     }
     with store.engine.connect() as connection:
-        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0003_media"
+        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one() == "0004_audio_filename"
         assert connection.exec_driver_sql("PRAGMA journal_mode").scalar_one() == "delete"
 
 

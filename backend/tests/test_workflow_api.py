@@ -62,6 +62,25 @@ def appeal_body(**changes):
             "reason": "Synthetic appeal reason", "message_ids": ["m0001"], **changes}
 
 
+def test_removal_preserves_snapshots_until_the_related_dialogue_is_deleted(workflow_client, contracts, request_data):
+    path = "/api/v1/checklists/freedom-cqa/versions"
+    published = workflow_client.post(path, json=contracts.example("checklist-publish")).json()
+    first = create_evaluation(workflow_client, request_data, checklist_version=published["version"])
+    second = create_evaluation(workflow_client, request_data)
+    eid = first["id"]
+    assert workflow_client.post(f"/api/v1/evaluations/{eid}/appeals",json=appeal_body()).is_success
+    assert workflow_client.delete(path + "/2").status_code == 204
+    assert workflow_client.delete(path + "/1").status_code == 409
+    assert workflow_client.get(f"/api/v1/evaluations/{eid}/snapshot").json()["checklist"] == published
+    assert workflow_client.post(path,json=contracts.example("checklist-publish")).json()["version"] == 3
+    assert workflow_client.delete(f"/api/v1/evaluations/{eid}").status_code == 204
+    assert workflow_client.get(f"/api/v1/review-cases/{eid}").status_code == 404
+    assert workflow_client.get("/api/v1/evaluations/" + second["id"]).status_code == 200
+    cid = request_data["conversation"]["id"]
+    assert workflow_client.delete("/api/v1/conversations/" + cid).status_code == 204
+    assert workflow_client.get("/api/v1/evaluations/" + second["id"]).status_code == 404
+
+
 def test_manual_conversation_replay_conflict_and_read(workflow_client, contracts):
     body = conversation_body()
     first = workflow_client.post("/api/v1/conversations", json=body)

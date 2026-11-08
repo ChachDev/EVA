@@ -161,6 +161,14 @@ def install_contract_openapi(app: FastAPI, contracts: Contracts) -> None:
                 {"in": "header", "name": "Range", "required": False, "schema": {"type": "string"}, "description": "HTTP byte range, for example bytes=0-1023."},
                 {"in": "header", "name": "If-Range", "required": False, "schema": {"type": "string"}, "description": "Saved ETag or modification date required for a partial response."},
             ])
+        export = document["paths"].get("/api/v1/transcriptions/{job_id}/export", {}).get("get")
+        if export:
+            imported = components["Contract_conversation-create"]
+            export["responses"]["200"] = _json_response({
+                "type": "object", "additionalProperties": False,
+                "properties": {k: v for k, v in imported["properties"].items() if k != "operation_id"},
+                "required": ["channel", "language", "messages"],
+            }, "Portable transcript for creating a new dialogue.")
         app.openapi_schema = document
         cached_routes = route_ids
         return document
