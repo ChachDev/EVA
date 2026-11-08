@@ -242,6 +242,9 @@ class GroundedEventsAuditor(EventsAuditor):
 
 
 def select_auditor(provider,components,profile,cache_size=16):
+    if profile=="baseline-plus-targeted":
+        from .targeted import TargetedAuditor
+        return TargetedAuditor(provider,components,cache_size)
     if profile=="baseline-plus":
         from .baseline_plus import BaselinePlusAuditor
         return BaselinePlusAuditor(provider,components,cache_size)

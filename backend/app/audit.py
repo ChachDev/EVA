@@ -15,7 +15,7 @@ from .storage import StorageConflict
 
 def validate_verification(contracts, request, response, audit):
     verification = audit.get("verification")
-    if audit["versions"].get("profile") != "baseline-plus":
+    if audit["versions"].get("profile") not in {"baseline-plus", "baseline-plus-targeted"}:
         if verification is not None:
             raise ValueError("Unexpected baseline verification.")
         return

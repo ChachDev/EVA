@@ -29,6 +29,31 @@ class Base:
                 "checklist_version":req["checklist"]["version"],"provider":self.name,"model":self.model,"criteria":rows,"warnings":[]}
 
 
+def test_targeted_profile_reuses_saved_response_and_changes_only_attested_row(client,evaluation_request,monkeypatch):
+    base = Base()
+    verifier = select_auditor(base, COMPONENTS, "baseline-plus-targeted", cache_size=0)
+    req = deepcopy(evaluation_request)
+    req["conversation"] = {"id":"targeted-fixture","channel":"agent_chat","audio_url":None,"language":"EN","messages":[
+        {"id":str(i),"speaker":speaker,"text":text,"timestamp":None,"offset_seconds":None} for i,(speaker,text) in enumerate([
+            ("client","Where is the form?"),("operator","Go to the portal."),("client","Where in the portal is the form?")],1)]}
+    original = base.evaluate(req)
+    calls = []
+    def findings(fields, trace, rules):
+        calls.append(set(fields))
+        return {key:{"finding":"reask" if key=="dialogue" else "unknown","client":"1","operator":"2",
+                     "context":"3","why":"The client had to ask the same question again."} for key in fields}
+    monkeypatch.setattr(verifier,"_second_read",findings)
+    client.app.state.auditor=verifier
+    reply=client.post("/v1/verify",json={"request":req,"baseline":original,"request_hash":digest(req)})
+    assert reply.status_code==200, reply.text
+    audit=reply.json()["audit"]
+    assert len(calls)==1 and len(base.requests)==1 and audit["stage_usage"]["baseline"]["calls"]==0
+    assert audit["versions"]["profile"]=="baseline-plus-targeted" and audit["verification"]["baseline"]==original
+    changed=[r for r,old in zip(reply.json()["response"]["criteria"],original["criteria"]) if r!=old]
+    assert [r["criterion_id"] for r in changed]==["dialogue"] and changed[0]["value"]==4
+    assert changed[0]["evidence"][0]["message_ids"]==["1","2","3"]
+
+
 def setup(req,case,components=COMPONENTS):
     base=Base()
     conv,goal,_=list(cases())[case]

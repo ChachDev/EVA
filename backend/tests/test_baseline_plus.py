@@ -19,8 +19,10 @@ def make_bundle(contracts,request):
     return result
 
 
-def test_primary_result_is_bound_and_unchecked_rows_cannot_be_rewritten(contracts,request_data):
+@pytest.mark.parametrize("profile", ["baseline-plus","baseline-plus-targeted"])
+def test_primary_result_is_bound_and_unchecked_rows_cannot_be_rewritten(contracts,request_data,profile):
     bundle=make_bundle(contracts,request_data)
+    bundle["audit"]["versions"]["profile"]=profile
     checked(contracts,request_data,bundle)
     changed=deepcopy(bundle)
     changed["response"]["criteria"][0]["reason"]="Replaced silently."

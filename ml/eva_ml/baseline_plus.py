@@ -125,6 +125,7 @@ def before_after(previous, proposed):
 class BaselinePlusAuditor(Auditor):
     profile="baseline-plus"
     reuses_baseline=True
+    targeted = None
     def __init__(self,baseline,components=COMPONENTS,cache_size=16):
         super().__init__(baseline,components,cache_size)
         self.revision=digest([self.revision,Path(__file__).read_text(encoding="utf8"),
@@ -135,7 +136,8 @@ class BaselinePlusAuditor(Auditor):
         data={"language":trace.conversation["language"],"rules":rules,
               "transcript":[{"id":m["utterance_id"],"role":m["role"],"text":m["text"]} for m in trace.records.values()]}
         schema=object_schema(fields)
-        payload={"model":self.base.model,"messages":[{"role":"system","content":PROMPT},
+        prompt = self.targeted.prompt if self.targeted and self.targeted.applies_to(fields) else PROMPT
+        payload={"model":self.base.model,"messages":[{"role":"system","content":prompt},
             {"role":"user","content":json.dumps(data,ensure_ascii=False,separators=(",",":"))}],
             "seed":42,"temperature":0,"max_tokens":1350,"stream":False,"cache_prompt":False,
             "chat_template_kwargs":{"enable_thinking":False},"response_format":{"type":"json_schema",
@@ -218,6 +220,11 @@ class BaselinePlusAuditor(Auditor):
                     "operator_id":{"type":"string","minLength":1},"quote":{"type":"string","maxLength":260},
                     "why":{"type":"string","minLength":1,"maxLength":210}})
                 instructions[name]=definition
+        targeted = {}
+        if self.targeted and "insult" not in fields and "identity" not in checks:
+            targeted = self.targeted.plan(trace, rules, initial, enabled)
+            for key, (shape, instruction) in targeted.items():
+                fields[key], instructions[key] = shape, instruction
         postings={}
         state="not_needed"
         if fields:
@@ -228,7 +235,7 @@ class BaselinePlusAuditor(Auditor):
                 state="unavailable"
 
         for k in ("needs","identity","consultation"):
-            if k not in fields:continue
+            if k not in fields or k in targeted:continue
             item=postings.get(k,{})
             checks[k]={"outcome":"retained","reason":"Достаточного дополнительного подтверждения нет."}
             if item.get("label","unknown")=="unknown":continue
@@ -244,6 +251,14 @@ class BaselinePlusAuditor(Auditor):
             row=make_row(k,value,item["why"],[first["utterance_id"],second["utterance_id"]],
                          "not_applicable" if value is None else "message")
             apply(row,item["why"],[first,second])
+
+        for key in targeted:
+            proposal = self.targeted.resolve(key, postings.get(key), trace, initial[key])
+            if proposal is None:
+                checks[key] = {"outcome":"retained","reason":"Дополнительные факты не подтвердили поправку."}
+            else:
+                row, proofs = proposal
+                apply(row, row["reason"], proofs)
 
         if "insult" in fields:
             flags,change,suggested=self._flags(postings,trace,rules["gross_errors"],initial["gross_errors"])
@@ -264,7 +279,7 @@ class BaselinePlusAuditor(Auditor):
         if "gross_errors" in fields and not flags:
             details["gross_errors"]["conflict"]="Сохранён вывод исходной модели; результаты второй проверки требуют сверки."
         versions.update(profile=self.profile,score_prompt=sha256(BASE_PROMPT.encode()).hexdigest(),
-                        verifier_prompt=sha256(PROMPT.encode()).hexdigest())
+                        verifier_prompt=sha256((self.targeted.prompt if targeted else PROMPT).encode()).hexdigest())
         versions["prompt"]=digest([versions["score_prompt"],versions["verifier_prompt"]])
         return {"response":result,"audit":{"version":1,"versions":versions,"target_operator":trace.target,
                 "source":req["conversation"].get("source",{}),"language":req["conversation"]["language"],
