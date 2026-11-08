@@ -13,7 +13,7 @@ from starlette.concurrency import run_in_threadpool
 
 from eva_ml import stub
 from eva_ml.audit import COMPONENTS
-from eva_ml.audit_events import select_auditor
+from eva_ml.questions import select_auditor
 from eva_ml.contracts import ContractError, Contracts
 from eva_ml.engine import EngineError, loaded_engine
 from eva_ml.issai import InvalidDecision, digest

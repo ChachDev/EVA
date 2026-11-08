@@ -15,7 +15,7 @@ from .storage import StorageConflict
 
 def validate_verification(contracts, request, response, audit):
     verification = audit.get("verification")
-    if audit["versions"].get("profile") not in {"baseline-plus", "baseline-plus-targeted"}:
+    if audit["versions"].get("profile") not in {"baseline-plus", "baseline-plus-targeted", "baseline-plus-questions"}:
         if verification is not None:
             raise ValueError("Unexpected baseline verification.")
         return
@@ -68,7 +68,42 @@ def checked(contracts, request, bundle):
                 raise ValueError("The explanation contradicts the decision.")
         messages = request["conversation"]["messages"]
         known = {m["id"]:(i,m) for i,m in enumerate(messages)}
-        for detail in [*audit["criteria"].values(), *audit["sentinel"]]:
+        map_refs=[]
+        if "question_map" in audit:
+            qm=audit["question_map"]
+            scope=qm["scope"]
+            source=request["conversation"].get("source",{})
+            operators={m.get("speaker_id") for m in messages if m["speaker"]=="operator"}
+            if (audit["versions"].get("profile")!="baseline-plus-questions" or scope["stage"]!="whole" or
+                    (scope["first"],scope["last"])!=(messages[0]["id"],messages[-1]["id"]) or
+                    any(scope.get(k)!=source.get(k) or source.get(k) is False for k in ("complete_start","complete_end")) or
+                    scope.get("gaps")!=source.get("gaps",False) or source.get("gaps") or
+                    len(operators)>1 or (operators and audit["target_operator"] and operators!={audit["target_operator"]}) or
+                    any(m["speaker"]=="unknown" for m in messages)):
+                raise ValueError("Invalid question scope.")
+            spans=[]
+            for pair in qm["items"]:
+                q,a=pair["question"],pair["answer"]
+                if q["role"]!="client" or (a is not None)!=(pair["status"]=="answered") or (
+                        a and (a["role"]!="operator" or a["order"]<=q["order"])):
+                    raise ValueError("Invalid question attribution.")
+                if any(q["utterance_id"]==mid and q["chars"][0]<end and start<q["chars"][1] for mid,start,end in spans):
+                    raise ValueError("Duplicated question.")
+                spans.append((q["utterance_id"],*q["chars"]))
+                map_refs.extend([q,a] if a else [q])
+            for k in qm["applied"]:
+                if audit["verification"]["checks"][k]["outcome"]!="amended":
+                    raise ValueError("Map does not match effective decision.")
+                if k=="consultation" and (decisions[k]["value"]!=10 or
+                        {r["status"] for r in qm["items"]}!={"answered","open"} or
+                        audit["criteria"][k]["evidence"]!=sorted(map_refs,key=lambda p:p["order"])):
+                    raise ValueError("Missing complete evidence for partial resolution.")
+                if k=="dialogue":
+                    refs=audit["criteria"][k]["evidence"]
+                    if (decisions[k]["value"]!=4 or [p["role"] for p in refs]!=["client","operator","client"] or
+                            not refs[0]["order"]<refs[1]["order"]<refs[2]["order"]):
+                        raise ValueError("Missing evidence of a repeated question.")
+        for detail in [*audit["criteria"].values(), *audit["sentinel"], {"evidence":map_refs}]:
             for item in detail["evidence"]:
                 pos,m = known[item["utterance_id"]]
                 start,end=item["chars"]
