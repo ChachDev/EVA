@@ -1,9 +1,13 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import DemoApp from "./App";
-import LiveApp from "./LiveApp";
 import { apiMode } from "./api/client";
+import { PreferencesProvider } from './preferences';
 import "./globals.css";
 import "./live.css";
-const App = apiMode === 'demo' ? DemoApp : LiveApp;
-createRoot(document.getElementById("eva-root")!).render(<React.StrictMode><App /></React.StrictMode>);
+import "./themes.css";
+import "./reference-design.css";
+import "./overview.css";
+import "./checklist-editor.css";
+import "./workspace-panels.css";
+const App = lazy(() => apiMode === 'demo' ? import('./App') : import('./LiveApp'));
+createRoot(document.getElementById("eva-root")!).render(<React.StrictMode><PreferencesProvider><Suspense fallback={<div className="workspace-loading" role="status" aria-label="EVA">EVA</div>}><App /></Suspense></PreferencesProvider></React.StrictMode>);

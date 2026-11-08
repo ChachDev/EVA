@@ -1,7 +1,7 @@
 # EVA — Expert Virtual Auditor
 
 <p align="center">
-  <img src="frontend/public/brand/eva-wordmark.svg" alt="EVA — Expert Virtual Auditor" width="412">
+  <img src="frontend/public/brand/eva-logo.png" alt="EVA — Expert Virtual Auditor" width="412">
 </p>
 
 Аудит клиентских диалогов: настраиваемые критерии, объяснимые оценки и пересмотр с сохранением истории.

@@ -1,0 +1,330 @@
+/* EVA workspace: forest navigation, quiet charcoal surfaces, clear data hierarchy.
+   Loaded after the base and theme styles; colour preferences remain user-owned. */
+html[data-theme="dark"] body { background: #20231f; }
+html[data-theme="light"] body { background: #f4f6f2; }
+
+#eva-root {
+  --canvas: #f4f6f2;
+  --surface: #ffffff;
+  --surface-soft: #f0f3ed;
+  --surface-hover: #eaf0e7;
+  --text: #1d2c23;
+  --muted: #657267;
+  --line: #dde3da;
+  --control-line: #cbd5c7;
+  --focus-ring: #16894c;
+  --green: #00b849;
+  --green-dark: #087b3e;
+}
+html[data-theme="dark"] #eva-root {
+  --canvas: #20231f;
+  --surface: #111411;
+  --surface-soft: #1e231d;
+  --surface-hover: #252e24;
+  --text: #edf2e9;
+  --muted: #a4aea1;
+  --line: #394035;
+  --control-line: #4b5646;
+  --focus-ring: #c8f06d;
+  --green: #00c653;
+  --green-dark: #99d5a4;
+  --amber: #e1bd70;
+  --red: #eea394;
+  --success-bg: #20301e;
+  --warning-bg: #352e1c;
+  --danger-bg: #372522;
+  --info-bg: #223039;
+  --info-text: #b3d8e7;
+}
+
+#eva-root .reference-workspace {
+  --sidebar: 250px;
+  font-size: 14px;
+  line-height: 1.55;
+  background: var(--canvas);
+  min-height: 100dvh;
+}
+#eva-root .reference-workspace :is(button, input, select, textarea) { font-family: var(--font); }
+#eva-root .reference-workspace :is(h1, h2, h3) { color: var(--text); }
+#eva-root .reference-workspace :is(h1, h2) { text-wrap: balance; }
+#eva-root .reference-workspace h1 { font-size: clamp(27px, 2.2vw, 34px); line-height: 1.22; letter-spacing: -.85px; }
+#eva-root .reference-workspace h2 { font-size: 17px; line-height: 1.4; letter-spacing: -.3px; }
+#eva-root .reference-workspace :is(.metric-value, .score-label, .appeal-scores, .checklist-total, .count-badge, .table-footer, .language-tag) { font-variant-numeric: tabular-nums; }
+#eva-root .reference-workspace :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+#eva-root .reference-workspace .workspace-skip { position: fixed; left: 20px; top: 12px; z-index: 100; padding: 10px 15px; border-radius: 6px; background: var(--lime); color: #10251d; transform: translateY(-160%); }
+#eva-root .reference-workspace .workspace-skip:focus { transform: translateY(0); }
+
+/* Navigation stays visually separate from the audit content in either theme. */
+#eva-root .reference-workspace .sidebar { width: var(--sidebar); padding: 32px 20px 22px; background: #10251d; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #355240 transparent; }
+#eva-root .reference-workspace .brand-button { margin: 0 13px 30px; flex-shrink: 0; }
+#eva-root .reference-workspace .workspace-switch { min-height: 60px; padding: 12px; gap: 10px; margin-bottom: 28px; border-color: #2b4133; border-radius: 9px; flex-shrink: 0; }
+#eva-root .reference-workspace .workspace-switch b { font-size: 12px; }
+#eva-root .reference-workspace .workspace-switch small { font-size: 10px; line-height: 1.5; color: #a6b5aa; }
+#eva-root .reference-workspace .workspace-details { position: relative; }
+#eva-root .reference-workspace .workspace-details summary { cursor: pointer; list-style: none; }
+#eva-root .reference-workspace .workspace-details summary::-webkit-details-marker { display: none; }
+#eva-root .reference-workspace .workspace-details[open] .workspace-switch { margin-bottom: 9px; border-color: #60775d; }
+#eva-root .reference-workspace .workspace-details[open] .workspace-switch > svg { transform: rotate(180deg); }
+#eva-root .reference-workspace .workspace-details .workspace-summary { display: grid; gap: 8px; margin-bottom: 22px; padding: 13px; background: #183326; border: 1px solid #3b5640; border-radius: 8px; color: #b5c8ba; line-height: 1.6; }
+#eva-root .reference-workspace .workspace-details .workspace-summary b { color: #e6efdf; font-size: 12px; }
+#eva-root .reference-workspace .workspace-details .workspace-summary > span { font-size: 10px; color: #c8e59f; }
+#eva-root .reference-workspace .workspace-symbol { width: 31px; height: 33px; flex-shrink: 0; background: #233c2b; }
+#eva-root .reference-workspace .nav-label { font-size: 9px; letter-spacing: 1.5px; color: #9bb09f; margin-bottom: 12px; }
+#eva-root .reference-workspace .nav-item { min-height: 45px; font-size: 13px; color: #afc0b3; border-radius: 6px; padding: 12px 13px; gap: 12px; }
+#eva-root .reference-workspace .nav-item:hover { background: #1c3528; color: #f0f6ed; }
+#eva-root .reference-workspace .nav-item.active { background: #2d4831; color: #d2edae; }
+#eva-root .reference-workspace .nav-item.active > svg { color: #c8f06d; }
+#eva-root .reference-workspace .nav-item small { color: #b0c0b4; font-size: 11px; }
+#eva-root .reference-workspace .nav-item em { background: #294519; color: #d4ef8f; min-width: 21px; width: auto; padding-inline: 5px; }
+#eva-root .reference-workspace .sidebar-bottom { padding-top: 30px; }
+#eva-root .reference-workspace .sidebar-promise { padding: 16px 14px; border-color: #647c6b; border-radius: 10px; margin-bottom: 20px; }
+#eva-root .reference-workspace .sidebar-promise strong { font-size: 12px; line-height: 1.7; color: #e5ede6; }
+#eva-root .reference-workspace .sidebar-promise p { max-width: none; font-size: 11px; line-height: 1.7; color: #b3c0b6; }
+#eva-root .reference-workspace .sidebar-promise .promise-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-top: 17px; padding: 0; font-size: 11px; color: #d2ed8f; text-align: left; }
+#eva-root .reference-workspace :is(.nav-secondary, .secondary-nav) { font-size: 11px; min-height: 40px; }
+#eva-root .reference-workspace .nav-secondary .nav-item { font-size: 11px; min-height: 40px; }
+#eva-root .reference-workspace .sidebar-freedom { margin-top: 22px; padding: 24px 12px 0; border-color: #2e4435; }
+#eva-root .reference-workspace .sidebar-freedom > span { font-size: 8px; letter-spacing: 1.6px; color: #9bb09f; }
+
+/* Header controls use one compact baseline; page content gets the visual weight. */
+#eva-root .reference-workspace .topbar { min-height: 72px; height: auto; padding: 14px 32px; gap: 20px; background: var(--surface); border-bottom-color: var(--line); }
+#eva-root .reference-workspace .breadcrumb { min-width: 0; gap: 12px; font-size: 12px; color: var(--muted); }
+#eva-root .reference-workspace .breadcrumb b { color: var(--text); font-weight: 400; }
+#eva-root .reference-workspace .breadcrumb-home { padding: 0; color: var(--muted); font-size: inherit; }
+#eva-root .reference-workspace .breadcrumb-home:hover { color: var(--text); }
+#eva-root .reference-workspace .top-actions { gap: 12px; min-width: 0; }
+#eva-root .reference-workspace .global-search { width: 228px; min-width: 0; min-height: 39px; padding: 9px 11px; background: var(--surface-soft); border-color: var(--line); color: var(--muted); text-align: left; }
+#eva-root .reference-workspace .global-search :is(span, input) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+#eva-root .reference-workspace .global-search > span { flex: 1; }
+#eva-root .reference-workspace .global-search kbd { font-size: 10px; color: var(--muted); border-color: var(--control-line); }
+#eva-root .reference-workspace .workspace-avatar { display: grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; border: 2px solid var(--control-line); border-radius: 50%; background: var(--surface-soft); color: var(--green-dark); font-size: 11px; font-weight: 700; }
+#eva-root .reference-workspace .workspace-notifications { position: relative; }
+#eva-root .reference-workspace .workspace-notifications i { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 2px var(--surface); }
+#eva-root .reference-workspace .workspace-mode { display: inline-flex; padding: 1px 5px; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); font-size: 8px; letter-spacing: 0; }
+#eva-root .reference-workspace .appearance-controls { background: var(--surface); border-color: var(--control-line); }
+#eva-root .reference-workspace .language-control select { font-size: 11px; color: var(--text); }
+#eva-root .reference-workspace .language-control > svg { color: var(--muted); }
+#eva-root .reference-workspace .appearance-controls .theme-toggle { color: var(--text); }
+#eva-root .reference-workspace select { color-scheme: inherit; }
+#eva-root .reference-workspace select :is(option, optgroup) { color: var(--text); background: var(--surface); }
+#eva-root .reference-workspace main { max-width: 1512px; padding: 32px 36px 24px; }
+#eva-root .reference-workspace .page-heading { margin-bottom: 26px; gap: 24px; }
+#eva-root .reference-workspace .page-heading p { font-size: 13px; line-height: 1.65; color: var(--muted); margin-top: 10px; max-width: 70ch; }
+#eva-root .reference-workspace .eyebrow { margin-bottom: 9px; font-size: 9px; letter-spacing: 1.45px; color: var(--muted); }
+#eva-root .reference-workspace .heading-actions { gap: 10px; flex-shrink: 0; }
+#eva-root .reference-workspace .button { min-height: 40px; font-size: 12px; line-height: 1.4; padding: 10px 15px; border-radius: 6px; }
+#eva-root .reference-workspace .button.small { min-height: 35px; padding: 8px 11px; font-size: 11px; }
+#eva-root .reference-workspace .button.primary { background: var(--green); color: #062910; }
+#eva-root .reference-workspace .button.primary:hover:not(:disabled) { background: #22d66b; }
+#eva-root .reference-workspace .button.secondary { background: var(--surface); color: var(--text); border-color: var(--control-line); }
+#eva-root .reference-workspace .button.secondary:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--muted); }
+#eva-root .reference-workspace .button:disabled { opacity: .5; }
+#eva-root .reference-workspace .date-control { border-color: var(--control-line); background: var(--surface); }
+#eva-root .reference-workspace .date-control select { color: var(--text); }
+
+/* Panels and tables retain fine separators rather than heavy card shadows. */
+#eva-root .reference-workspace :is(.panel, .metric-card, .live-metric, .audit-summary, .appeals-intro, .checklist-overview) { background: var(--surface); border: 1px solid var(--line); box-shadow: none; border-radius: 10px; }
+#eva-root .reference-workspace .panel-heading { padding: 21px 24px; }
+#eva-root .reference-workspace .panel-heading p { font-size: 12px; color: var(--muted); }
+#eva-root .reference-workspace .panel-heading .text-button { font-size: 12px; }
+#eva-root .reference-workspace .live-panel { padding: 24px; }
+#eva-root .reference-workspace .live-panel > .panel-heading { padding: 0 0 24px; }
+#eva-root .reference-workspace .metrics-grid { gap: 18px; }
+#eva-root .reference-workspace .metric-card { padding: 22px; }
+#eva-root .reference-workspace .metric-card.featured { background: linear-gradient(120deg, var(--surface-soft), var(--surface)); border-color: var(--line); }
+#eva-root .reference-workspace .metric-top { font-size: 12px; color: var(--muted); }
+#eva-root .reference-workspace .metric-value { font-size: 38px; letter-spacing: -1.4px; color: var(--text); }
+#eva-root .reference-workspace .metric-chip { font-size: 10px; }
+#eva-root .reference-workspace .metric-footer > small { font-size: 10px; color: var(--muted); }
+#eva-root .reference-workspace .overview-middle { gap: 20px; margin-top: 22px; }
+#eva-root .reference-workspace .chart-panel { height: 292px; }
+#eva-root .reference-workspace .insight-card { border-radius: 10px; background: #0c3022; }
+#eva-root .reference-workspace .insight-card h2 { color: #edf5e7; font-size: clamp(22px, 2vw, 29px); }
+#eva-root .reference-workspace .insight-card p { color: #bbd1bc; font-size: 12px; }
+#eva-root .reference-workspace .insight-card button { font-size: 11px; }
+#eva-root .reference-workspace .recent-panel { margin-top: 24px; }
+#eva-root .reference-workspace .table-scroll { width: 100%; overflow: auto; scrollbar-width: thin; scrollbar-color: var(--control-line) transparent; }
+#eva-root .reference-workspace .conversation-table { min-width: 800px; font-size: 13px; }
+#eva-root .reference-workspace .conversation-table thead { background: var(--surface-soft); }
+#eva-root .reference-workspace .conversation-table th { font-size: 11px; font-weight: 400; color: var(--muted); padding-top: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+#eva-root .reference-workspace .conversation-table td { height: 76px; padding-top: 16px; padding-bottom: 16px; color: var(--text); font-size: 14px; border-color: var(--line); }
+#eva-root .reference-workspace .conversation-table :is(th, td):first-child { padding-left: 24px; }
+#eva-root .reference-workspace .conversation-table :is(th, td):last-child { padding-right: 24px; }
+#eva-root .reference-workspace .conversation-table tbody tr:hover { background: var(--surface-hover); }
+#eva-root .reference-workspace .topic-link { gap: 12px; min-width: 0; text-align: left; }
+#eva-root .reference-workspace .topic-link strong { color: var(--text); font-size: 14px; line-height: 1.5; }
+#eva-root .reference-workspace .topic-link small { color: var(--muted); font-size: 11px; line-height: 1.6; margin-top: 3px; }
+#eva-root .reference-workspace .topic-link:hover strong { color: var(--green-dark); }
+#eva-root .reference-workspace .channel-icon { width: 34px; height: 34px; background: var(--surface-soft); color: var(--green-dark); border-radius: 7px; }
+#eva-root .reference-workspace .channel-icon.voice { background: #eeeaf4; color: #76608c; }
+#eva-root .reference-workspace .operator-cell { color: var(--muted); font-size: 12px; }
+#eva-root .reference-workspace .language-tag { color: var(--muted); border-color: var(--line); background: var(--surface-soft); font-size: 10px; }
+#eva-root .reference-workspace .badge { font-size: 10px; line-height: 1.5; border-radius: 4px; }
+#eva-root .reference-workspace :is(.table-caption, .table-footer) { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+#eva-root .reference-workspace :is(.table-footer, .table-caption) > span { display: inline-flex; align-items: center; gap: 6px; }
+#eva-root .reference-workspace :is(.table-footer, .table-caption) svg { width: 13px; height: 13px; color: var(--green-dark); }
+
+/* The search/filter strip sits inside the list, separate from the page actions. */
+#eva-root .reference-workspace :is(.list-toolbar, .dialog-toolbar, .workspace-table-toolbar) { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 22px; border-bottom: 1px solid var(--line); }
+#eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) { display: flex; align-items: center; gap: 26px; min-width: 0; }
+#eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) > button { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; padding: 18px 0 15px; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--muted); white-space: nowrap; }
+#eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) > button:is(.active, .selected) { color: var(--green-dark); border-bottom-color: var(--green); font-weight: 600; }
+#eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) > button > span { background: var(--surface-soft); color: var(--muted); font-size: 10px; padding: 1px 5px; border-radius: 3px; }
+#eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) > button:is(.active, .selected) > span { color: var(--green-dark); }
+#eva-root .reference-workspace .filter-bar { padding: 17px 22px; gap: 12px; border-bottom: 1px solid var(--line); align-items: center; }
+#eva-root .reference-workspace .filter-bar .form-label { margin: 0; font-size: 11px; }
+#eva-root .reference-workspace .filter-bar :is(input, select) { min-height: 38px; padding: 9px 11px; font-size: 12px; }
+#eva-root .reference-workspace .search-field { background: var(--surface); border-color: var(--control-line); min-height: 39px; }
+#eva-root .reference-workspace .search-field input { background: transparent; font-size: 12px; }
+#eva-root .reference-workspace .select-field select { background: var(--surface); border-color: var(--control-line); color: var(--text); font-size: 12px; min-height: 39px; }
+#eva-root .reference-workspace .workspace-summary { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; color: var(--muted); font-size: 11px; }
+
+/* Appeals mirror the evidence-first layout without hiding their real state. */
+#eva-root .reference-workspace .appeals-intro { padding: 24px; margin-bottom: 24px; }
+#eva-root .reference-workspace .appeals-intro b { color: var(--text); font-size: 13px; }
+#eva-root .reference-workspace .appeals-intro small { font-size: 12px; color: var(--muted); }
+#eva-root .reference-workspace .appeals-intro strong { color: var(--green-dark); font-size: 29px; }
+#eva-root .reference-workspace .appeals-intro > div > span:not(:first-child) { font-size: 11px; color: var(--muted); }
+#eva-root .reference-workspace .live-appeals-page > .filter-tabs { margin-bottom: 22px; border-bottom: 1px solid var(--line); }
+#eva-root .reference-workspace .appeal-card { padding: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-top: 16px; overflow-wrap: anywhere; }
+#eva-root .reference-workspace .appeal-card > h2 { font-size: 18px; color: var(--text); margin-top: 18px; }
+#eva-root .reference-workspace .appeal-id { color: var(--muted); font-size: 11px; }
+#eva-root .reference-workspace .appeal-conversation-link { color: var(--green-dark); font-size: 12px; }
+#eva-root .reference-workspace .appeal-comment { background: var(--surface-soft); border-color: var(--line); color: var(--muted); font-size: 13px; line-height: 1.8; padding: 15px 17px; }
+#eva-root .reference-workspace .appeal-card-bottom { gap: 20px; flex-wrap: wrap; }
+#eva-root .reference-workspace .appeal-scores { color: var(--muted); font-size: 11px; }
+#eva-root .reference-workspace .appeal-scores b { color: var(--green-dark); font-size: 18px; }
+#eva-root .reference-workspace .live-footer { margin-top: 28px; font-size: 11px; color: var(--muted); line-height: 1.75; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 24px; }
+#eva-root .reference-workspace .product-link { color: var(--green-dark); white-space: nowrap; }
+#eva-root .reference-workspace .workspace-footer { font-size: 10px; color: var(--muted); line-height: 1.75; gap: 12px 20px; }
+#eva-root .reference-workspace .workspace-footer > span { flex-wrap: wrap; }
+#eva-root .reference-workspace .form-label { color: var(--muted); font-size: 12px; line-height: 1.6; }
+#eva-root .reference-workspace .form-label > :is(input, textarea, select) { color: var(--text); background: var(--surface); border-color: var(--control-line); font-size: 13px; }
+#eva-root .reference-workspace .empty-state { padding: 48px 24px; color: var(--muted); }
+#eva-root .reference-workspace .empty-state h3 { color: var(--text); font-size: 17px; }
+#eva-root .reference-workspace .live-notice { font-size: 12px; line-height: 1.75; }
+#eva-root .reference-workspace .live-error { font-size: 13px; }
+
+/* Dialogs rendered in the shared portal retain the same restrained palette. */
+html[data-theme="dark"] #eva-root :is(.modal, .topbar, .panel, .metric-card, .audit-summary, .appeals-intro, .checklist-overview) { background-color: var(--surface); border-color: var(--line); }
+html[data-theme="dark"] #eva-root :is(input, textarea, select) { background-color: #151914; border-color: var(--control-line); color: var(--text); }
+html[data-theme="dark"] #eva-root :is(.form-label, .criterion-fields) > :is(input, textarea, select) { background-color: #151914; border-color: var(--control-line); color: var(--text); }
+html[data-theme="dark"] #eva-root :is(.global-search, .search-field) input,
+html[data-theme="dark"] #eva-root :is(.language-control, .date-control) select { background: transparent; }
+html[data-theme="dark"] #eva-root .reference-workspace .channel-icon.voice { background: #2b2931; color: #c8bed8; }
+html[data-theme="dark"] #eva-root .modal { box-shadow: 0 26px 80px #0007; }
+html[data-theme="dark"] #eva-root .modal::backdrop { background: #0b100bc7; backdrop-filter: blur(4px); }
+html[data-theme="dark"] #eva-root :is(.review-banner, .info-callout, .decision-reason, .checklist-note, .review-preview, .calculation) { background: #242d1f; border-color: #47543a; color: #becbb2; }
+html[data-theme="dark"] #eva-root .live-workspace .live-notice { background: #253021; border-color: #45593b; color: #cfddc4; }
+html[data-theme="dark"] #eva-root .quality-chart line { stroke: #50594b; }
+html[data-theme="dark"] #eva-root .quality-chart line[stroke="#b5cbb9"] { stroke: #9ca98b; }
+html[data-theme="dark"] #eva-root .message-bubble { background: #242b22; color: #e0e9da; }
+html[data-theme="dark"] #eva-root .message.operator .message-bubble { background: #243722; border-color: #3f5538; color: #dcebd2; }
+
+@media (max-width: 1400px) {
+  #eva-root .reference-workspace .top-actions { gap: 9px; }
+  #eva-root .reference-workspace .global-search { width: 190px; }
+  #eva-root .reference-workspace .theme-label { display: none; }
+  #eva-root .reference-workspace .topbar { padding-inline: 28px; }
+  #eva-root .reference-workspace main { padding-inline: 28px; }
+}
+@media (max-width: 1180px) {
+  #eva-root .reference-workspace .top-actions .global-search { width: 38px; min-width: 38px; justify-content: center; padding: 9px; }
+  #eva-root .reference-workspace .global-search :is(span, kbd) { display: none; }
+  #eva-root .reference-workspace .breadcrumb > span:first-of-type { display: none; }
+  #eva-root .reference-workspace .breadcrumb-home { display: none; }
+  #eva-root .reference-workspace .breadcrumb > .slash { display: none; }
+  #eva-root .reference-workspace .heading-actions { flex-wrap: wrap; justify-content: flex-end; }
+  #eva-root .reference-workspace .filter-tabs { gap: 19px; }
+}
+@media (min-width: 561px) and (max-width: 900px) {
+  #eva-root .reference-workspace { --sidebar: 76px; }
+  #eva-root .reference-workspace .sidebar { padding: 25px 10px 18px; }
+  #eva-root .reference-workspace .brand-button { margin: 0 2px 28px; }
+  #eva-root .reference-workspace .workspace-switch { padding: 8px 0; border: 0; justify-content: center; }
+  #eva-root .reference-workspace .workspace-switch > span:not(.workspace-symbol),
+  #eva-root .reference-workspace .workspace-switch > svg { display: none; }
+  #eva-root .reference-workspace .workspace-details .workspace-summary { position: fixed; z-index: 45; left: 81px; top: 103px; width: 210px; box-shadow: 0 8px 24px #0004; }
+  #eva-root .reference-workspace .nav-item { justify-content: center; padding: 13px; }
+  #eva-root .reference-workspace .nav-item > :is(span, small) { display: none; }
+  #eva-root .reference-workspace .nav-item em { position: absolute; right: 8px; width: 6px; height: 6px; min-width: 0; padding: 0; font-size: 0; background: #c8f06d; }
+  #eva-root .reference-workspace .sidebar-freedom { padding: 20px 3px 0; }
+  #eva-root .reference-workspace .sidebar-freedom > span { display: none; }
+}
+@media (max-width: 900px) {
+  #eva-root .reference-workspace .topbar { padding-inline: 22px; }
+  #eva-root .reference-workspace main { padding: 27px 22px 22px; }
+  #eva-root .reference-workspace .page-heading { gap: 20px; }
+  #eva-root .reference-workspace .page-heading h1 { font-size: 29px; }
+  #eva-root .reference-workspace .heading-actions .button { padding-inline: 11px; }
+  #eva-root .reference-workspace .top-actions .global-search { display: flex; }
+  #eva-root .reference-workspace .conversation-table :is(th, td):first-child { padding-left: 20px; }
+  #eva-root .reference-workspace .conversation-table :is(th, td):last-child { padding-right: 20px; }
+}
+@media (max-width: 680px) {
+  #eva-root .reference-workspace .page-heading { align-items: flex-start; flex-direction: column; }
+  #eva-root .reference-workspace .heading-actions { width: 100%; justify-content: flex-start; }
+  #eva-root .reference-workspace :is(.list-toolbar, .dialog-toolbar, .workspace-table-toolbar) { padding-inline: 16px; gap: 10px; }
+  #eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) { gap: 14px; overflow-x: auto; }
+  #eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) > button { font-size: 11px; gap: 5px; }
+  #eva-root .reference-workspace .filter-bar { padding: 16px; flex-wrap: wrap; }
+  #eva-root .reference-workspace .filter-bar .search-field { flex: 1 1 100%; }
+  #eva-root .reference-workspace .appeal-card { padding: 20px; }
+  #eva-root .reference-workspace .table-footer { flex-wrap: wrap; padding-inline: 18px; }
+  #eva-root .reference-workspace .workspace-avatar { display: none; }
+}
+@media (max-width: 560px) {
+  #eva-root .reference-workspace { --sidebar: 0px; }
+  #eva-root .reference-workspace .sidebar { width: 250px; padding: 28px 20px 22px; }
+  #eva-root .reference-workspace .brand-button { margin-left: 13px; }
+  #eva-root .reference-workspace .topbar { min-height: 66px; padding: 12px 16px; gap: 8px; flex-wrap: wrap; }
+  #eva-root .reference-workspace .breadcrumb { gap: 6px; font-size: 11px; flex: 1 1 90px; }
+  #eva-root .reference-workspace .top-actions { gap: 7px; flex-wrap: nowrap; margin-left: auto; }
+  #eva-root .reference-workspace .top-actions .global-search { display: none; }
+  #eva-root .reference-workspace .top-actions .button { min-width: 32px; min-height: 34px; padding: 7px; }
+  #eva-root .reference-workspace .top-actions .button svg { width: 15px; height: 15px; }
+  #eva-root .reference-workspace .top-actions .button .refresh-label { display: none; }
+  #eva-root .reference-workspace .appearance-controls { min-height: 34px; }
+  #eva-root .reference-workspace .language-control { padding-left: 7px; gap: 4px; }
+  #eva-root .reference-workspace .language-control > svg { width: 13px; height: 13px; }
+  #eva-root .reference-workspace .language-control select { font-size: 10px; min-height: 32px; padding-right: 2px; }
+  #eva-root .reference-workspace .appearance-controls .theme-toggle { margin-block: 2px; min-width: 29px; padding-inline: 6px; }
+  #eva-root .reference-workspace main { padding: 25px 16px 22px; }
+  #eva-root .reference-workspace .page-heading { margin-bottom: 22px; }
+  #eva-root .reference-workspace .page-heading h1 { font-size: 29px; }
+  #eva-root .reference-workspace .page-heading p { font-size: 12px; max-width: none; }
+  #eva-root .reference-workspace .eyebrow { font-size: 8px; letter-spacing: 1.2px; }
+  #eva-root .reference-workspace .button { font-size: 11px; min-height: 40px; }
+  #eva-root .reference-workspace .heading-actions { gap: 8px; }
+  #eva-root .reference-workspace .panel-heading { padding: 18px; }
+  #eva-root .reference-workspace .panel-heading h2 { font-size: 16px; }
+  #eva-root .reference-workspace .panel-heading p { font-size: 11px; }
+  #eva-root .reference-workspace .live-panel { padding: 18px; }
+  #eva-root .reference-workspace .metric-card { padding: 16px 13px; }
+  #eva-root .reference-workspace .metric-top { font-size: 11px; line-height: 1.55; }
+  #eva-root .reference-workspace .metric-value { font-size: 32px; }
+  #eva-root .reference-workspace .metric-chip { font-size: 9px; }
+  #eva-root .reference-workspace .metric-footer > small { display: none; }
+  #eva-root .reference-workspace .overview-middle { margin-top: 16px; gap: 16px; }
+  #eva-root .reference-workspace .insight-card { padding: 22px; min-height: 260px; max-height: none; }
+  #eva-root .reference-workspace .insight-card h2 { font-size: 27px; }
+  #eva-root .reference-workspace .insight-card button { position: static; margin-top: 18px; font-size: 11px; }
+  #eva-root .reference-workspace .insight-card p { font-size: 12px; }
+  #eva-root .reference-workspace .conversation-table { min-width: 760px; }
+  #eva-root .reference-workspace .conversation-table td { height: 74px; font-size: 12px; }
+  #eva-root .reference-workspace .filter-bar .form-label { flex: 1 1 120px; min-width: 0; }
+  #eva-root .reference-workspace .filter-bar .form-label:first-child { flex-basis: 100%; }
+  #eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) { gap: 13px; }
+  #eva-root .reference-workspace :is(.filter-tabs, .dialog-tabs) > button { font-size: 11px; padding-block: 15px 13px; }
+  #eva-root .reference-workspace .appeals-intro { padding: 20px; }
+  #eva-root .reference-workspace .appeals-intro b { font-size: 13px; }
+  #eva-root .reference-workspace .appeals-intro small { font-size: 11px; }
+  #eva-root .reference-workspace .appeal-card { padding: 18px; }
+  #eva-root .reference-workspace .appeal-card > h2 { font-size: 17px; }
+  #eva-root .reference-workspace .appeal-comment { font-size: 12px; }
+  #eva-root .reference-workspace .appeal-scores { font-size: 11px; }
+  #eva-root .reference-workspace .live-footer { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #eva-root .reference-workspace *, #eva-root .reference-workspace *::before, #eva-root .reference-workspace *::after { transition: none !important; scroll-behavior: auto !important; }
+}

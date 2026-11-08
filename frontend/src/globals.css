@@ -1016,6 +1016,10 @@
   gap: 11px;
   max-width: 280px
 }
+#eva-root .topic-link > span:last-child {
+  flex: 1;
+  min-width: 0
+}
 #eva-root .topic-link strong {
   display: block;
   font-size: 11px;
@@ -1039,6 +1043,7 @@
 #eva-root .channel-icon {
   width: 33px;
   height: 33px;
+  flex-shrink: 0;
   border-radius: 8px;
   background: #f0f5ed;
   display: grid;
@@ -4049,3 +4054,68 @@ to {
 
 
 #eva-root .reset-demo { margin-top: 12px; }
+
+/* Original brand assets adapted to the dark sidebar without backing cards. */
+#eva-root .supplied-eva-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+#eva-root .supplied-eva-logo .eva-logo-image {
+  position: relative;
+  display: block;
+  width: 136px;
+  height: 44px;
+  overflow: hidden;
+  background: transparent;
+  border-radius: 0;
+}
+#eva-root .eva-logo-image img {
+  position: absolute;
+  width: 150%;
+  max-width: none;
+  height: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+#eva-root .supplied-eva-logo > small {
+  margin-top: 10px;
+  letter-spacing: .8px;
+}
+#eva-root .supplied-freedom-logo {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+#eva-root .supplied-freedom-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+@media (min-width: 561px) and (max-width: 900px) {
+  #eva-root .sidebar .supplied-eva-logo .eva-logo-image { width: 50px; height: 28px; border-radius: 4px; }
+  #eva-root .sidebar .supplied-eva-logo > small { display: none; }
+  #eva-root .sidebar .supplied-freedom-logo { width: 50px; padding: 0; border-radius: 0; }
+}
+
+
+#eva-root .sidebar .eva-logo-image {
+  mix-blend-mode: screen;
+}
+#eva-root .sidebar .eva-logo-image img {
+  filter: grayscale(1) invert(1) contrast(2) brightness(3);
+}
+#eva-root .sidebar .supplied-freedom-logo img {
+  filter: invert(1) hue-rotate(180deg);
+}
+#eva-root .sidebar .supplied-eva-logo > small {
+  font-size: 9px;
+  color: #a6b8ae;
+  letter-spacing: .4px;
+  margin-top: 8px;
+}

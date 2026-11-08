@@ -1,0 +1,22 @@
+/** Checklist editing controls only; user-authored criteria keep their source language. */
+export const editorMessages: Record<string, { kk: string; en: string }> = {
+  'Название чек-листа': { kk: 'Чек-парақ атауы', en: 'Checklist name' },
+  'Версия {version}': { kk: '{version}-нұсқа', en: 'Version {version}' },
+  'Чаты и звонки · RU / KZ / EN': { kk: 'Чаттар мен қоңыраулар · RU / KZ / EN', en: 'Chats and calls · RU / KZ / EN' },
+  'Сумма весов': { kk: 'Салмақтар қосындысы', en: 'Total weight' },
+  'баллов': { kk: 'ұпай', en: 'points' },
+  'Критерии оценки': { kk: 'Бағалау критерийлері', en: 'Evaluation criteria' },
+  'Меняйте формулировки, веса и типы ответа без изменения кода.': { kk: 'Тұжырымдарды, салмақтарды және жауап түрлерін кодты өзгертпей өңдеңіз.', en: 'Edit instructions, weights and answer types without changing code.' },
+  'Критерий и формулировка': { kk: 'Критерий және тұжырым', en: 'Criterion and instructions' },
+  'Тип ответа': { kk: 'Жауап түрі', en: 'Answer type' },
+  'Название критерия': { kk: 'Критерий атауы', en: 'Criterion title' },
+  'Что должен сделать оператор?': { kk: 'Оператор не істеуі керек?', en: 'What should the operator do?' },
+  'Настройки критерия': { kk: 'Критерий параметрлері', en: 'Criterion settings' },
+  'Макс.: {value}': { kk: 'Ең көбі: {value}', en: 'Max: {value}' },
+  'Добавьте хотя бы один критерий для публикации.': { kk: 'Жариялау үшін кемінде бір критерий қосыңыз.', en: 'Add at least one criterion before publishing.' },
+  'N/A не снижает оценку: вес неприменимого критерия распределяется между остальными. Грубые нарушения отмечаются отдельно. Прежние оценки сохраняют свою версию чек-листа.': { kk: 'N/A бағаны төмендетпейді: қолданылмайтын критерийдің салмағы қалғандарына бөлінеді. Өрескел бұзушылықтар бөлек белгіленеді. Бұрынғы бағалар чек-парақтың өз нұсқасын сақтайды.', en: 'N/A does not reduce the score: the weight of an inapplicable criterion is redistributed. Critical violations are tracked separately. Previous evaluations keep their original checklist version.' },
+  'Есть неопубликованные изменения.': { kk: 'Жарияланбаған өзгерістер бар.', en: 'You have unpublished changes.' },
+  'Новая версия сохранится на сервере после публикации.': { kk: 'Жаңа нұсқа жарияланғаннан кейін серверде сақталады.', en: 'The new version will be saved on the server when published.' },
+  'Отменить изменения': { kk: 'Өзгерістерді болдырмау', en: 'Discard changes' },
+  'Опубликовать версию {version}': { kk: '{version}-нұсқаны жариялау', en: 'Publish version {version}' },
+};
