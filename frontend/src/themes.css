@@ -1,0 +1,370 @@
+/* Shared appearance controls; loaded after the working-screen styles. */
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+html[data-theme="light"] body { background: #f5f7f5; }
+html[data-theme="dark"] body { background: #0d1713; }
+
+#eva-root {
+  --surface: #fff;
+  --surface-soft: #f0f4f0;
+  --surface-hover: #e8eee9;
+  --control-line: #d5dfd7;
+  --focus-ring: #087d3e;
+}
+
+#eva-root .topbar { min-height: 72px; height: auto; padding-block: 14px; }
+#eva-root .top-actions { gap: 12px; }
+#eva-root .appearance-controls {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  border: 1px solid var(--control-line);
+  border-radius: 9px;
+  background: var(--surface);
+  min-height: 38px;
+}
+#eva-root .language-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 11px;
+  color: var(--muted);
+}
+#eva-root .language-control > svg { width: 15px; height: 15px; }
+#eva-root .language-control select {
+  min-width: 59px;
+  min-height: 36px;
+  padding: 6px 7px 6px 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+/* Native popup menus need an opaque surface; a transparent select can fall
+   back to a white Windows popup while keeping the dark theme's light text. */
+#eva-root select { color-scheme: inherit; }
+#eva-root select option,
+#eva-root select optgroup {
+  background-color: var(--surface);
+  color: var(--text);
+}
+#eva-root .appearance-controls .theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 28px;
+  min-width: 36px;
+  margin: 4px;
+  margin-left: 1px;
+  padding: 5px 10px;
+  border-left: 1px solid var(--line);
+  border-radius: 0 5px 5px 0;
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.4;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+#eva-root .appearance-controls .theme-toggle svg { width: 15px; height: 15px; }
+#eva-root .appearance-controls .theme-toggle:hover { background: var(--surface-soft); }
+#eva-root .appearance-controls :focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Keep the forest sidebar and original brand treatment consistent in both themes. */
+html[data-theme="dark"] #eva-root {
+  color-scheme: dark;
+  --canvas: #0d1713;
+  --surface: #15231c;
+  --surface-soft: #1c2e24;
+  --surface-hover: #243b2c;
+  --text: #e7eee9;
+  --muted: #a2b4a8;
+  --line: #2d4135;
+  --control-line: #496453;
+  --green: #3bd678;
+  --green-dark: #84dfa1;
+  --amber: #ebc375;
+  --red: #f3a395;
+  --focus-ring: #8ee8ab;
+  --success-bg: #203c2a;
+  --warning-bg: #3d3320;
+  --danger-bg: #3d2725;
+  --info-bg: #1d3541;
+  --info-text: #a4d5e9;
+}
+
+html[data-theme="dark"] #eva-root :is(
+  .topbar, .panel, .metric-card, .audit-summary, .appeals-intro,
+  .checklist-overview, .modal, .date-control, .search-field
+) {
+  background: var(--surface);
+  border-color: var(--line);
+}
+html[data-theme="dark"] #eva-root .metric-card.featured {
+  background: linear-gradient(120deg, #203b29, var(--surface));
+  border-color: #3c5c45;
+}
+html[data-theme="dark"] #eva-root :is(
+  .global-search, .conversation-table thead, .segmented, .checklist-table-head,
+  .modal-context, .upload-zone, .review-evidence, .audio-empty,
+  .criterion.expanded, .appeal-comment
+) {
+  background: var(--surface-soft);
+  border-color: var(--line);
+}
+html[data-theme="dark"] #eva-root :is(
+  .conversation-table td, .table-caption, .transcript-controls, .transcript-footer,
+  .criterion, .checklist-editor-row, .modal-actions, .notification-row,
+  .review-evidence > div + div, .live-criterion-editor,
+  .live-evidence-picker, .live-evidence-picker label, .live-appeal
+) { border-color: var(--line); }
+
+/* Text roles stay separate from state colours and the sidebar. */
+html[data-theme="dark"] #eva-root :is(
+  .breadcrumb b, .topic-link strong, .empty-state h3, .criterion-title > strong,
+  .appeals-intro b, .appeal-card > h2, .checklist-overview h2,
+  .modal-head h2, .modal-context strong, .help-steps b,
+  .upload-zone strong, .notification-row b, .palette-panel > h2,
+  .type-panel h2, .brand-download h2, .type-sample
+) { color: var(--text); }
+html[data-theme="dark"] #eva-root :is(
+  .breadcrumb, .page-heading p, .eyebrow, .metric-top, .metric-value > small,
+  .metric-footer > small, .metric-footer > svg, .language-dots, .panel-heading p,
+  .panel-heading > svg, .chart-legend, .conversation-table th, .topic-link small,
+  .operator-cell, .score-label small, .table-caption, .app-footer,
+  .filter-tabs > button, .empty-state, .back-link, .gauge span, .mini-eyebrow,
+  .summary-description > p, .summary-tags > span, .summary-counts span,
+  .transcript-controls > .muted, .message-meta, .message-meta > span,
+  .transcript-footer, .transcript-footer > span:last-child, .audio-empty > svg,
+  .audio-empty strong, .audio-empty span, .criterion-title > small,
+  .criterion-score small, .criterion-score.muted, .criterion-toggle > svg:last-child,
+  .criterion-detail > p, .criterion-bottom > span, .calculation p,
+  .calculation strong small, .pending-notice, .appeals-intro small,
+  .appeals-intro > div > span:not(:first-child), .appeal-id,
+  .appeal-comment, .appeal-scores, .appeal-scores svg,
+  .checklist-overview p, .checklist-total span, .checklist-total small,
+  .checklist-table-head, .criterion-number, .criterion-type label,
+  .checklist-actions > span, .brand-showcase p, .swatches b, .swatches small,
+  .type-panel p, .font-weights, .brand-download p, .modal-description,
+  .form-label, .form-hint, .modal-context span:not(.badge), .upload-zone small,
+  .upload-zone > span:last-child, .or-divider, .field-eyebrow, .review-comment,
+  .review-evidence span, .review-evidence p, .review-choice label,
+  .notification-row small, .help-steps p, .live-workspace .live-footer
+) { color: var(--muted); }
+html[data-theme="dark"] #eva-root :is(
+  .text-button, .text-green, .criterion-score, .criterion-bottom button,
+  .evidence-caption, .appeal-conversation-link, .appeal-scores b,
+  .appeals-intro strong, .checklist-total b, .decision-reason b,
+  .checklist-note b, .calculation strong, .review-preview b
+) { color: var(--green-dark); }
+html[data-theme="dark"] #eva-root :is(
+  .text-button:hover, .back-link:hover, .topic-link:hover strong,
+  .criterion-bottom button:hover
+) { color: #b4efc5; }
+
+/* Native fields retain a visible boundary, including imported-file controls. */
+html[data-theme="dark"] #eva-root :is(input, textarea, select),
+html[data-theme="dark"] #eva-root :is(.form-label, .criterion-fields) > :is(input, textarea, select),
+html[data-theme="dark"] #eva-root :is(.criterion-type select, .weight-input, .select-field select) {
+  background: #101e17;
+  border-color: var(--control-line);
+  color: var(--text);
+}
+html[data-theme="dark"] #eva-root :is(.global-search, .search-field) input,
+html[data-theme="dark"] #eva-root :is(.date-control, .language-control) select {
+  background: transparent;
+  color: var(--text);
+}
+html[data-theme="dark"] #eva-root :is(input, textarea)::placeholder,
+html[data-theme="dark"] #eva-root :is(.global-search, .search-field, .form-label) :is(input, textarea)::placeholder {
+  color: #91a297;
+  opacity: 1;
+}
+html[data-theme="dark"] #eva-root :is(input, textarea, select):focus {
+  border-color: var(--focus-ring);
+}
+html[data-theme="dark"] #eva-root :focus-visible {
+  outline-color: var(--focus-ring);
+}
+html[data-theme="dark"] #eva-root :is(input, select, textarea):disabled {
+  background: var(--surface-soft);
+  color: var(--muted);
+  opacity: .7;
+  cursor: not-allowed;
+}
+html[data-theme="dark"] #eva-root :is(input[type="checkbox"], input[type="radio"]) {
+  accent-color: var(--green);
+}
+html[data-theme="dark"] #eva-root input::file-selector-button {
+  padding: 7px 10px;
+  margin-right: 10px;
+  border: 1px solid var(--control-line);
+  border-radius: 5px;
+  background: var(--surface-soft);
+  color: var(--text);
+  cursor: pointer;
+}
+html[data-theme="dark"] #eva-root :is(.global-search > svg, .search-field > svg,
+  .search-field button svg, .select-field > svg, .date-control > svg) { color: var(--muted); }
+html[data-theme="dark"] #eva-root .global-search kbd {
+  border-color: var(--control-line);
+  color: var(--muted);
+}
+
+/* State backgrounds and foregrounds are paired to preserve contrast. */
+html[data-theme="dark"] #eva-root :is(.badge.good, .metric-chip.good, .criterion-check.pass) {
+  background: var(--success-bg);
+  color: var(--green-dark);
+}
+html[data-theme="dark"] #eva-root :is(.badge.warning, .metric-chip.warning, .criterion-check.fail, .metric-icon.amber) {
+  background: var(--warning-bg);
+  color: var(--amber);
+}
+html[data-theme="dark"] #eva-root :is(.badge.danger, .metric-chip.danger, .metric-icon.danger) {
+  background: var(--danger-bg);
+  color: var(--red);
+}
+html[data-theme="dark"] #eva-root .badge.info {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+html[data-theme="dark"] #eva-root :is(
+  .badge.neutral, .criterion-check.muted, .count-badge, .subtle-pill, .language-tag,
+  .metric-icon, .empty-icon, .pending-score, .channel-icon, .checklist-symbol,
+  .upload-icon, .notification-icon, .help-steps > div > span
+) {
+  background: var(--surface-soft);
+  color: #b3c8b8;
+  border-color: var(--line);
+}
+html[data-theme="dark"] #eva-root .channel-icon.voice { background: #302d41; color: #c9bde5; }
+html[data-theme="dark"] #eva-root :is(.score-label.good, .table-caption svg) { color: var(--green-dark); }
+html[data-theme="dark"] #eva-root :is(.score-label.warning, .text-amber) { color: var(--amber); }
+html[data-theme="dark"] #eva-root :is(.score-label.danger, .form-error, .required) { color: var(--red); }
+html[data-theme="dark"] #eva-root :is(.review-banner, .info-callout, .decision-reason, .checklist-note, .review-preview, .calculation) {
+  background: #1d3323;
+  border-color: #38573d;
+  color: #b7cdb1;
+}
+html[data-theme="dark"] #eva-root :is(.review-banner > svg, .checklist-note > svg,
+  .review-preview > svg, .modal-context > svg, .calculation > div > span) { color: #b7cdb1; }
+html[data-theme="dark"] #eva-root .live-workspace .live-notice {
+  background: #1c3526;
+  border-color: #365b42;
+  color: #c2e1cb;
+}
+html[data-theme="dark"] #eva-root .live-workspace .live-error {
+  background: var(--danger-bg);
+  border-color: #6b433d;
+  color: #f5b8aa;
+}
+
+/* Interactive states, including the demo editor and overlays. */
+html[data-theme="dark"] #eva-root .button.primary { background: var(--green); color: #092614; }
+html[data-theme="dark"] #eva-root .button.primary:hover:not(:disabled) { background: #70e798; }
+html[data-theme="dark"] #eva-root .button.secondary {
+  background: var(--surface-soft);
+  border-color: var(--control-line);
+  color: var(--text);
+}
+html[data-theme="dark"] #eva-root .button.secondary:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: #72977c;
+}
+html[data-theme="dark"] #eva-root :is(
+  .icon-button:hover, .conversation-table tbody tr:hover, .criterion-toggle:hover,
+  .upload-zone:hover
+) { background: var(--surface-hover); color: var(--text); }
+html[data-theme="dark"] #eva-root .metric-button:hover { border-color: #64866d; box-shadow: none; }
+html[data-theme="dark"] #eva-root .icon-button { color: var(--muted); }
+html[data-theme="dark"] #eva-root .segmented button { color: var(--muted); }
+html[data-theme="dark"] #eva-root .segmented button.active { background: #314d39; color: #ddf3db; }
+html[data-theme="dark"] #eva-root .filter-tabs > button span { background: var(--surface-soft); color: var(--muted); }
+html[data-theme="dark"] #eva-root .filter-tabs > button.active { color: var(--green-dark); border-color: var(--green); }
+html[data-theme="dark"] #eva-root .filter-tabs > button.active span { background: var(--success-bg); color: var(--green-dark); }
+html[data-theme="dark"] #eva-root .switch > span { background: #445a49; }
+html[data-theme="dark"] #eva-root .switch input:checked + span { background: #358c4d; }
+html[data-theme="dark"] #eva-root .switch input:focus-visible + span { outline-color: var(--focus-ring); }
+html[data-theme="dark"] #eva-root .profile-avatar { background: #314b36; color: #d0e7c8; border-color: #253b2d; }
+html[data-theme="dark"] #eva-root :is(.avatar-mini, .avatar-0) { background: #2d4437; color: #bed8c8; }
+html[data-theme="dark"] #eva-root .avatar-1 { background: #433d2d; color: #e3d1ad; }
+html[data-theme="dark"] #eva-root .avatar-2 { background: #2c4049; color: #b9dbe6; }
+html[data-theme="dark"] #eva-root .avatar-3 { background: #443449; color: #e1bfe0; }
+html[data-theme="dark"] #eva-root .notification-button i { border-color: var(--surface); }
+html[data-theme="dark"] #eva-root :is(.or-divider > span, .app-footer i) { background: var(--line); }
+html[data-theme="dark"] #eva-root .slash { color: #698371; }
+html[data-theme="dark"] #eva-root .demo-pill { border-color: var(--control-line); color: var(--muted); }
+html[data-theme="dark"] #eva-root .modal { box-shadow: 0 28px 90px #0008; }
+html[data-theme="dark"] #eva-root .modal::backdrop { background: #030a07b3; }
+html[data-theme="dark"] #eva-root .toast { background: #25432e; border-color: #658b57; color: #ecf5e4; }
+html[data-theme="dark"] #eva-root .toast > button { color: #c4d8ba; }
+
+/* Conversation roles and cited evidence remain visually distinguishable. */
+html[data-theme="dark"] #eva-root .message-bubble { background: #223329; color: #d7e3da; }
+html[data-theme="dark"] #eva-root .message.operator .message-bubble {
+  background: #233d29;
+  border-color: #3c5b38;
+  color: #d4eacb;
+}
+html[data-theme="dark"] #eva-root .message.operator .message-meta > span { color: var(--green-dark); }
+html[data-theme="dark"] #eva-root .message.system .message-bubble { background: transparent; color: var(--muted); }
+html[data-theme="dark"] #eva-root .message.system .message-meta { color: var(--muted); }
+html[data-theme="dark"] #eva-root .message.highlighted { background: #324b27; outline-color: #aacd72; }
+html[data-theme="dark"] #eva-root .message.highlighted .message-bubble { background: #3e5730; color: #edf5e2; border-color: #7f9c5a; }
+html[data-theme="dark"] #eva-root .evidence-link { background: #243a24; border-color: #42633a; }
+html[data-theme="dark"] #eva-root .evidence-link:hover { background: #304c2c; border-color: #779758; }
+html[data-theme="dark"] #eva-root :is(.evidence-link-heading, .evidence-link q) { color: #c7dfb0; }
+html[data-theme="dark"] #eva-root :is(.transcript-body, .criteria-list, .live-evidence-picker) { scrollbar-color: #55715d transparent; }
+html[data-theme="dark"] #eva-root .quality-chart text { fill: var(--muted); }
+html[data-theme="dark"] #eva-root .quality-chart text.chart-goal { fill: #b2c3a8; }
+html[data-theme="dark"] #eva-root .quality-chart line { stroke: #344c3c; }
+html[data-theme="dark"] #eva-root .quality-chart line[stroke="#b5cbb9"] { stroke: #77936e; }
+html[data-theme="dark"] #eva-root .quality-chart circle[fill="#fff"] { fill: var(--surface); }
+html[data-theme="dark"] #eva-root .gauge circle[stroke="#e8eee9"] { stroke: #344b3b; }
+
+/* Brand previews use the same transparent treatment as the forest sidebar. */
+html[data-theme="dark"] #eva-root .brand-showcase > img,
+html[data-theme="dark"] #eva-root .help-logo .eva-logo-image {
+  mix-blend-mode: screen;
+}
+html[data-theme="dark"] #eva-root .brand-showcase > img,
+html[data-theme="dark"] #eva-root .help-logo .eva-logo-image img {
+  filter: grayscale(1) invert(1) contrast(2) brightness(3);
+}
+html[data-theme="dark"] #eva-root .help-logo .eva-logo strong { color: var(--text); }
+html[data-theme="dark"] #eva-root .help-logo .eva-logo small { color: var(--muted); }
+
+@media (max-width: 1200px) {
+  #eva-root .theme-label { display: none; }
+  #eva-root .appearance-controls .theme-toggle { padding-inline: 8px; }
+  #eva-root .top-actions { gap: 8px; }
+  #eva-root .top-actions .global-search { width: 180px; }
+}
+@media (max-width: 1000px) {
+  #eva-root .top-actions .global-search { display: none; }
+  #eva-root .breadcrumb { min-width: 0; white-space: normal; flex-wrap: wrap; row-gap: 4px; }
+}
+@media (max-width: 560px) {
+  #eva-root .topbar { min-height: 62px; padding-block: 10px; gap: 10px; flex-wrap: wrap; }
+  #eva-root .breadcrumb { flex: 1; }
+  #eva-root .top-actions { margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
+  #eva-root .appearance-controls { min-height: 36px; }
+  #eva-root .language-control { padding-left: 8px; gap: 4px; }
+  #eva-root .language-control select { min-height: 34px; min-width: 54px; }
+  #eva-root .appearance-controls .theme-toggle { min-width: 32px; margin-block: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #eva-root .appearance-controls .theme-toggle { transition: none; }
+}
+
+#eva-root .live-file-picker { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid var(--control-line); border-radius: 8px; background: var(--surface); cursor: pointer; }
+#eva-root .live-file-picker:focus-within { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+#eva-root .live-file-picker[data-disabled] { opacity: .55; cursor: not-allowed; }
+#eva-root .live-file-picker .button { flex-shrink: 0; }
+#eva-root .live-file-name { overflow-wrap: anywhere; color: var(--muted); font-size: 12px; min-width: 0; }
+#eva-root .product-link { display: inline-block; margin-left: 8px; text-decoration: underline; text-underline-offset: 3px; color: var(--green-dark); }

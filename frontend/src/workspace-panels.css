@@ -1,0 +1,82 @@
+#eva-root .workspace-skip { position: fixed; top: -100px; left: 16px; z-index: 90; padding: 14px 20px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 6px; }
+#eva-root .workspace-loading { min-height: 100dvh; display: grid; place-items: center; color: var(--green-dark); background: var(--canvas); font-size: 32px; letter-spacing: 4px; }
+#eva-root .workspace-skip:focus { top: 12px; }
+#eva-root .workspace-details { position: relative; }
+#eva-root .workspace-details summary { list-style: none; cursor: pointer; }
+#eva-root .workspace-details summary::-webkit-details-marker { display: none; }
+#eva-root .workspace-details summary > svg { width: 13px; margin-left: auto; }
+#eva-root .workspace-details summary .workspace-symbol { display: grid; place-items: center; border-radius: 7px; color: var(--lime); }
+#eva-root .workspace-summary { padding: 15px; margin: 0 0 18px; background: #193426; border: 1px solid #35523e; border-radius: 8px; font-size: 12px; color: #d7e5d8; }
+#eva-root .workspace-summary p { margin: 6px 0; }
+#eva-root .workspace-summary > span { color: #b1cbac; font-size: 10px; }
+#eva-root .breadcrumb-home { padding: 0; font-size: inherit; }
+#eva-root .reference-workspace .global-search { text-align: left; min-width: 0; }
+#eva-root .reference-workspace .global-search > span { flex: 1; font-size: 11px; white-space: nowrap; }
+#eva-root .workspace-notifications { position: relative; }
+#eva-root .workspace-notifications i { position: absolute; right: 6px; top: 5px; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+#eva-root .workspace-mode { border: 1px solid var(--line); border-radius: 3px; padding: 2px 5px; letter-spacing: 0; font-size: 9px; margin-left: 12px; }
+#eva-root .workspace-table-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 0 20px; border-bottom: 1px solid var(--line); }
+#eva-root .workspace-table-toolbar .filter-tabs { border: 0; margin: 0; }
+#eva-root .reference-workspace .dialog-tabs > button { padding-block: 18px; }
+#eva-root .reference-workspace .filter-tabs { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; scrollbar-width: thin; }
+#eva-root .reference-workspace .filter-tabs > button { flex-shrink: 0; }
+#eva-root .reference-workspace .filter-bar > label > select { padding: 9px 12px; min-height: 38px; width: 160px; }
+#eva-root .reference-workspace .filter-bar .search-field { min-width: 240px; }
+#eva-root .reference-workspace .conversation-table .conversation-preview { max-width: 340px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#eva-root .reference-workspace .table-caption { padding: 14px 22px; }
+#eva-root .reference-workspace .table-caption svg { width: 13px; height: 13px; }
+#eva-root .reference-workspace .workspace-version-selector { margin: 0 0 22px; }
+#eva-root .reference-workspace .workspace-version-selector .form-label { margin: 0; }
+#eva-root .reference-workspace .workspace-footer { flex-wrap: wrap; gap: 12px; font-size: 10px; line-height: 1.7; }
+#eva-root .reference-workspace .workspace-footer > span { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+#eva-root .reference-workspace .workspace-footer .product-link { margin-left: 8px; }
+#eva-root .workspace-help { display: grid; gap: 24px; }
+#eva-root .modal:has(.workspace-help) { width: min(620px, calc(100vw - 32px)); }
+#eva-root .workspace-help .eva-logo { align-items: flex-start; }
+#eva-root .workspace-help .eva-logo-image { width: 160px; height: 48px; }
+#eva-root .workspace-help-steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 22px; }
+#eva-root .workspace-help-steps li { display: flex; gap: 18px; align-items: start; }
+#eva-root .workspace-help-steps li > span { background: var(--surface-soft); color: var(--green-dark); width: 37px; height: 37px; border-radius: 8px; display: grid; place-items: center; flex-shrink: 0; font-size: 12px; }
+#eva-root .workspace-help-steps b { display: block; margin: 1px 0 7px; font-size: 14px; }
+#eva-root .workspace-help-steps p { color: var(--muted); line-height: 1.7; }
+#eva-root .workspace-help-note { display: flex; gap: 12px; align-items: start; padding: 16px; border: 1px solid var(--line); background: var(--surface-soft); border-radius: 8px; color: var(--muted); line-height: 1.7; font-size: 12px; }
+#eva-root .workspace-help-note svg { width: 18px; margin-top: 2px; }
+#eva-root .workspace-search > .search-field { width: 100%; margin-bottom: 14px; }
+#eva-root .workspace-search-results { display: grid; margin-top: 12px; max-height: min(52vh, 460px); overflow: auto; }
+#eva-root .workspace-search-results > button { display: flex; text-align: left; align-items: center; gap: 14px; padding: 15px 8px; border-bottom: 1px solid var(--line); }
+#eva-root .workspace-search-results > button:hover { background: var(--surface-soft); }
+#eva-root .workspace-search-results > button > span { display: grid; gap: 6px; flex: 1; min-width: 0; }
+#eva-root .workspace-search-results small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--muted); }
+#eva-root .workspace-brand .swatches > div > span { display: block; height: 62px; border-radius: 5px; border: 1px solid var(--line); margin-bottom: 9px; }
+#eva-root .workspace-brand .swatches > div > b, #eva-root .workspace-brand .swatches > div > small { display: block; font-size: 10px; margin-top: 4px; }
+#eva-root .workspace-brand .swatches > div > small { color: var(--muted); }
+#eva-root .workspace-brand .brand-asset-links { display: flex; gap: 8px; flex-wrap: wrap; }
+#eva-root .reference-workspace .brand-voice h2 { font-size: clamp(26px, 2.4vw, 38px); font-weight: 400; line-height: 1.2; color: #eaf5e6; }
+html[data-theme="dark"] #eva-root .workspace-help .eva-logo-image img { filter: grayscale(1) invert(1) contrast(3) brightness(3); mix-blend-mode: screen; }
+@media (min-width:561px) and (max-width:900px) {
+  #eva-root .reference-workspace .workspace-details summary { padding: 8px; justify-content: center; }
+  #eva-root .reference-workspace .workspace-details summary > span:not(.workspace-symbol), #eva-root .reference-workspace .workspace-details summary > svg, #eva-root .workspace-summary { display: none; }
+}
+@media (max-width:1100px) { #eva-root .reference-workspace .workspace-avatar { display: none; } }
+@media (min-width:901px) and (max-height:820px) {
+  #eva-root .reference-workspace .sidebar { padding-block: 20px 14px; }
+  #eva-root .reference-workspace .brand-button { margin-bottom: 20px; }
+  #eva-root .reference-workspace .workspace-switch { margin-bottom: 18px; }
+  #eva-root .reference-workspace .nav-item { min-height: 39px; padding-block: 9px; }
+  #eva-root .reference-workspace .sidebar-bottom { padding-top: 18px; gap: 10px; }
+  #eva-root .reference-workspace .sidebar-promise { padding: 13px 14px; }
+  #eva-root .reference-workspace .sidebar-promise > p { display: none; }
+  #eva-root .reference-workspace .sidebar-promise .promise-link { margin-top: 12px; }
+  #eva-root .reference-workspace .sidebar-freedom { padding-top: 14px; margin-top: 8px; }
+  #eva-root .reference-workspace .sidebar-freedom > span { margin-top: 8px; }
+}
+@media (max-width:560px) {
+  #eva-root .reference-workspace .workspace-table-toolbar { padding: 0 12px; flex-wrap: wrap; gap: 0; padding-bottom: 12px; }
+  #eva-root .reference-workspace .filter-bar .search-field { min-width: 0; width: 100%; }
+  #eva-root .reference-workspace .filter-bar > label { flex: 1; }
+  #eva-root .reference-workspace .filter-bar > label > select { width: 100%; min-width: 0; }
+  #eva-root .reference-workspace .workspace-notifications { display: none; }
+  #eva-root .workspace-help-steps { gap: 18px; }
+  #eva-root .workspace-help-steps li { gap: 12px; }
+  #eva-root .reference-workspace .table-caption { padding: 14px; gap: 8px; flex-wrap: wrap; }
+}

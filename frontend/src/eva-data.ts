@@ -1,3 +1,4 @@
+import { formatNumber } from "./i18n-core.ts";
 export type Message = { time: string; role: "operator" | "client" | "system" | "bot"; text: string };
 export type Criterion = { id: number; title: string; weight: number; type: "binary" | "scale" | "flag"; max: number; na: boolean; description: string };
 export type Conversation = { id: string; topic: string; operator: string; initials: string; lang: "RU" | "KZ" | "EN"; channel: "chat" | "voice"; date: number; time: string; duration: string; ratings: (number | null)[]; messages: Message[]; pending?: boolean; evaluationChecklist?: Criterion[]; evaluationVersion?: number };
@@ -91,7 +92,7 @@ export function score(ratings: (number|null)[], checklist: Criterion[] = criteri
  checklist.forEach((c,i)=>{ const v=ratings[i]; if(c.type!=="flag" && v!==null && v!==undefined && c.max>0){total+=c.weight;earned+=Math.max(0,Math.min(v,c.max))/c.max*c.weight;} });
  return total ? Math.round(earned/total*10000)/100 : null;
 }
-export const formatScore = (v: number | null, precision=2) => v===null ? "—" : v.toLocaleString("ru-RU",{minimumFractionDigits:precision, maximumFractionDigits:precision});
+export const formatScore = (v: number | null, precision=2) => v===null ? "—" : formatNumber(v,{minimumFractionDigits:precision, maximumFractionDigits:precision});
 export const defaultAppeals: Appeal[] = [
  {id:"APL-001",conversationId:"DEMO-RU-001",criterionId:7,comment:"Оператор предложил дальнейшую помощь и попрощался в реплике 00:50. Прошу пересмотреть оценку завершения.",status:"open",originalScore:87.5,originalValue:0,date:"7 нояб., 14:40"},
  {id:"APL-002",conversationId:"DEMO-EN-003",criterionId:4,comment:"Прошу проверить полноту консультации: вопрос о доступе к аккаунту был решён.",status:"open",originalScore:75.5,originalValue:10,date:"7 нояб., 12:18"}

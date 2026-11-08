@@ -1,0 +1,149 @@
+/* The live checklist keeps every contract field editable in a compact sheet. */
+#eva-root .checklist-workbench { min-width: 0; gap: 20px; }
+#eva-root .checklist-summary {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 26px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+#eva-root .checklist-summary-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--surface-soft);
+  color: var(--green-dark);
+}
+#eva-root .checklist-summary-icon svg { width: 22px; height: 22px; }
+#eva-root .checklist-summary-copy { flex: 1; min-width: 0; }
+#eva-root .checklist-summary-title { display: flex; align-items: center; gap: 12px; }
+#eva-root .checklist-summary-title label { flex: 1; min-width: 100px; max-width: 440px; }
+#eva-root .checklist-summary-title input {
+  width: 100%;
+  min-height: 32px;
+  padding: 4px 6px;
+  margin-left: -6px;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+  background: transparent;
+  border-color: transparent;
+}
+#eva-root .checklist-summary-title input:hover { border-color: var(--control-line); }
+#eva-root .checklist-summary-title input:focus { background: var(--surface-soft); border-color: var(--green); }
+#eva-root .checklist-version {
+  display: inline-flex;
+  padding: 4px 7px;
+  border-radius: 4px;
+  background: var(--surface-soft);
+  color: var(--green-dark);
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+#eva-root .checklist-summary-copy p { margin: 2px 0 0; font-size: 11px; color: var(--muted); }
+#eva-root .checklist-weight-total { min-width: 108px; padding-left: 24px; border-left: 1px solid var(--line); }
+#eva-root .checklist-weight-total > span { display: block; font-size: 10px; color: var(--muted); margin-bottom: 5px; }
+#eva-root .checklist-weight-total > div { display: flex; align-items: baseline; gap: 5px; }
+#eva-root .checklist-weight-total strong { color: var(--green-dark); font-size: 25px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+#eva-root .checklist-weight-total small { color: var(--muted); font-size: 10px; }
+#eva-root .criteria-sheet { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+#eva-root .criteria-sheet-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px 26px; }
+#eva-root .criteria-sheet-heading h2 { display: flex; align-items: center; gap: 12px; margin: 0; font-size: 16px; font-weight: 600; }
+#eva-root .criteria-sheet-heading .count-badge { font-size: 10px; min-width: 23px; }
+#eva-root .criteria-sheet-heading p { margin: 7px 0 0; font-size: 11px; color: var(--muted); }
+#eva-root .criteria-sheet-heading > button { flex-shrink: 0; }
+#eva-root .criteria-column-head,
+#eva-root .criterion-edit-row { display: grid; grid-template-columns: minmax(0, 1fr) 150px 72px 48px; column-gap: 16px; }
+#eva-root .criteria-column-head { padding: 12px 26px; border-block: 1px solid var(--line); background: var(--surface-soft); color: var(--muted); font-size: 10px; }
+#eva-root .criteria-column-head > :first-child { padding-left: 35px; }
+#eva-root .criterion-edit-row { min-width: 0; margin: 0; padding: 20px 26px; border: 0; border-bottom: 1px solid var(--line); }
+#eva-root .criterion-edit-copy { display: flex; gap: 12px; min-width: 0; }
+#eva-root .criterion-edit-number { flex-shrink: 0; width: 22px; padding-top: 8px; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+#eva-root .criterion-edit-copy > div { min-width: 0; flex: 1; }
+#eva-root .criterion-title-field,
+#eva-root .criterion-instruction-field { display: block; }
+#eva-root .criterion-title-field input,
+#eva-root .criterion-instruction-field textarea {
+  display: block;
+  width: 100%;
+  margin-left: -7px;
+  padding: 5px 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+}
+#eva-root .criterion-title-field input { font-size: 12px; font-weight: 600; min-height: 30px; }
+#eva-root .criterion-instruction-field textarea { min-height: 42px; font-size: 11px; line-height: 1.6; color: var(--muted); resize: vertical; field-sizing: content; }
+#eva-root .criterion-title-field input:hover,
+#eva-root .criterion-instruction-field textarea:hover { border-color: var(--control-line); }
+#eva-root .criterion-title-field input:focus,
+#eva-root .criterion-instruction-field textarea:focus { color: var(--text); background: var(--surface-soft); border-color: var(--green); }
+#eva-root .criterion-details-toggle { display: inline-flex; align-items: center; gap: 5px; padding: 4px 0; color: var(--muted); font-size: 10px; }
+#eva-root .criterion-details-toggle:hover { color: var(--green-dark); }
+#eva-root .criterion-details-toggle svg { width: 12px; height: 12px; transition: transform 150ms ease; }
+#eva-root .criterion-details-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+#eva-root .criterion-control { display: flex; flex-direction: column; gap: 7px; padding-top: 3px; min-width: 0; }
+#eva-root .criterion-control > select,
+#eva-root .criterion-control > input { width: 100%; min-height: 34px; padding: 6px 9px; font-size: 11px; background: var(--surface); border-color: var(--control-line); }
+#eva-root .criterion-control > small { color: var(--muted); font-size: 10px; }
+#eva-root .criterion-control-label { display: none; }
+#eva-root .criterion-na-control { position: relative; display: flex; flex-direction: column; align-items: flex-start; padding-top: 11px; gap: 7px; cursor: pointer; }
+#eva-root .criterion-na-control > input { position: absolute; width: 32px; height: 20px; margin: 0; opacity: 0; cursor: pointer; }
+#eva-root .criterion-switch-track { display: block; width: 32px; height: 18px; border: 1px solid var(--control-line); border-radius: 99px; background: var(--surface-hover); pointer-events: none; }
+#eva-root .criterion-switch-track::after { content: ''; display: block; width: 12px; height: 12px; margin: 2px; border-radius: 50%; background: var(--muted); transition: transform 150ms ease, background-color 150ms ease; }
+#eva-root .criterion-na-control > input:checked + .criterion-switch-track { background: var(--green); border-color: var(--green); }
+#eva-root .criterion-na-control > input:checked + .criterion-switch-track::after { transform: translateX(14px); background: var(--forest); }
+#eva-root .criterion-na-control > input:focus-visible + .criterion-switch-track { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+#eva-root .criterion-na-control > input:disabled { cursor: not-allowed; }
+#eva-root .criterion-na-control > input:disabled + .criterion-switch-track { opacity: .4; }
+#eva-root .criterion-advanced { grid-column: 1 / -1; display: grid; gap: 16px; margin: 16px 0 0 34px; padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-soft); }
+#eva-root .criterion-advanced .form-label { font-size: 11px; }
+#eva-root .criterion-advanced .form-label input,
+#eva-root .criterion-advanced .form-label textarea { background: var(--surface); }
+#eva-root .criterion-remove { justify-self: start; color: var(--red); }
+#eva-root .criteria-empty { margin: 0; padding: 30px 26px; color: var(--muted); }
+#eva-root .criteria-sheet-note { display: flex; align-items: flex-start; gap: 10px; padding: 16px 24px; background: var(--surface-soft); color: var(--muted); }
+#eva-root .criteria-sheet-note > svg { width: 16px; height: 16px; margin-top: 1px; color: var(--green-dark); }
+#eva-root .criteria-sheet-note p { margin: 0; font-size: 10px; line-height: 1.7; }
+#eva-root .checklist-publish-bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 0 10px; }
+#eva-root .checklist-publish-bar > p { margin: 0; color: var(--muted); font-size: 11px; }
+#eva-root .checklist-publish-bar > div { display: flex; flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
+#eva-root .checklist-workbench :is(input, textarea, select, button):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+@media (max-width: 1100px) {
+  #eva-root .criteria-column-head,
+  #eva-root .criterion-edit-row { grid-template-columns: minmax(0, 1fr) 130px 62px 36px; column-gap: 12px; padding-inline: 20px; }
+  #eva-root .checklist-summary-title { flex-wrap: wrap; gap: 4px 10px; }
+  #eva-root .checklist-publish-bar { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 700px) {
+  #eva-root .checklist-summary { flex-wrap: wrap; gap: 12px; padding: 18px; }
+  #eva-root .checklist-summary-icon { width: 36px; height: 36px; }
+  #eva-root .checklist-summary-title { display: block; }
+  #eva-root .checklist-summary-title label { display: block; }
+  #eva-root .checklist-summary-title input { font-size: 13px; }
+  #eva-root .checklist-summary-copy p { margin-top: 8px; }
+  #eva-root .checklist-weight-total { width: 100%; display: flex; align-items: baseline; justify-content: space-between; padding: 12px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+  #eva-root .criteria-sheet-heading { padding: 18px; align-items: flex-start; flex-direction: column; gap: 14px; }
+  #eva-root .criteria-column-head { display: none; }
+  #eva-root .criterion-edit-row { grid-template-columns: minmax(0, 1fr) 72px 42px; padding: 18px; column-gap: 12px; row-gap: 14px; }
+  #eva-root .criterion-edit-copy { grid-column: 1 / -1; }
+  #eva-root .criterion-control-label { display: block; color: var(--muted); font-size: 10px; }
+  #eva-root .criterion-na-control { padding-top: 3px; }
+  #eva-root .criterion-na-control > input { top: 24px; }
+  #eva-root .criterion-switch-track { margin-top: 7px; }
+  #eva-root .criterion-advanced { margin: 0; padding: 14px; }
+  #eva-root .criteria-sheet-note { padding: 16px 18px; }
+  #eva-root .checklist-publish-bar > div { width: 100%; }
+  #eva-root .checklist-publish-bar .button { flex: 1; white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #eva-root .criterion-details-toggle svg,
+  #eva-root .criterion-switch-track::after { transition: none; }
+}

@@ -60,6 +60,7 @@ try {
   await page.getByLabel('Причина', { exact: true }).fill('Синтетическое изменение: критерий не выполнен.');
   await page.getByRole('dialog').getByRole('button', { name: 'Сохранить', exact: true }).click();
   await page.getByRole('dialog').waitFor({ state: 'hidden' });
+  await page.getByRole('button', { name: /Рассмотренные/ }).click();
   await page.getByRole('button', { name: 'Открыть оценку', exact: true }).click();
   await page.waitForFunction(() => document.querySelector('.gauge strong')?.textContent === '90');
   await page.reload();
@@ -69,7 +70,8 @@ try {
   await page.screenshot({ path: new URL('detail.png', output).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
   const evaluationUrl = page.url();
   await page.getByRole('navigation').getByRole('button', { name: 'Чек-листы', exact: true }).click();
-  await page.getByLabel('Название', { exact: true }).first().fill('Синтетический чек-лист v2');
+  await page.getByLabel('Название чек-листа', { exact: true }).fill('Синтетический чек-лист v2');
+  await page.getByRole('group', { name: 'Критерий 4', exact: true }).getByRole('button', { name: 'Настройки критерия', exact: true }).click();
   const scale = page.getByLabel('Допустимые ступени через запятую').first();
   await scale.fill('0, 10, 20');
   const published = page.waitForResponse(r => r.url().includes('/versions') && r.request().method() === 'POST');
