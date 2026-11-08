@@ -1,4 +1,9 @@
 export const commonMessages: Record<string, { kk: string; en: string }> = {
+  "Источник разговора": {"en":"Conversation source","kk":"Әңгіме дереккөзі"},
+  "ID оцениваемого оператора": {"en":"ID of the agent being evaluated","kk":"Бағаланатын оператордың ID-і"},
+  "Начало записи отсутствует": {"en":"The start of the recording is missing","kk":"Жазбаның басы жоқ"},
+  "Конец записи отсутствует": {"en":"The end of the recording is missing","kk":"Жазбаның соңы жоқ"},
+  "Роль неизвестна": {"en":"Unknown role","kk":"Рөлі белгісіз"},
   "О продукте": {"en":"About EVA","kk":"EVA туралы"},
   "Язык интерфейса": {
     "en": "Interface language",
@@ -147,6 +152,14 @@ export const commonMessages: Record<string, { kk: string; en: string }> = {
   "Сервис оценки или распознавания вернул некорректный ответ. Результат не подтверждён.": {
     "en": "The assessment or transcription service returned an invalid response. The result is unverified.",
     "kk": "Бағалау не тану қызметі қате жауап берді. Нәтиже расталмаған."
+  },
+  "Аудиозапись сохранена. На сервере не подключено распознавание речи.": {
+    "en": "The recording was saved. Speech recognition is not configured on the server.",
+    "kk": "Аудиожазба сақталды. Серверде сөйлеуді тану қызметі қосылмаған."
+  },
+  "Сервис оценки не ответил. Транскрипт сохранён, оценку можно повторить.": {
+    "en": "The evaluation service did not respond. The transcript is saved and you can retry the evaluation.",
+    "kk": "Бағалау қызметі жауап бермеді. Мәтін сақталды, бағалауды қайталауға болады."
   },
   "Сервис временно недоступен или занят. Проверьте доступность Backend, ML и настройку локального ASR.": {
     "en": "The service is unavailable or busy. Check Backend, ML and local ASR settings.",

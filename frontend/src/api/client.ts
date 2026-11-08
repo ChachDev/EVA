@@ -73,6 +73,16 @@ export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
       });
       if (!response.ok) {
         let message = errorMessages[response.status] ?? 'Не удалось выполнить запрос. Проверьте состояние сервиса.';
+        if (response.status === 503 && (path === '/api/v1/evaluations' || path === '/api/v1/transcriptions')) {
+          try {
+            const body = await response.json();
+            if (path === '/api/v1/transcriptions' && body?.detail === 'Local speech recognition is not configured. The audio asset remains saved.') {
+              message = 'Аудиозапись сохранена. На сервере не подключено распознавание речи.';
+            } else if (path === '/api/v1/evaluations' && body?.detail === 'ML service is unavailable. No evaluation was saved.') {
+              message = 'Сервис оценки не ответил. Транскрипт сохранён, оценку можно повторить.';
+            }
+          } catch { /* Keep the fixed 503 message for other upstream responses. */ }
+        }
         if (response.status===409 && path.startsWith('/api/v1/batches/') && path.endsWith('/results')) {
           const failures:Record<string,string>={
             'Not an organizer DEV or PROD group.':'Для сдачи нужен набор организаторов DEV или PROD.',

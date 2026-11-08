@@ -14,7 +14,7 @@ function useOperation() {
     return last.current.id;
   };
 }
-const speakerLabels = { operator: 'Оператор', client: 'Клиент', bot: 'Бот', system: 'Система' };
+const speakerLabels = { operator: 'Оператор', client: 'Клиент', bot: 'Бот', system: 'Система', unknown: 'Роль неизвестна' };
 const errorText = (error: unknown) => error instanceof Error ? error.message : 'Не удалось сохранить. Попробуйте обновить данные.';
 
 export function ImportDialog({ onClose, onSaved }: { onClose: () => void; onSaved: (c: Conversation) => void }) {
@@ -47,6 +47,11 @@ export function ImportDialog({ onClose, onSaved }: { onClose: () => void; onSave
   return <Modal title={t("Добавить переписку")} onClose={() => !busy && onClose()} wide>
     <form onSubmit={submit} className="live-form">
       <p className="modal-description">{t("Диалог сохранится на сервере. Оценку можно запустить после проверки реплик и выбора чек-листа.")}</p>
+      <details><summary>{t("Источник разговора")}</summary>
+        <label className="form-label">{t("ID оцениваемого оператора")}<input value={operator} disabled={busy} onChange={e=>setOperator(e.target.value)}/></label>
+        <label><input type="checkbox" checked={lostStart} disabled={busy} onChange={e=>setLostStart(e.target.checked)}/>{t("Начало записи отсутствует")}</label>
+        <label><input type="checkbox" checked={lostEnd} disabled={busy} onChange={e=>setLostEnd(e.target.checked)}/>{t("Конец записи отсутствует")}</label>
+      </details>
       <div className="live-fields"><label className="form-label">{t("Язык")}<select value={language} disabled={busy} onChange={e => setLanguage(e.target.value as Conversation['language'])}>{['RU','KZ','EN'].map(l => <option key={l}>{l}</option>)}</select></label>
       <label className="form-label">{t("Канал")}<select value={channel} disabled={busy} onChange={e => setChannel(e.target.value as Conversation['channel'])}><option value="agent_chat">{t("Чат поддержки")}</option><option value="voice_call">{t("Готовый транскрипт звонка")}</option></select></label></div>
       <label className="form-label">{t("JSON или TXT, до 1 МБ")}<span className="live-file-picker" data-disabled={busy || undefined}><input className="sr-only" aria-label={t('Выбрать файл переписки')} aria-describedby={fileNameId} disabled={busy} type="file" accept=".json,.txt" onChange={async e => {

@@ -49,6 +49,7 @@ class Settings:
     ml_max_response_bytes: int = field(default_factory=lambda: int(os.getenv("ML_MAX_RESPONSE_BYTES", str(2 * 1024 * 1024))))
     media_root: Path = field(default_factory=lambda: Path(os.getenv("MEDIA_ROOT", str(BACKEND_ROOT / "data" / "audio"))), repr=False)
     audio_max_bytes: int = field(default_factory=lambda: int(os.getenv("AUDIO_MAX_BYTES", str(25 * 1024 * 1024))))
+    media_base_url: str = field(default_factory=lambda: os.getenv("MEDIA_BASE_URL", "http://127.0.0.1:8000"))
     asr_url: str | None = field(default_factory=lambda: os.getenv("ASR_URL") or None)
     asr_timeout_seconds: float = field(default_factory=lambda: float(os.getenv("ASR_TIMEOUT_SECONDS", "300")))
     reviewer_id: str = field(default_factory=lambda: os.getenv("REVIEWER_ID", "local-reviewer"))
@@ -84,6 +85,7 @@ class Settings:
         except Exception:
             raise ValueError("DATABASE_URL must select local PostgreSQL or an explicit SQLite file inside backend.") from None
         _local_origin(self.ml_url, "ML_URL")
+        _local_origin(self.media_base_url, "MEDIA_BASE_URL")
         if self.asr_url is not None:
             _local_origin(self.asr_url, "ASR_URL")
         if (type(self.ml_timeout_seconds) not in {int, float}

@@ -1,0 +1,1094 @@
+{
+  "groups": {
+    "book": {
+      "base": {
+        "chats": 15,
+        "full": 12,
+        "n": 120,
+        "correct": 89,
+        "fixed": 0,
+        "worse": 0,
+        "scored": 117,
+        "false_na": 7,
+        "missed_na": 7,
+        "positives": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "zip": {
+        "chats": 15,
+        "full": 15,
+        "n": 120,
+        "correct": 96,
+        "fixed": 7,
+        "worse": 0,
+        "scored": 120,
+        "false_na": 3,
+        "missed_na": 5,
+        "positives": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "eva": {
+        "chats": 15,
+        "full": 13,
+        "n": 120,
+        "correct": 91,
+        "fixed": 2,
+        "worse": 0,
+        "scored": 118,
+        "false_na": 7,
+        "missed_na": 7,
+        "positives": 2,
+        "fp": 0,
+        "fn": 0
+      }
+    },
+    "develop": {
+      "base": {
+        "chats": 9,
+        "full": 8,
+        "n": 72,
+        "correct": 50,
+        "fixed": 0,
+        "worse": 0,
+        "scored": 71,
+        "false_na": 4,
+        "missed_na": 5,
+        "positives": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      "zip": {
+        "chats": 9,
+        "full": 9,
+        "n": 72,
+        "correct": 54,
+        "fixed": 4,
+        "worse": 0,
+        "scored": 72,
+        "false_na": 1,
+        "missed_na": 5,
+        "positives": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      "eva": {
+        "chats": 9,
+        "full": 9,
+        "n": 72,
+        "correct": 52,
+        "fixed": 2,
+        "worse": 0,
+        "scored": 72,
+        "false_na": 4,
+        "missed_na": 5,
+        "positives": 1,
+        "fp": 0,
+        "fn": 0
+      }
+    },
+    "reserved": {
+      "base": {
+        "chats": 6,
+        "full": 4,
+        "n": 48,
+        "correct": 39,
+        "fixed": 0,
+        "worse": 0,
+        "scored": 46,
+        "false_na": 3,
+        "missed_na": 2,
+        "positives": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      "zip": {
+        "chats": 6,
+        "full": 6,
+        "n": 48,
+        "correct": 42,
+        "fixed": 3,
+        "worse": 0,
+        "scored": 48,
+        "false_na": 2,
+        "missed_na": 0,
+        "positives": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      "eva": {
+        "chats": 6,
+        "full": 4,
+        "n": 48,
+        "correct": 39,
+        "fixed": 0,
+        "worse": 0,
+        "scored": 46,
+        "false_na": 3,
+        "missed_na": 2,
+        "positives": 1,
+        "fp": 0,
+        "fn": 0
+      }
+    },
+    "pilot": {
+      "base": {
+        "chats": 12,
+        "full": 10,
+        "n": 96,
+        "correct": 78,
+        "fixed": 0,
+        "worse": 0,
+        "scored": 93,
+        "false_na": 4,
+        "missed_na": 6,
+        "positives": 0,
+        "fp": 0,
+        "fn": 0
+      },
+      "zip": {
+        "chats": 12,
+        "full": 12,
+        "n": 96,
+        "correct": 81,
+        "fixed": 3,
+        "worse": 0,
+        "scored": 96,
+        "false_na": 4,
+        "missed_na": 3,
+        "positives": 0,
+        "fp": 0,
+        "fn": 0
+      },
+      "eva": {
+        "chats": 12,
+        "full": 10,
+        "n": 96,
+        "correct": 78,
+        "fixed": 2,
+        "worse": 2,
+        "scored": 93,
+        "false_na": 6,
+        "missed_na": 4,
+        "positives": 0,
+        "fp": 0,
+        "fn": 0
+      }
+    }
+  },
+  "criteria": {
+    "book/contact": {
+      "base": {
+        "n": 15,
+        "correct": 14
+      },
+      "zip": {
+        "n": 15,
+        "correct": 14
+      },
+      "eva": {
+        "n": 15,
+        "correct": 14
+      }
+    },
+    "develop/contact": {
+      "base": {
+        "n": 9,
+        "correct": 9
+      },
+      "zip": {
+        "n": 9,
+        "correct": 9
+      },
+      "eva": {
+        "n": 9,
+        "correct": 9
+      }
+    },
+    "book/needs": {
+      "base": {
+        "n": 15,
+        "correct": 9
+      },
+      "zip": {
+        "n": 15,
+        "correct": 9
+      },
+      "eva": {
+        "n": 15,
+        "correct": 9
+      }
+    },
+    "develop/needs": {
+      "base": {
+        "n": 9,
+        "correct": 5
+      },
+      "zip": {
+        "n": 9,
+        "correct": 5
+      },
+      "eva": {
+        "n": 9,
+        "correct": 5
+      }
+    },
+    "book/identity": {
+      "base": {
+        "n": 15,
+        "correct": 10
+      },
+      "zip": {
+        "n": 15,
+        "correct": 12
+      },
+      "eva": {
+        "n": 15,
+        "correct": 10
+      }
+    },
+    "develop/identity": {
+      "base": {
+        "n": 9,
+        "correct": 6
+      },
+      "zip": {
+        "n": 9,
+        "correct": 6
+      },
+      "eva": {
+        "n": 9,
+        "correct": 6
+      }
+    },
+    "book/consultation": {
+      "base": {
+        "n": 15,
+        "correct": 10
+      },
+      "zip": {
+        "n": 15,
+        "correct": 11
+      },
+      "eva": {
+        "n": 15,
+        "correct": 11
+      }
+    },
+    "develop/consultation": {
+      "base": {
+        "n": 9,
+        "correct": 5
+      },
+      "zip": {
+        "n": 9,
+        "correct": 6
+      },
+      "eva": {
+        "n": 9,
+        "correct": 6
+      }
+    },
+    "book/empathy": {
+      "base": {
+        "n": 15,
+        "correct": 13
+      },
+      "zip": {
+        "n": 15,
+        "correct": 13
+      },
+      "eva": {
+        "n": 15,
+        "correct": 13
+      }
+    },
+    "develop/empathy": {
+      "base": {
+        "n": 9,
+        "correct": 7
+      },
+      "zip": {
+        "n": 9,
+        "correct": 7
+      },
+      "eva": {
+        "n": 9,
+        "correct": 7
+      }
+    },
+    "book/dialogue": {
+      "base": {
+        "n": 15,
+        "correct": 8
+      },
+      "zip": {
+        "n": 15,
+        "correct": 8
+      },
+      "eva": {
+        "n": 15,
+        "correct": 9
+      }
+    },
+    "develop/dialogue": {
+      "base": {
+        "n": 9,
+        "correct": 4
+      },
+      "zip": {
+        "n": 9,
+        "correct": 4
+      },
+      "eva": {
+        "n": 9,
+        "correct": 5
+      }
+    },
+    "book/closing": {
+      "base": {
+        "n": 15,
+        "correct": 10
+      },
+      "zip": {
+        "n": 15,
+        "correct": 14
+      },
+      "eva": {
+        "n": 15,
+        "correct": 10
+      }
+    },
+    "develop/closing": {
+      "base": {
+        "n": 9,
+        "correct": 5
+      },
+      "zip": {
+        "n": 9,
+        "correct": 8
+      },
+      "eva": {
+        "n": 9,
+        "correct": 5
+      }
+    },
+    "book/gross_errors": {
+      "base": {
+        "n": 15,
+        "correct": 15
+      },
+      "zip": {
+        "n": 15,
+        "correct": 15
+      },
+      "eva": {
+        "n": 15,
+        "correct": 15
+      }
+    },
+    "develop/gross_errors": {
+      "base": {
+        "n": 9,
+        "correct": 9
+      },
+      "zip": {
+        "n": 9,
+        "correct": 9
+      },
+      "eva": {
+        "n": 9,
+        "correct": 9
+      }
+    },
+    "reserved/contact": {
+      "base": {
+        "n": 6,
+        "correct": 5
+      },
+      "zip": {
+        "n": 6,
+        "correct": 5
+      },
+      "eva": {
+        "n": 6,
+        "correct": 5
+      }
+    },
+    "reserved/needs": {
+      "base": {
+        "n": 6,
+        "correct": 4
+      },
+      "zip": {
+        "n": 6,
+        "correct": 4
+      },
+      "eva": {
+        "n": 6,
+        "correct": 4
+      }
+    },
+    "reserved/identity": {
+      "base": {
+        "n": 6,
+        "correct": 4
+      },
+      "zip": {
+        "n": 6,
+        "correct": 6
+      },
+      "eva": {
+        "n": 6,
+        "correct": 4
+      }
+    },
+    "reserved/consultation": {
+      "base": {
+        "n": 6,
+        "correct": 5
+      },
+      "zip": {
+        "n": 6,
+        "correct": 5
+      },
+      "eva": {
+        "n": 6,
+        "correct": 5
+      }
+    },
+    "reserved/empathy": {
+      "base": {
+        "n": 6,
+        "correct": 6
+      },
+      "zip": {
+        "n": 6,
+        "correct": 6
+      },
+      "eva": {
+        "n": 6,
+        "correct": 6
+      }
+    },
+    "reserved/dialogue": {
+      "base": {
+        "n": 6,
+        "correct": 4
+      },
+      "zip": {
+        "n": 6,
+        "correct": 4
+      },
+      "eva": {
+        "n": 6,
+        "correct": 4
+      }
+    },
+    "reserved/closing": {
+      "base": {
+        "n": 6,
+        "correct": 5
+      },
+      "zip": {
+        "n": 6,
+        "correct": 6
+      },
+      "eva": {
+        "n": 6,
+        "correct": 5
+      }
+    },
+    "reserved/gross_errors": {
+      "base": {
+        "n": 6,
+        "correct": 6
+      },
+      "zip": {
+        "n": 6,
+        "correct": 6
+      },
+      "eva": {
+        "n": 6,
+        "correct": 6
+      }
+    },
+    "pilot/contact": {
+      "base": {
+        "n": 12,
+        "correct": 12
+      },
+      "zip": {
+        "n": 12,
+        "correct": 12
+      },
+      "eva": {
+        "n": 12,
+        "correct": 12
+      }
+    },
+    "pilot/needs": {
+      "base": {
+        "n": 12,
+        "correct": 6
+      },
+      "zip": {
+        "n": 12,
+        "correct": 6
+      },
+      "eva": {
+        "n": 12,
+        "correct": 7
+      }
+    },
+    "pilot/identity": {
+      "base": {
+        "n": 12,
+        "correct": 11
+      },
+      "zip": {
+        "n": 12,
+        "correct": 12
+      },
+      "eva": {
+        "n": 12,
+        "correct": 10
+      }
+    },
+    "pilot/consultation": {
+      "base": {
+        "n": 12,
+        "correct": 10
+      },
+      "zip": {
+        "n": 12,
+        "correct": 11
+      },
+      "eva": {
+        "n": 12,
+        "correct": 10
+      }
+    },
+    "pilot/empathy": {
+      "base": {
+        "n": 12,
+        "correct": 11
+      },
+      "zip": {
+        "n": 12,
+        "correct": 11
+      },
+      "eva": {
+        "n": 12,
+        "correct": 11
+      }
+    },
+    "pilot/dialogue": {
+      "base": {
+        "n": 12,
+        "correct": 9
+      },
+      "zip": {
+        "n": 12,
+        "correct": 9
+      },
+      "eva": {
+        "n": 12,
+        "correct": 9
+      }
+    },
+    "pilot/closing": {
+      "base": {
+        "n": 12,
+        "correct": 7
+      },
+      "zip": {
+        "n": 12,
+        "correct": 8
+      },
+      "eva": {
+        "n": 12,
+        "correct": 7
+      }
+    },
+    "pilot/gross_errors": {
+      "base": {
+        "n": 12,
+        "correct": 12
+      },
+      "zip": {
+        "n": 12,
+        "correct": 12
+      },
+      "eva": {
+        "n": 12,
+        "correct": 12
+      }
+    }
+  },
+  "languages": {
+    "book/RU": {
+      "base": {
+        "n": 40,
+        "correct": 23
+      },
+      "zip": {
+        "n": 40,
+        "correct": 26
+      },
+      "eva": {
+        "n": 40,
+        "correct": 24
+      }
+    },
+    "develop/RU": {
+      "base": {
+        "n": 24,
+        "correct": 13
+      },
+      "zip": {
+        "n": 24,
+        "correct": 15
+      },
+      "eva": {
+        "n": 24,
+        "correct": 14
+      }
+    },
+    "book/KZ": {
+      "base": {
+        "n": 40,
+        "correct": 35
+      },
+      "zip": {
+        "n": 40,
+        "correct": 37
+      },
+      "eva": {
+        "n": 40,
+        "correct": 36
+      }
+    },
+    "develop/KZ": {
+      "base": {
+        "n": 24,
+        "correct": 21
+      },
+      "zip": {
+        "n": 24,
+        "correct": 22
+      },
+      "eva": {
+        "n": 24,
+        "correct": 22
+      }
+    },
+    "book/EN": {
+      "base": {
+        "n": 40,
+        "correct": 31
+      },
+      "zip": {
+        "n": 40,
+        "correct": 33
+      },
+      "eva": {
+        "n": 40,
+        "correct": 31
+      }
+    },
+    "develop/EN": {
+      "base": {
+        "n": 24,
+        "correct": 16
+      },
+      "zip": {
+        "n": 24,
+        "correct": 17
+      },
+      "eva": {
+        "n": 24,
+        "correct": 16
+      }
+    },
+    "reserved/RU": {
+      "base": {
+        "n": 16,
+        "correct": 10
+      },
+      "zip": {
+        "n": 16,
+        "correct": 11
+      },
+      "eva": {
+        "n": 16,
+        "correct": 10
+      }
+    },
+    "reserved/KZ": {
+      "base": {
+        "n": 16,
+        "correct": 14
+      },
+      "zip": {
+        "n": 16,
+        "correct": 15
+      },
+      "eva": {
+        "n": 16,
+        "correct": 14
+      }
+    },
+    "reserved/EN": {
+      "base": {
+        "n": 16,
+        "correct": 15
+      },
+      "zip": {
+        "n": 16,
+        "correct": 16
+      },
+      "eva": {
+        "n": 16,
+        "correct": 15
+      }
+    },
+    "pilot/RU": {
+      "base": {
+        "n": 32,
+        "correct": 23
+      },
+      "zip": {
+        "n": 32,
+        "correct": 25
+      },
+      "eva": {
+        "n": 32,
+        "correct": 23
+      }
+    },
+    "pilot/KZ": {
+      "base": {
+        "n": 32,
+        "correct": 25
+      },
+      "zip": {
+        "n": 32,
+        "correct": 26
+      },
+      "eva": {
+        "n": 32,
+        "correct": 24
+      }
+    },
+    "pilot/EN": {
+      "base": {
+        "n": 32,
+        "correct": 30
+      },
+      "zip": {
+        "n": 32,
+        "correct": 30
+      },
+      "eva": {
+        "n": 32,
+        "correct": 31
+      }
+    }
+  },
+  "annotation": {
+    "unanimous": {
+      "base": {
+        "n": 79,
+        "correct": 65
+      },
+      "zip": {
+        "n": 79,
+        "correct": 72
+      },
+      "eva": {
+        "n": 79,
+        "correct": 66
+      }
+    },
+    "Gemini": {
+      "base": {
+        "n": 120,
+        "correct": 90
+      },
+      "zip": {
+        "n": 120,
+        "correct": 97
+      },
+      "eva": {
+        "n": 120,
+        "correct": 92
+      }
+    },
+    "ChatGPT": {
+      "base": {
+        "n": 120,
+        "correct": 82
+      },
+      "zip": {
+        "n": 120,
+        "correct": 89
+      },
+      "eva": {
+        "n": 120,
+        "correct": 84
+      }
+    },
+    "Grok": {
+      "base": {
+        "n": 120,
+        "correct": 83
+      },
+      "zip": {
+        "n": 120,
+        "correct": 90
+      },
+      "eva": {
+        "n": 120,
+        "correct": 83
+      }
+    },
+    "DeepSeek": {
+      "base": {
+        "n": 120,
+        "correct": 83
+      },
+      "zip": {
+        "n": 120,
+        "correct": 90
+      },
+      "eva": {
+        "n": 120,
+        "correct": 83
+      }
+    },
+    "disputed": {
+      "base": {
+        "n": 41,
+        "correct": 24
+      },
+      "zip": {
+        "n": 41,
+        "correct": 24
+      },
+      "eva": {
+        "n": 41,
+        "correct": 25
+      }
+    }
+  },
+  "numeric": {
+    "book": {
+      "base": {
+        "n": 12,
+        "mae": 11.401
+      },
+      "zip": {
+        "n": 12,
+        "mae": 11.328
+      },
+      "eva": {
+        "n": 12,
+        "mae": 11.776
+      }
+    },
+    "develop": {
+      "base": {
+        "n": 8,
+        "mae": 14.797
+      },
+      "zip": {
+        "n": 8,
+        "mae": 14.431
+      },
+      "eva": {
+        "n": 8,
+        "mae": 15.36
+      }
+    },
+    "reserved": {
+      "base": {
+        "n": 4,
+        "mae": 4.608
+      },
+      "zip": {
+        "n": 4,
+        "mae": 5.12
+      },
+      "eva": {
+        "n": 4,
+        "mae": 4.608
+      }
+    },
+    "pilot": {
+      "base": {
+        "n": 10,
+        "mae": 8.393
+      },
+      "zip": {
+        "n": 10,
+        "mae": 8.393
+      },
+      "eva": {
+        "n": 10,
+        "mae": 8.393
+      }
+    }
+  },
+  "timing": {
+    "zip": {
+      "calls": 12,
+      "median_seconds": 0.0,
+      "max_seconds": 40.839
+    },
+    "eva": {
+      "calls": 27,
+      "median_seconds": 4.863,
+      "max_seconds": 38.064
+    }
+  },
+  "changes": {
+    "zip": [
+      {
+        "cohort": "develop",
+        "language": "RU",
+        "criterion": "closing",
+        "before": null,
+        "after": false,
+        "reference": false
+      },
+      {
+        "cohort": "develop",
+        "language": "RU",
+        "criterion": "closing",
+        "before": null,
+        "after": false,
+        "reference": false
+      },
+      {
+        "cohort": "develop",
+        "language": "KZ",
+        "criterion": "consultation",
+        "before": "review",
+        "after": 20,
+        "reference": 20
+      },
+      {
+        "cohort": "develop",
+        "language": "EN",
+        "criterion": "closing",
+        "before": null,
+        "after": false,
+        "reference": false
+      },
+      {
+        "cohort": "reserved",
+        "language": "RU",
+        "criterion": "closing",
+        "before": null,
+        "after": false,
+        "reference": false
+      },
+      {
+        "cohort": "reserved",
+        "language": "KZ",
+        "criterion": "identity",
+        "before": "review",
+        "after": null,
+        "reference": null
+      },
+      {
+        "cohort": "reserved",
+        "language": "EN",
+        "criterion": "identity",
+        "before": "review",
+        "after": null,
+        "reference": null
+      },
+      {
+        "cohort": "pilot",
+        "language": "RU",
+        "criterion": "consultation",
+        "before": "review",
+        "after": null,
+        "reference": null
+      },
+      {
+        "cohort": "pilot",
+        "language": "RU",
+        "criterion": "closing",
+        "before": "review",
+        "after": null,
+        "reference": null
+      },
+      {
+        "cohort": "pilot",
+        "language": "KZ",
+        "criterion": "identity",
+        "before": "review",
+        "after": null,
+        "reference": null
+      }
+    ],
+    "eva": [
+      {
+        "cohort": "develop",
+        "language": "RU",
+        "criterion": "dialogue",
+        "before": 7,
+        "after": 4,
+        "reference": 4
+      },
+      {
+        "cohort": "develop",
+        "language": "KZ",
+        "criterion": "consultation",
+        "before": "review",
+        "after": 20,
+        "reference": 20
+      },
+      {
+        "cohort": "pilot",
+        "language": "RU",
+        "criterion": "needs",
+        "before": true,
+        "after": null,
+        "reference": null
+      },
+      {
+        "cohort": "pilot",
+        "language": "RU",
+        "criterion": "identity",
+        "before": true,
+        "after": null,
+        "reference": true
+      },
+      {
+        "cohort": "pilot",
+        "language": "KZ",
+        "criterion": "needs",
+        "before": true,
+        "after": null,
+        "reference": true
+      },
+      {
+        "cohort": "pilot",
+        "language": "EN",
+        "criterion": "needs",
+        "before": true,
+        "after": null,
+        "reference": null
+      }
+    ]
+  },
+  "prediction_hashes": {
+    "zip": "95fa61b3fe8e25d5aa77306af19624e8bdc3763ba0fda67c587c2ea06c2222b4",
+    "eva": "8ffee1a4c8efc1c03151939a2eefc5b3c8074de661ff2cdc7f7f5b7f287a830e"
+  }
+}

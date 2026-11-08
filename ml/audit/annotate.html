@@ -1,0 +1,74 @@
+<!doctype html><html lang="ru"><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>EVA · Независимая разметка</title>
+<style>
+:root{font:16px/1.45 "Segoe UI",sans-serif;color:#182834;background:#f3f6f5}body{max-width:1100px;margin:24px auto;padding:0 18px}
+h1{font-size:28px;margin:0 0 12px}h2{font-size:19px;margin:0 0 10px}.panel{background:white;border:1px solid #d5dfdc;padding:16px;border-radius:8px;margin:12px 0}
+.columns{display:grid;grid-template-columns:1.25fr 1fr;gap:18px}label{display:block;margin:10px 0}button,select,input,textarea{font:inherit}
+button{padding:6px 12px}textarea,select{box-sizing:border-box;width:100%;padding:6px}textarea{min-height:75px}
+.turn{display:block;border-bottom:1px solid #e2e8e6;padding:8px 0;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}.turn input{margin-right:8px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.bar select{width:auto;max-width:70%}#feedback{color:#075d53}
+@media(max-width:740px){.columns{grid-template-columns:1fr}}
+</style>
+<h1>Разметка диалогов EVA</h1>
+<div class="panel"><label>Ваш бланк JSONL <input id="ballot" type="file" accept=".jsonl"></label>
+<label>Транскрипты JSONL <input id="transcripts" type="file" accept=".jsonl"></label>
+<p id="feedback" role="status">Выберите личный бланк и файл transcripts.jsonl.</p></div>
+<div id="workspace" hidden>
+<div class="bar"><button id="prev">← Назад</button><select id="nav" aria-label="Выбрать решение"></select><button id="next">Дальше →</button>
+<button id="save">Скачать мой бланк</button></div>
+<div class="columns"><section class="panel"><h2 id="chat"></h2><div id="turns"></div></section>
+<section class="panel"><h2 id="criterion"></h2><p id="rule"></p><p id="na"></p>
+<label>Оценка <select id="value"></select></label>
+<label>Почему вы так решили <textarea id="reason"></textarea></label>
+<label id="factsLabel" hidden>Цели клиента и связанные ответы (необязательный JSON)
+<textarea id="facts" placeholder="[]"></textarea></label>
+<p>Отметьте слева реплики, которые обосновывают решение. При пропуске укажите границы проверенного участка.</p></section></div></div>
+<script>
+'use strict';
+const el=id=>document.getElementById(id);
+let ballot=[], conversations=new Map(), position=0, fileName='annotator';
+const display=v=>v===null?'N/A':v===true?'Да':v===false?'Нет':String(v);
+async function readFile(file){return (await file.text()).replace(/^\uFEFF/,'').split(/\r?\n/).filter(x=>x.trim()).map(x=>JSON.parse(x));}
+function feedback(msg){el('feedback').textContent=msg;}
+function render(){
+  if(!ballot.length||!conversations.size)return;
+  if(ballot.some(r=>!conversations.has(r.chat)))throw Error('В транскриптах отсутствует чат из бланка.');
+  el('workspace').hidden=false;
+  const row=ballot[position],conv=conversations.get(row.chat);
+  el('nav').replaceChildren(...ballot.map((r,i)=>new Option((r.status==='scored'?'✓ ':'')+r.chat+' · '+r.criterion,String(i))));
+  el('nav').value=String(position); el('chat').textContent=conv.chat+' · '+conv.language;
+  el('criterion').textContent=row.criterion;el('rule').textContent=row.rule;el('na').textContent=row.na_condition?'Условие N/A — '+row.na_condition:'N/A не допускается.';
+  el('value').replaceChildren(new Option('Выберите оценку',''),...row.allowed.map(v=>new Option(display(v),JSON.stringify(v))));
+  el('value').value=row.status==='scored'?JSON.stringify(row.value):''; el('reason').value=row.reason;
+  el('factsLabel').hidden=row.criterion!=='consultation';el('facts').value=JSON.stringify(row.request_facts??[]);
+  el('turns').replaceChildren(...conv.turns.map(t=>{
+    const label=document.createElement('label'),check=document.createElement('input');
+    label.className='turn';check.type='checkbox';check.dataset.id=t.id;check.checked=row.evidence_ids.includes(t.id);
+    label.append(check,document.createTextNode(t.id+' · '+t.timestamp+' · '+t.speaker+'\n'+t.text));return label;
+  }));
+  feedback('Заполнено '+ballot.filter(r=>r.status==='scored').length+' из '+ballot.length+'. Скачайте бланк, чтобы сохранить изменения.');
+}
+function storeRow(){
+  if(el('workspace').hidden)return true;
+  const r=ballot[position],choice=el('value').value,ids=[...el('turns').querySelectorAll('input:checked')].map(x=>x.dataset.id);
+  let facts=null;try{if(r.criterion==='consultation'){facts=JSON.parse(el('facts').value||'[]');if(!Array.isArray(facts))throw Error();}}
+  catch{feedback('Поле целей должно содержать JSON-массив.');return false;}
+  const reason=el('reason').value.trim();
+  if(choice!=='' && (!reason||!ids.length)){feedback('Для выставленной оценки нужны причина и хотя бы одна реплика.');return false;}
+  Object.assign(r,{status:choice===''?'unlabeled':'scored',value:choice===''?null:JSON.parse(choice),evidence_ids:ids,reason,request_facts:facts});return true;
+}
+function move(i){if(!storeRow()){el('nav').value=String(position);return;}position=Math.min(Math.max(i,0),ballot.length-1);render();}
+el('prev').onclick=()=>move(position-1);el('next').onclick=()=>move(position+1);el('nav').onchange=()=>move(Number(el('nav').value));
+for(const id of ['ballot','transcripts'])el(id).onchange=async e=>{
+  try{const data=await readFile(e.target.files[0]);
+    if(id==='ballot'){if(!data.length||!data.every(r=>Array.isArray(r.allowed)&&Array.isArray(r.evidence_ids)))throw Error('Нужен бланк разметчика.');
+      ballot=data;position=0;fileName=e.target.files[0].name.replace(/\.jsonl$/i,'');}
+    else{if(!data.length||!data.every(c=>Array.isArray(c.turns)))throw Error('Нужен файл transcripts.jsonl.');
+      conversations=new Map(data.map(c=>[c.chat,c]));}render();
+  }catch(error){el('workspace').hidden=true;feedback(error.message);}
+};
+el('save').onclick=()=>{if(!storeRow())return;const file=new Blob([ballot.map(r=>JSON.stringify(r)).join('\n')+'\n'],{type:'application/x-ndjson'});
+  const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=fileName+'-saved.jsonl';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);render();};
+</script></html>

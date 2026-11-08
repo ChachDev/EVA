@@ -73,6 +73,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
   const resultRows = currentReview?.final.criteria ?? [];
   const scoring = currentReview?.final.scoring ?? null;
   const results = new Map(resultRows.map(result => [result.criterion_id, result]));
+  const detectedFlags = criteria.filter(c => c.type === "flag" && results.get(c.id)?.value === true);
   const contributions = new Map(scoring?.criteria.map(result => [result.criterion_id, result]) ?? []);
   const messages = new Map(conversation.messages.map(message => [message.id, message]));
   function speakerLabel(message:Conversation['messages'][number]) {
@@ -145,7 +146,14 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
     {currentEvaluation && <div className="info-callout"><Info aria-hidden="true" /><span>{t("Результат предварительный. Решение по апелляции не означает утверждение аудита.")}{source?.provider === "stub" && t(" Активна заглушка: качество работы оператора не оценено моделью.")}
       {source?.provider === "fixture" && t(" Это демонстрационная разметка, а не вывод модели.")}
     </span></div>}
-    {scoring && <p className="muted">{t('Грубые нарушения: {status}. Флаг учитывается отдельно от балла.', { status: t(scoring.has_gross_error === null ? "требуется проверка" : scoring.has_gross_error ? "обнаружены" : "не обнаружены") })}</p>}
+    {scoring && <div className={detectedFlags.length ? "info-callout" : "muted"}><span>{t('Грубые нарушения: {status}. Флаг учитывается отдельно от балла.', { status: t(scoring.has_gross_error === null ? "требуется проверка" : scoring.has_gross_error ? "обнаружены" : "не обнаружены") })}</span>
+      {detectedFlags.map(c => <button className="badge danger" key={c.id} type="button" onClick={() => {
+        setExpanded(c.id);
+        const toggle = document.getElementById(`criterion-toggle-${conversation.id}-${c.id}`);
+        toggle?.focus({ preventScroll: true });
+        toggle?.scrollIntoView({ block: "center" });
+      }}><AlertTriangle aria-hidden="true" />{c.title}</button>)}
+    </div>}
     {source?.warnings.map((warning, index) => <p className="info-callout" key={index}><Info aria-hidden="true" /><span>{warning}</span></p>)}
     {legacy && <div className="info-callout"><Info aria-hidden="true" /><span>{t("У этой исторической оценки нет снимка входных данных. Просмотр доступен, пересмотр недоступен.")}</span></div>}
     {currentReview && currentReview.decisions.length > 0 && <div className="review-banner"><ShieldCheck aria-hidden="true" /><span>
@@ -168,7 +176,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
         <div className="transcript-body">{conversation.messages.map(message => transcriptTab === "operator" && message.speaker !== "operator" ? null :
           <article id={messageAnchor(conversation.id, message.id)} tabIndex={-1} key={message.id}
             className={`message ${message.speaker}${highlighted.has(message.id) ? " highlighted" : ""}`}>
-            <div className="message-meta"><span>{t(speakers[message.speaker])}</span><time title={message.timestamp}>{timeLabel(message.timestamp)}</time></div>
+            <div className="message-meta"><span>{t(speakerLabel(message))}</span><time title={message.timestamp ?? undefined}>{timeLabel(message.timestamp)}</time></div>
             <div className="message-bubble">{message.text}</div>
             {highlighted.has(message.id) && <span className="evidence-caption"><Check aria-hidden="true" />{message.id} {t("· основание оценки")}</span>}
           </article>)}</div>
@@ -177,6 +185,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
       <section className="panel criteria-panel">
         <div className="panel-heading"><div><h2>{t("Оценка по критериям")}</h2><p>{t("От решения — к исходной реплике")}</p></div><span className="count-badge">{formatNumber(criteria.length)}</span></div>
         {!currentEvaluation && <div className="pending-notice"><Info aria-hidden="true" /><h3>{t("Оценка ещё не выполнена")}</h3><p>{t("Выберите версию чек-листа и запустите проверку. При недоступности модели результат не подменяется демонстрационными баллами.")}</p></div>}
+        {currentEvaluation && currentReview && <AuditReview evaluation={currentEvaluation} review={currentReview} jump={jump}/>}
         <div className="criteria-list">{criteria.map(criterion => {
           const row = results.get(criterion.id);
           const contribution = contributions.get(criterion.id);
@@ -189,7 +198,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
           const existingAppeal = currentReview?.appeals.some(appeal => appeal.criterion_id === criterion.id && appeal.status === "open");
           const serverPoints = !flag && !pending && !na && scoring?.status === "complete" ? contribution?.points ?? null : null;
           return <div className={`criterion${open ? " expanded" : ""}`} key={criterion.id}>
-            <button className="criterion-toggle" onClick={() => setExpanded(open ? null : criterion.id)} aria-expanded={open}>
+            <button className="criterion-toggle" id={`criterion-toggle-${conversation.id}-${criterion.id}`} onClick={() => setExpanded(open ? null : criterion.id)} aria-expanded={open}>
               <span className={`criterion-check ${pending || na ? "muted" : positive ? "pass" : "fail"}`}>{pending || na ? <Minus aria-hidden="true" /> : positive ? <Check aria-hidden="true" /> : <AlertTriangle aria-hidden="true" />}</span>
               <span className="criterion-title"><strong>{criterion.title}</strong><small>{resultLabel(row, criterion)} · {flag ? t("Отдельный флаг") : t('Исходный вес {weight}', { weight: formatNumber(criterion.weight) })}</small></span>
               <span className={`criterion-score${pending || na ? " muted" : ""}`}>

@@ -1,0 +1,2086 @@
+{
+  "date": "2026-11-08",
+  "purpose": "Retrospective local diagnostics; public synthetic gold and preliminary Codex pilot; no human gold in these cohorts.",
+  "rule": "Each review is an incorrect label. MAE uses explicitly reported common numeric conversations, which can vary across analyses.",
+  "timing_note": "reader-public and resolution supplementary runs partially shared the worker. Use these runs for labels only.",
+  "weights_sha256": {
+    "issai": "4c0beeaa5d24765d791fc6c0fee9b4a30b5e563d18dd6830c61b9993faf8e0b6",
+    "plain": "dc2a39aef291f91a9116ad214058da0d86eb648743a124bd8c333787c4b9c91c"
+  },
+  "raw_inputs_sha256": {
+    "public-gold16.json": "4987f3f62fbd7f816119260a9132c9b0a9431d09d84455e0e33a190e13cdc933",
+    "public-holdout.json": "ecf251e30da62337febf2c622957775c19bb5714bfe9c2394b83edb170341df0",
+    "public-reference-runs.json": "47c613719c02536ad6d798380b1bbcba3b42d11a48888269c29bb86cdf3b7640"
+  },
+  "public_source": {
+    "repo": "useing123/d00mathon",
+    "commit": "39f9cc1f2c39ec97d864fa99c7505392c2d29b28"
+  },
+  "weight_comparison": {
+    "public": {
+      "counts": {
+        "chats": 10,
+        "issai_numeric": 8,
+        "plain_numeric": 10,
+        "n": 80,
+        "issai": 62,
+        "plain": 71,
+        "fixed": 10,
+        "broken": 1
+      },
+      "language": {
+        "EN": {
+          "n": 24,
+          "issai": 21,
+          "plain": 22
+        },
+        "RU": {
+          "n": 40,
+          "issai": 29,
+          "plain": 33
+        },
+        "KZ": {
+          "n": 16,
+          "issai": 12,
+          "plain": 16
+        }
+      },
+      "common_n": 8,
+      "common_mae": {
+        "issai": 10.825,
+        "plain": 10.538
+      }
+    },
+    "gold16": {
+      "counts": {
+        "chats": 16,
+        "issai_numeric": 16,
+        "plain_numeric": 15,
+        "n": 128,
+        "issai": 106,
+        "plain": 103,
+        "fixed": 3,
+        "broken": 6
+      },
+      "language": {
+        "RU": {
+          "n": 72,
+          "issai": 60,
+          "plain": 59
+        },
+        "KZ": {
+          "n": 24,
+          "issai": 20,
+          "plain": 19
+        },
+        "EN": {
+          "n": 32,
+          "issai": 26,
+          "plain": 25
+        }
+      },
+      "common_n": 15,
+      "common_mae": {
+        "issai": 9.489,
+        "plain": 8.664
+      }
+    },
+    "pilot": {
+      "counts": {
+        "chats": 12,
+        "issai_numeric": 10,
+        "plain_numeric": 12,
+        "n": 96,
+        "issai": 78,
+        "plain": 84,
+        "fixed": 7,
+        "broken": 1
+      },
+      "language": {
+        "RU": {
+          "n": 32,
+          "issai": 23,
+          "plain": 25
+        },
+        "KZ": {
+          "n": 32,
+          "issai": 25,
+          "plain": 28
+        },
+        "EN": {
+          "n": 32,
+          "issai": 30,
+          "plain": 31
+        }
+      },
+      "common_n": 10,
+      "common_mae": {
+        "issai": 8.393,
+        "plain": 9.56
+      }
+    }
+  },
+  "external_same_rows": {
+    "common_chats": [
+      "hold-01-en-bonds-clarify",
+      "hold-02-call-ru-phone-change-no-id",
+      "hold-03-kz-no-name",
+      "hold-04-ru-transfer-minor-detail",
+      "hold-05-en-angry-order-cancelled",
+      "hold-06-ru-wrong-advice-close",
+      "hold-08-ru-third-party-data",
+      "hold-09-en-long-gap-no-warning"
+    ],
+    "models": {
+      "results/kz_models/issai_9b_kk_holdout.json": {
+        "correct": 71,
+        "n": 80,
+        "complete": 9,
+        "common_mae": 9.561,
+        "criteria": {
+          "contact": 10,
+          "needs": 7,
+          "identity": 8,
+          "consultation": 7,
+          "empathy": 10,
+          "dialogue": 9,
+          "closing": 10,
+          "gross_errors": 10
+        }
+      },
+      "results/kz_models/q38_27b_fp8_holdout.json": {
+        "correct": 77,
+        "n": 80,
+        "complete": 10,
+        "common_mae": 3.902,
+        "criteria": {
+          "contact": 10,
+          "needs": 9,
+          "identity": 10,
+          "consultation": 8,
+          "empathy": 10,
+          "dialogue": 10,
+          "closing": 10,
+          "gross_errors": 10
+        }
+      },
+      "results/gold_holdout_v13.json": {
+        "correct": 77,
+        "n": 80,
+        "complete": 10,
+        "common_mae": 0.0,
+        "criteria": {
+          "contact": 10,
+          "needs": 10,
+          "identity": 10,
+          "consultation": 9,
+          "empathy": 9,
+          "dialogue": 9,
+          "closing": 10,
+          "gross_errors": 10
+        }
+      },
+      "results/oss/jev3_holdout.json": {
+        "correct": 77,
+        "n": 80,
+        "complete": 10,
+        "common_mae": 0.961,
+        "criteria": {
+          "contact": 10,
+          "needs": 10,
+          "identity": 10,
+          "consultation": 8,
+          "empathy": 10,
+          "dialogue": 9,
+          "closing": 10,
+          "gross_errors": 10
+        }
+      },
+      "EVA ISSAI primary": {
+        "correct": 62,
+        "n": 80,
+        "complete": 8,
+        "common_mae": 10.825,
+        "criteria": {
+          "contact": 10,
+          "needs": 4,
+          "identity": 7,
+          "consultation": 5,
+          "empathy": 8,
+          "dialogue": 9,
+          "closing": 9,
+          "gross_errors": 10
+        }
+      },
+      "EVA ISSAI spans": {
+        "correct": 62,
+        "n": 80,
+        "complete": 8,
+        "common_mae": 10.825,
+        "criteria": {
+          "contact": 10,
+          "needs": 4,
+          "identity": 7,
+          "consultation": 5,
+          "empathy": 8,
+          "dialogue": 9,
+          "closing": 9,
+          "gross_errors": 10
+        }
+      },
+      "EVA ISSAI spans_examples": {
+        "correct": 62,
+        "n": 80,
+        "complete": 8,
+        "common_mae": 10.825,
+        "criteria": {
+          "contact": 10,
+          "needs": 4,
+          "identity": 7,
+          "consultation": 5,
+          "empathy": 8,
+          "dialogue": 9,
+          "closing": 9,
+          "gross_errors": 10
+        }
+      },
+      "EVA ISSAI resolution-v2": {
+        "correct": 66,
+        "n": 80,
+        "complete": 10,
+        "common_mae": 10.825,
+        "criteria": {
+          "contact": 10,
+          "needs": 4,
+          "identity": 9,
+          "consultation": 6,
+          "empathy": 9,
+          "dialogue": 9,
+          "closing": 9,
+          "gross_errors": 10
+        }
+      },
+      "EVA Qwen3.5-9B-Q5_K_M": {
+        "correct": 71,
+        "n": 80,
+        "complete": 10,
+        "common_mae": 10.538,
+        "criteria": {
+          "contact": 10,
+          "needs": 9,
+          "identity": 9,
+          "consultation": 7,
+          "empathy": 8,
+          "dialogue": 9,
+          "closing": 9,
+          "gross_errors": 10
+        }
+      },
+      "EVA ISSAI criterion reader": {
+        "correct": 30,
+        "n": 80,
+        "complete": 10,
+        "common_mae": 45.524,
+        "criteria": {
+          "contact": 1,
+          "needs": 3,
+          "identity": 7,
+          "consultation": 5,
+          "empathy": 0,
+          "dialogue": 4,
+          "closing": 1,
+          "gross_errors": 9
+        }
+      }
+    }
+  },
+  "series": {
+    "issai-synthetic.jsonl": {
+      "sha256": "3030aa927459cc67bf9a8fd0f92d4d3676ebe69a12c8f730a3eabebc5c76f78e",
+      "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+      "version": {
+        "ledger": "aae03624b1c72b620cf1b9f12e52a99354b2e18de4450dea1898944bd68556c0",
+        "examples": "6fb8265d7088a50ebeb9f9dd4e2523f82711953011cba55199d7c723ef5247ec"
+      },
+      "counts": {
+        "primary": {
+          "chats": 24,
+          "complete": 22,
+          "review_all": 3,
+          "n": 24,
+          "correct": 11,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 1,
+          "missed_na": 1,
+          "false_max": 7,
+          "missed_max": 0,
+          "target_low": 12,
+          "correct_low": 0,
+          "pair_ok": 0,
+          "pairs": 12
+        },
+        "ledger": {
+          "chats": 24,
+          "complete": 22,
+          "review_all": 3,
+          "read_retained": 19,
+          "n": 24,
+          "correct": 12,
+          "fixed": 1,
+          "broken": 0,
+          "false_na": 1,
+          "missed_na": 1,
+          "false_max": 5,
+          "missed_max": 0,
+          "target_low": 12,
+          "correct_low": 1,
+          "read_corroborated": 3,
+          "read_amended": 2,
+          "pair_ok": 1,
+          "pairs": 12
+        },
+        "examples": {
+          "chats": 24,
+          "complete": 22,
+          "review_all": 3,
+          "read_retained": 20,
+          "n": 24,
+          "correct": 12,
+          "fixed": 1,
+          "broken": 0,
+          "false_na": 1,
+          "missed_na": 1,
+          "false_max": 6,
+          "missed_max": 0,
+          "target_low": 12,
+          "correct_low": 1,
+          "read_corroborated": 3,
+          "read_amended": 1,
+          "pair_ok": 1,
+          "pairs": 12
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "consultation": {
+            "correct": 11,
+            "n": 24
+          }
+        },
+        "ledger": {
+          "consultation": {
+            "correct": 12,
+            "n": 24
+          }
+        },
+        "examples": {
+          "consultation": {
+            "correct": 12,
+            "n": 24
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "RU": {
+            "correct": 4,
+            "n": 8
+          },
+          "KZ": {
+            "correct": 3,
+            "n": 8
+          },
+          "EN": {
+            "correct": 4,
+            "n": 8
+          }
+        },
+        "ledger": {
+          "RU": {
+            "correct": 4,
+            "n": 8
+          },
+          "KZ": {
+            "correct": 3,
+            "n": 8
+          },
+          "EN": {
+            "correct": 5,
+            "n": 8
+          }
+        },
+        "examples": {
+          "RU": {
+            "correct": 4,
+            "n": 8
+          },
+          "KZ": {
+            "correct": 3,
+            "n": 8
+          },
+          "EN": {
+            "correct": 5,
+            "n": 8
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 0,
+          "mae": null
+        },
+        "ledger": {
+          "n": 0,
+          "mae": null
+        },
+        "examples": {
+          "n": 0,
+          "mae": null
+        }
+      },
+      "warm_total_s": {
+        "primary": {
+          "median": 7.39,
+          "p95": 13.59
+        },
+        "ledger": {
+          "median": 10.61,
+          "p95": 14.33
+        },
+        "examples": {
+          "median": 10.92,
+          "p95": 16.83
+        }
+      },
+      "extra_s": {
+        "primary": null,
+        "ledger": {
+          "median": 3.0,
+          "p95": 4.54
+        },
+        "examples": {
+          "median": 3.2,
+          "p95": 4.32
+        }
+      }
+    },
+    "issai-pilot.jsonl": {
+      "sha256": "76891c1af6236d5fabf6d5d8b33a108e92a22019bc4d3cef89fdf224fcccd579",
+      "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+      "version": {
+        "ledger": "aae03624b1c72b620cf1b9f12e52a99354b2e18de4450dea1898944bd68556c0",
+        "examples": "6fb8265d7088a50ebeb9f9dd4e2523f82711953011cba55199d7c723ef5247ec"
+      },
+      "counts": {
+        "primary": {
+          "chats": 12,
+          "complete": 10,
+          "review_all": 3,
+          "n": 96,
+          "correct": 78,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 6,
+          "false_max": 1,
+          "missed_max": 0,
+          "target_low": 1,
+          "correct_low": 0
+        },
+        "ledger": {
+          "chats": 12,
+          "complete": 10,
+          "review_all": 3,
+          "read_retained": 11,
+          "n": 96,
+          "correct": 78,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 6,
+          "false_max": 1,
+          "missed_max": 0,
+          "target_low": 1,
+          "correct_low": 0,
+          "read_corroborated": 1
+        },
+        "examples": {
+          "chats": 12,
+          "complete": 10,
+          "review_all": 3,
+          "read_retained": 11,
+          "n": 96,
+          "correct": 78,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 6,
+          "false_max": 1,
+          "missed_max": 0,
+          "target_low": 1,
+          "correct_low": 0,
+          "read_corroborated": 1
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 12,
+            "n": 12
+          },
+          "needs": {
+            "correct": 6,
+            "n": 12
+          },
+          "identity": {
+            "correct": 11,
+            "n": 12
+          },
+          "consultation": {
+            "correct": 10,
+            "n": 12
+          },
+          "empathy": {
+            "correct": 11,
+            "n": 12
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 12
+          },
+          "closing": {
+            "correct": 7,
+            "n": 12
+          },
+          "gross_errors": {
+            "correct": 12,
+            "n": 12
+          }
+        },
+        "ledger": {
+          "contact": {
+            "correct": 12,
+            "n": 12
+          },
+          "needs": {
+            "correct": 6,
+            "n": 12
+          },
+          "identity": {
+            "correct": 11,
+            "n": 12
+          },
+          "consultation": {
+            "correct": 10,
+            "n": 12
+          },
+          "empathy": {
+            "correct": 11,
+            "n": 12
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 12
+          },
+          "closing": {
+            "correct": 7,
+            "n": 12
+          },
+          "gross_errors": {
+            "correct": 12,
+            "n": 12
+          }
+        },
+        "examples": {
+          "contact": {
+            "correct": 12,
+            "n": 12
+          },
+          "needs": {
+            "correct": 6,
+            "n": 12
+          },
+          "identity": {
+            "correct": 11,
+            "n": 12
+          },
+          "consultation": {
+            "correct": 10,
+            "n": 12
+          },
+          "empathy": {
+            "correct": 11,
+            "n": 12
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 12
+          },
+          "closing": {
+            "correct": 7,
+            "n": 12
+          },
+          "gross_errors": {
+            "correct": 12,
+            "n": 12
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "RU": {
+            "correct": 23,
+            "n": 32
+          },
+          "KZ": {
+            "correct": 25,
+            "n": 32
+          },
+          "EN": {
+            "correct": 30,
+            "n": 32
+          }
+        },
+        "ledger": {
+          "RU": {
+            "correct": 23,
+            "n": 32
+          },
+          "KZ": {
+            "correct": 25,
+            "n": 32
+          },
+          "EN": {
+            "correct": 30,
+            "n": 32
+          }
+        },
+        "examples": {
+          "RU": {
+            "correct": 23,
+            "n": 32
+          },
+          "KZ": {
+            "correct": 25,
+            "n": 32
+          },
+          "EN": {
+            "correct": 30,
+            "n": 32
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 10,
+          "mae": 8.393
+        },
+        "ledger": {
+          "n": 10,
+          "mae": 8.393
+        },
+        "examples": {
+          "n": 10,
+          "mae": 8.393
+        }
+      },
+      "warm_total_s": {
+        "primary": null,
+        "ledger": null,
+        "examples": null
+      },
+      "extra_s": {
+        "primary": null,
+        "ledger": {
+          "median": 4.78,
+          "p95": 7.84
+        },
+        "examples": {
+          "median": 4.91,
+          "p95": 8.01
+        }
+      }
+    },
+    "issai-pilot-spans.jsonl": {
+      "sha256": "9126e8d7458db488727939409ea892eff373891689999bdccc64006ab8a32a4e",
+      "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+      "version": {
+        "spans": "739afe116b66bfdc23ff11e1625e9fda6bfbfcdbedecc33d03c1350583873161",
+        "spans_examples": "395c76c1a555b41f6a0e79f48bf02f34c3ca61cd90efb56ec764cfac8fb63573"
+      },
+      "counts": {
+        "primary": {
+          "chats": 12,
+          "complete": 10,
+          "review_all": 3,
+          "n": 96,
+          "correct": 78,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 6,
+          "false_max": 1,
+          "missed_max": 0,
+          "target_low": 1,
+          "correct_low": 0
+        },
+        "spans": {
+          "chats": 12,
+          "complete": 10,
+          "review_all": 3,
+          "read_retained": 11,
+          "n": 96,
+          "correct": 78,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 6,
+          "false_max": 1,
+          "missed_max": 0,
+          "target_low": 1,
+          "correct_low": 0,
+          "read_corroborated": 1
+        },
+        "spans_examples": {
+          "chats": 12,
+          "complete": 10,
+          "review_all": 3,
+          "read_retained": 10,
+          "n": 96,
+          "correct": 78,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 6,
+          "false_max": 1,
+          "missed_max": 0,
+          "target_low": 1,
+          "correct_low": 0,
+          "read_corroborated": 2
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 12,
+            "n": 12
+          },
+          "needs": {
+            "correct": 6,
+            "n": 12
+          },
+          "identity": {
+            "correct": 11,
+            "n": 12
+          },
+          "consultation": {
+            "correct": 10,
+            "n": 12
+          },
+          "empathy": {
+            "correct": 11,
+            "n": 12
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 12
+          },
+          "closing": {
+            "correct": 7,
+            "n": 12
+          },
+          "gross_errors": {
+            "correct": 12,
+            "n": 12
+          }
+        },
+        "spans": {
+          "contact": {
+            "correct": 12,
+            "n": 12
+          },
+          "needs": {
+            "correct": 6,
+            "n": 12
+          },
+          "identity": {
+            "correct": 11,
+            "n": 12
+          },
+          "consultation": {
+            "correct": 10,
+            "n": 12
+          },
+          "empathy": {
+            "correct": 11,
+            "n": 12
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 12
+          },
+          "closing": {
+            "correct": 7,
+            "n": 12
+          },
+          "gross_errors": {
+            "correct": 12,
+            "n": 12
+          }
+        },
+        "spans_examples": {
+          "contact": {
+            "correct": 12,
+            "n": 12
+          },
+          "needs": {
+            "correct": 6,
+            "n": 12
+          },
+          "identity": {
+            "correct": 11,
+            "n": 12
+          },
+          "consultation": {
+            "correct": 10,
+            "n": 12
+          },
+          "empathy": {
+            "correct": 11,
+            "n": 12
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 12
+          },
+          "closing": {
+            "correct": 7,
+            "n": 12
+          },
+          "gross_errors": {
+            "correct": 12,
+            "n": 12
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "RU": {
+            "correct": 23,
+            "n": 32
+          },
+          "KZ": {
+            "correct": 25,
+            "n": 32
+          },
+          "EN": {
+            "correct": 30,
+            "n": 32
+          }
+        },
+        "spans": {
+          "RU": {
+            "correct": 23,
+            "n": 32
+          },
+          "KZ": {
+            "correct": 25,
+            "n": 32
+          },
+          "EN": {
+            "correct": 30,
+            "n": 32
+          }
+        },
+        "spans_examples": {
+          "RU": {
+            "correct": 23,
+            "n": 32
+          },
+          "KZ": {
+            "correct": 25,
+            "n": 32
+          },
+          "EN": {
+            "correct": 30,
+            "n": 32
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 10,
+          "mae": 8.393
+        },
+        "spans": {
+          "n": 10,
+          "mae": 8.393
+        },
+        "spans_examples": {
+          "n": 10,
+          "mae": 8.393
+        }
+      },
+      "warm_total_s": {
+        "primary": null,
+        "spans": null,
+        "spans_examples": null
+      },
+      "extra_s": {
+        "primary": null,
+        "spans": {
+          "median": 4.14,
+          "p95": 8.64
+        },
+        "spans_examples": {
+          "median": 4.19,
+          "p95": 8.59
+        }
+      }
+    },
+    "issai-public.jsonl": {
+      "sha256": "938e801082f2ff47ad0388269d3ad11486f3942615ec78c150aab2691bb7b2d9",
+      "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+      "version": {
+        "spans": "739afe116b66bfdc23ff11e1625e9fda6bfbfcdbedecc33d03c1350583873161",
+        "spans_examples": "395c76c1a555b41f6a0e79f48bf02f34c3ca61cd90efb56ec764cfac8fb63573"
+      },
+      "counts": {
+        "primary": {
+          "chats": 10,
+          "complete": 8,
+          "review_all": 5,
+          "n": 80,
+          "correct": 62,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 3,
+          "missed_na": 7,
+          "false_max": 2,
+          "missed_max": 1,
+          "target_low": 3,
+          "correct_low": 0
+        },
+        "spans": {
+          "chats": 10,
+          "complete": 8,
+          "review_all": 5,
+          "read_corroborated": 2,
+          "n": 80,
+          "correct": 62,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 3,
+          "missed_na": 7,
+          "false_max": 2,
+          "missed_max": 1,
+          "target_low": 3,
+          "correct_low": 0,
+          "read_retained": 8
+        },
+        "spans_examples": {
+          "chats": 10,
+          "complete": 8,
+          "review_all": 5,
+          "read_corroborated": 2,
+          "n": 80,
+          "correct": 62,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 3,
+          "missed_na": 7,
+          "false_max": 2,
+          "missed_max": 1,
+          "target_low": 3,
+          "correct_low": 0,
+          "read_retained": 8
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 10,
+            "n": 10
+          },
+          "needs": {
+            "correct": 4,
+            "n": 10
+          },
+          "identity": {
+            "correct": 7,
+            "n": 10
+          },
+          "consultation": {
+            "correct": 5,
+            "n": 10
+          },
+          "empathy": {
+            "correct": 8,
+            "n": 10
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 10
+          },
+          "closing": {
+            "correct": 9,
+            "n": 10
+          },
+          "gross_errors": {
+            "correct": 10,
+            "n": 10
+          }
+        },
+        "spans": {
+          "contact": {
+            "correct": 10,
+            "n": 10
+          },
+          "needs": {
+            "correct": 4,
+            "n": 10
+          },
+          "identity": {
+            "correct": 7,
+            "n": 10
+          },
+          "consultation": {
+            "correct": 5,
+            "n": 10
+          },
+          "empathy": {
+            "correct": 8,
+            "n": 10
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 10
+          },
+          "closing": {
+            "correct": 9,
+            "n": 10
+          },
+          "gross_errors": {
+            "correct": 10,
+            "n": 10
+          }
+        },
+        "spans_examples": {
+          "contact": {
+            "correct": 10,
+            "n": 10
+          },
+          "needs": {
+            "correct": 4,
+            "n": 10
+          },
+          "identity": {
+            "correct": 7,
+            "n": 10
+          },
+          "consultation": {
+            "correct": 5,
+            "n": 10
+          },
+          "empathy": {
+            "correct": 8,
+            "n": 10
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 10
+          },
+          "closing": {
+            "correct": 9,
+            "n": 10
+          },
+          "gross_errors": {
+            "correct": 10,
+            "n": 10
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "EN": {
+            "correct": 21,
+            "n": 24
+          },
+          "RU": {
+            "correct": 29,
+            "n": 40
+          },
+          "KZ": {
+            "correct": 12,
+            "n": 16
+          }
+        },
+        "spans": {
+          "EN": {
+            "correct": 21,
+            "n": 24
+          },
+          "RU": {
+            "correct": 29,
+            "n": 40
+          },
+          "KZ": {
+            "correct": 12,
+            "n": 16
+          }
+        },
+        "spans_examples": {
+          "EN": {
+            "correct": 21,
+            "n": 24
+          },
+          "RU": {
+            "correct": 29,
+            "n": 40
+          },
+          "KZ": {
+            "correct": 12,
+            "n": 16
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 8,
+          "mae": 10.825
+        },
+        "spans": {
+          "n": 8,
+          "mae": 10.825
+        },
+        "spans_examples": {
+          "n": 8,
+          "mae": 10.825
+        }
+      },
+      "warm_total_s": {
+        "primary": {
+          "median": 9.33,
+          "p95": 15.49
+        },
+        "spans": {
+          "median": 12.16,
+          "p95": 20.06
+        },
+        "spans_examples": {
+          "median": 12.65,
+          "p95": 20.16
+        }
+      },
+      "extra_s": {
+        "primary": null,
+        "spans": {
+          "median": 3.01,
+          "p95": 4.84
+        },
+        "spans_examples": {
+          "median": 3.37,
+          "p95": 4.93
+        }
+      }
+    },
+    "plain-public.jsonl": {
+      "sha256": "aa62500abbc9f69168d0bd52e2f783870218ee6eab03a2258d73424354a6d0f1",
+      "model": "Qwen3.5-9B-Q5_K_M",
+      "version": {},
+      "counts": {
+        "primary": {
+          "chats": 10,
+          "complete": 10,
+          "review_all": 0,
+          "n": 80,
+          "correct": 71,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 2,
+          "missed_na": 0,
+          "false_max": 2,
+          "missed_max": 0,
+          "target_low": 3,
+          "correct_low": 0
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 10,
+            "n": 10
+          },
+          "needs": {
+            "correct": 9,
+            "n": 10
+          },
+          "identity": {
+            "correct": 9,
+            "n": 10
+          },
+          "consultation": {
+            "correct": 7,
+            "n": 10
+          },
+          "empathy": {
+            "correct": 8,
+            "n": 10
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 10
+          },
+          "closing": {
+            "correct": 9,
+            "n": 10
+          },
+          "gross_errors": {
+            "correct": 10,
+            "n": 10
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "EN": {
+            "correct": 22,
+            "n": 24
+          },
+          "RU": {
+            "correct": 33,
+            "n": 40
+          },
+          "KZ": {
+            "correct": 16,
+            "n": 16
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 10,
+          "mae": 9.969
+        }
+      },
+      "warm_total_s": {
+        "primary": {
+          "median": 7.54,
+          "p95": 61.22
+        }
+      },
+      "extra_s": {
+        "primary": null
+      }
+    },
+    "reader-public.jsonl": {
+      "sha256": "40a71d45218e65777c312d9dce01498aa44376c49ed1d2674f40d940bd00414f",
+      "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+      "version": {
+        "reader": "48a9723e11d3aefe084d6f25cbd61005e1c91966a309fef5cc759d7e9c68a14d"
+      },
+      "counts": {
+        "primary": {
+          "chats": 10,
+          "complete": 8,
+          "review_all": 5,
+          "n": 80,
+          "correct": 62,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 3,
+          "missed_na": 7,
+          "false_max": 2,
+          "missed_max": 1,
+          "target_low": 3,
+          "correct_low": 0
+        },
+        "reader": {
+          "chats": 10,
+          "complete": 10,
+          "review_all": 0,
+          "read_evaluated": 10,
+          "n": 80,
+          "correct": 30,
+          "fixed": 3,
+          "broken": 35,
+          "false_na": 14,
+          "missed_na": 6,
+          "false_max": 1,
+          "missed_max": 1,
+          "target_low": 3,
+          "correct_low": 0
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 10,
+            "n": 10
+          },
+          "needs": {
+            "correct": 4,
+            "n": 10
+          },
+          "identity": {
+            "correct": 7,
+            "n": 10
+          },
+          "consultation": {
+            "correct": 5,
+            "n": 10
+          },
+          "empathy": {
+            "correct": 8,
+            "n": 10
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 10
+          },
+          "closing": {
+            "correct": 9,
+            "n": 10
+          },
+          "gross_errors": {
+            "correct": 10,
+            "n": 10
+          }
+        },
+        "reader": {
+          "contact": {
+            "correct": 1,
+            "n": 10
+          },
+          "needs": {
+            "correct": 3,
+            "n": 10
+          },
+          "identity": {
+            "correct": 7,
+            "n": 10
+          },
+          "consultation": {
+            "correct": 5,
+            "n": 10
+          },
+          "empathy": {
+            "correct": 0,
+            "n": 10
+          },
+          "dialogue": {
+            "correct": 4,
+            "n": 10
+          },
+          "closing": {
+            "correct": 1,
+            "n": 10
+          },
+          "gross_errors": {
+            "correct": 9,
+            "n": 10
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "EN": {
+            "correct": 21,
+            "n": 24
+          },
+          "RU": {
+            "correct": 29,
+            "n": 40
+          },
+          "KZ": {
+            "correct": 12,
+            "n": 16
+          }
+        },
+        "reader": {
+          "EN": {
+            "correct": 9,
+            "n": 24
+          },
+          "RU": {
+            "correct": 11,
+            "n": 40
+          },
+          "KZ": {
+            "correct": 10,
+            "n": 16
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 8,
+          "mae": 10.825
+        },
+        "reader": {
+          "n": 8,
+          "mae": 45.524
+        }
+      }
+    },
+    "issai-gold16.jsonl": {
+      "sha256": "712e74f36156bb4b3b154f6f0b1a700597f17180cc507297eb51cd07c35efd11",
+      "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+      "version": {
+        "reader": "48a9723e11d3aefe084d6f25cbd61005e1c91966a309fef5cc759d7e9c68a14d"
+      },
+      "counts": {
+        "primary": {
+          "chats": 16,
+          "complete": 16,
+          "review_all": 0,
+          "n": 128,
+          "correct": 106,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 3,
+          "false_max": 2,
+          "missed_max": 0,
+          "target_low": 4,
+          "correct_low": 1
+        },
+        "reader": {
+          "chats": 16,
+          "complete": 15,
+          "review_all": 1,
+          "read_evaluated": 16,
+          "n": 128,
+          "correct": 57,
+          "fixed": 3,
+          "broken": 52,
+          "false_na": 20,
+          "missed_na": 3,
+          "false_max": 0,
+          "missed_max": 2,
+          "target_low": 4,
+          "correct_low": 2
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 16,
+            "n": 16
+          },
+          "needs": {
+            "correct": 13,
+            "n": 16
+          },
+          "identity": {
+            "correct": 12,
+            "n": 16
+          },
+          "consultation": {
+            "correct": 13,
+            "n": 16
+          },
+          "empathy": {
+            "correct": 14,
+            "n": 16
+          },
+          "dialogue": {
+            "correct": 11,
+            "n": 16
+          },
+          "closing": {
+            "correct": 12,
+            "n": 16
+          },
+          "gross_errors": {
+            "correct": 15,
+            "n": 16
+          }
+        },
+        "reader": {
+          "contact": {
+            "correct": 3,
+            "n": 16
+          },
+          "needs": {
+            "correct": 12,
+            "n": 16
+          },
+          "identity": {
+            "correct": 9,
+            "n": 16
+          },
+          "consultation": {
+            "correct": 11,
+            "n": 16
+          },
+          "empathy": {
+            "correct": 2,
+            "n": 16
+          },
+          "dialogue": {
+            "correct": 6,
+            "n": 16
+          },
+          "closing": {
+            "correct": 2,
+            "n": 16
+          },
+          "gross_errors": {
+            "correct": 12,
+            "n": 16
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "RU": {
+            "correct": 60,
+            "n": 72
+          },
+          "KZ": {
+            "correct": 20,
+            "n": 24
+          },
+          "EN": {
+            "correct": 26,
+            "n": 32
+          }
+        },
+        "reader": {
+          "RU": {
+            "correct": 29,
+            "n": 72
+          },
+          "KZ": {
+            "correct": 12,
+            "n": 24
+          },
+          "EN": {
+            "correct": 16,
+            "n": 32
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 15,
+          "mae": 9.489
+        },
+        "reader": {
+          "n": 15,
+          "mae": 38.912
+        }
+      },
+      "warm_total_s": {
+        "primary": {
+          "median": 10.01,
+          "p95": 26.55
+        },
+        "reader": {
+          "median": 30.25,
+          "p95": 54.1
+        }
+      },
+      "extra_s": {
+        "primary": null,
+        "reader": {
+          "median": 30.25,
+          "p95": 54.1
+        }
+      }
+    },
+    "resolution-public.jsonl": {
+      "sha256": "97965ca15a1a145667c23308e76afd779a2b93c4dfecda46525fea83107f08bb",
+      "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+      "version": {
+        "resolution": "38a671764d2f5970101cecfbcbdac1ac4014ccf3d2ceed5cc7f91db6e0ac2a6f"
+      },
+      "counts": {
+        "primary": {
+          "chats": 10,
+          "complete": 8,
+          "review_all": 5,
+          "n": 80,
+          "correct": 62,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 3,
+          "missed_na": 7,
+          "false_max": 2,
+          "missed_max": 1,
+          "target_low": 3,
+          "correct_low": 0
+        },
+        "resolution": {
+          "chats": 10,
+          "complete": 10,
+          "review_all": 0,
+          "read_evaluated": 10,
+          "n": 80,
+          "correct": 66,
+          "fixed": 4,
+          "broken": 0,
+          "false_na": 3,
+          "missed_na": 4,
+          "false_max": 2,
+          "missed_max": 1,
+          "target_low": 3,
+          "correct_low": 0
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 10,
+            "n": 10
+          },
+          "needs": {
+            "correct": 4,
+            "n": 10
+          },
+          "identity": {
+            "correct": 7,
+            "n": 10
+          },
+          "consultation": {
+            "correct": 5,
+            "n": 10
+          },
+          "empathy": {
+            "correct": 8,
+            "n": 10
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 10
+          },
+          "closing": {
+            "correct": 9,
+            "n": 10
+          },
+          "gross_errors": {
+            "correct": 10,
+            "n": 10
+          }
+        },
+        "resolution": {
+          "contact": {
+            "correct": 10,
+            "n": 10
+          },
+          "needs": {
+            "correct": 4,
+            "n": 10
+          },
+          "identity": {
+            "correct": 9,
+            "n": 10
+          },
+          "consultation": {
+            "correct": 6,
+            "n": 10
+          },
+          "empathy": {
+            "correct": 9,
+            "n": 10
+          },
+          "dialogue": {
+            "correct": 9,
+            "n": 10
+          },
+          "closing": {
+            "correct": 9,
+            "n": 10
+          },
+          "gross_errors": {
+            "correct": 10,
+            "n": 10
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "EN": {
+            "correct": 21,
+            "n": 24
+          },
+          "RU": {
+            "correct": 29,
+            "n": 40
+          },
+          "KZ": {
+            "correct": 12,
+            "n": 16
+          }
+        },
+        "resolution": {
+          "EN": {
+            "correct": 21,
+            "n": 24
+          },
+          "RU": {
+            "correct": 30,
+            "n": 40
+          },
+          "KZ": {
+            "correct": 15,
+            "n": 16
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 8,
+          "mae": 10.825
+        },
+        "resolution": {
+          "n": 8,
+          "mae": 10.825
+        }
+      }
+    },
+    "resolution-gold16.jsonl": {
+      "sha256": "e4b916910505904a8715664e05b4432401a41c553dc6b5f9696c7305d1dd2c44",
+      "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+      "version": {
+        "resolution": "38a671764d2f5970101cecfbcbdac1ac4014ccf3d2ceed5cc7f91db6e0ac2a6f"
+      },
+      "counts": {
+        "primary": {
+          "chats": 16,
+          "complete": 16,
+          "review_all": 0,
+          "n": 128,
+          "correct": 106,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 3,
+          "false_max": 2,
+          "missed_max": 0,
+          "target_low": 4,
+          "correct_low": 1
+        },
+        "resolution": {
+          "chats": 16,
+          "complete": 16,
+          "review_all": 0,
+          "read_evaluated": 16,
+          "n": 128,
+          "correct": 106,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 4,
+          "missed_na": 3,
+          "false_max": 2,
+          "missed_max": 0,
+          "target_low": 4,
+          "correct_low": 1
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 16,
+            "n": 16
+          },
+          "needs": {
+            "correct": 13,
+            "n": 16
+          },
+          "identity": {
+            "correct": 12,
+            "n": 16
+          },
+          "consultation": {
+            "correct": 13,
+            "n": 16
+          },
+          "empathy": {
+            "correct": 14,
+            "n": 16
+          },
+          "dialogue": {
+            "correct": 11,
+            "n": 16
+          },
+          "closing": {
+            "correct": 12,
+            "n": 16
+          },
+          "gross_errors": {
+            "correct": 15,
+            "n": 16
+          }
+        },
+        "resolution": {
+          "contact": {
+            "correct": 16,
+            "n": 16
+          },
+          "needs": {
+            "correct": 13,
+            "n": 16
+          },
+          "identity": {
+            "correct": 12,
+            "n": 16
+          },
+          "consultation": {
+            "correct": 13,
+            "n": 16
+          },
+          "empathy": {
+            "correct": 14,
+            "n": 16
+          },
+          "dialogue": {
+            "correct": 11,
+            "n": 16
+          },
+          "closing": {
+            "correct": 12,
+            "n": 16
+          },
+          "gross_errors": {
+            "correct": 15,
+            "n": 16
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "RU": {
+            "correct": 60,
+            "n": 72
+          },
+          "KZ": {
+            "correct": 20,
+            "n": 24
+          },
+          "EN": {
+            "correct": 26,
+            "n": 32
+          }
+        },
+        "resolution": {
+          "RU": {
+            "correct": 60,
+            "n": 72
+          },
+          "KZ": {
+            "correct": 20,
+            "n": 24
+          },
+          "EN": {
+            "correct": 26,
+            "n": 32
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 16,
+          "mae": 8.896
+        },
+        "resolution": {
+          "n": 16,
+          "mae": 8.896
+        }
+      }
+    },
+    "plain-gold16.jsonl": {
+      "sha256": "5dac2c93e49bfdb8b9b4686c547b0b21644bac56e5a24910294831e3de5856b3",
+      "model": "Qwen3.5-9B-Q5_K_M",
+      "version": {},
+      "counts": {
+        "primary": {
+          "chats": 16,
+          "complete": 15,
+          "review_all": 1,
+          "n": 128,
+          "correct": 103,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 5,
+          "missed_na": 0,
+          "false_max": 3,
+          "missed_max": 1,
+          "target_low": 4,
+          "correct_low": 1
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 15,
+            "n": 16
+          },
+          "needs": {
+            "correct": 15,
+            "n": 16
+          },
+          "identity": {
+            "correct": 13,
+            "n": 16
+          },
+          "consultation": {
+            "correct": 12,
+            "n": 16
+          },
+          "empathy": {
+            "correct": 11,
+            "n": 16
+          },
+          "dialogue": {
+            "correct": 10,
+            "n": 16
+          },
+          "closing": {
+            "correct": 12,
+            "n": 16
+          },
+          "gross_errors": {
+            "correct": 15,
+            "n": 16
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "RU": {
+            "correct": 59,
+            "n": 72
+          },
+          "KZ": {
+            "correct": 19,
+            "n": 24
+          },
+          "EN": {
+            "correct": 25,
+            "n": 32
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 15,
+          "mae": 8.664
+        }
+      },
+      "warm_total_s": {
+        "primary": {
+          "median": 8.04,
+          "p95": 52.3
+        }
+      },
+      "extra_s": {
+        "primary": null
+      }
+    },
+    "plain-pilot.jsonl": {
+      "sha256": "96a0319321f54664c4ad8c2950cddd59e9b0cdc1ae33e52aca14dd200c23c4a1",
+      "model": "Qwen3.5-9B-Q5_K_M",
+      "version": {},
+      "counts": {
+        "primary": {
+          "chats": 12,
+          "complete": 12,
+          "review_all": 0,
+          "n": 96,
+          "correct": 84,
+          "fixed": 0,
+          "broken": 0,
+          "false_na": 3,
+          "missed_na": 1,
+          "false_max": 2,
+          "missed_max": 0,
+          "target_low": 1,
+          "correct_low": 0
+        }
+      },
+      "by_criterion": {
+        "primary": {
+          "contact": {
+            "correct": 12,
+            "n": 12
+          },
+          "needs": {
+            "correct": 9,
+            "n": 12
+          },
+          "identity": {
+            "correct": 12,
+            "n": 12
+          },
+          "consultation": {
+            "correct": 10,
+            "n": 12
+          },
+          "empathy": {
+            "correct": 10,
+            "n": 12
+          },
+          "dialogue": {
+            "correct": 10,
+            "n": 12
+          },
+          "closing": {
+            "correct": 9,
+            "n": 12
+          },
+          "gross_errors": {
+            "correct": 12,
+            "n": 12
+          }
+        }
+      },
+      "by_language": {
+        "primary": {
+          "RU": {
+            "correct": 25,
+            "n": 32
+          },
+          "KZ": {
+            "correct": 28,
+            "n": 32
+          },
+          "EN": {
+            "correct": 31,
+            "n": 32
+          }
+        }
+      },
+      "mae": {
+        "primary": {
+          "n": 12,
+          "mae": 8.607
+        }
+      },
+      "warm_total_s": {
+        "primary": {
+          "median": 9.09,
+          "p95": 16.09
+        }
+      },
+      "extra_s": {
+        "primary": null
+      }
+    }
+  },
+  "package_counts": {
+    "human_chats": 12,
+    "empty_rows_per_person": 96,
+    "RU": 10,
+    "KZ": 1,
+    "EN": 1
+  },
+  "checks": {
+    "ml_tests_passed": 150,
+    "endpoint": "real local /v1/evaluate",
+    "backend": "isolated /api/v1/evaluations",
+    "browser": "offline ballot edit and JSONL download"
+  }
+}

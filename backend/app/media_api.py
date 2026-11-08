@@ -16,7 +16,7 @@ from .media import (
 
 def install_media_routes(application, contracts, store, settings):
     media = MediaService(store, settings.media_root, max_upload_bytes=settings.audio_max_bytes,
-                         media_base_url="http://127.0.0.1:8000")
+                         media_base_url=settings.media_base_url)
     application.state.media = media
 
     async def call(method, *args, **kwargs):

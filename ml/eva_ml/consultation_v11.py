@@ -112,4 +112,13 @@ def select_provider(engine, variant):
         return ISSAIProvider(engine)
     if variant == VERSION:
         return ConsultationV11Provider(engine)
+    if variant == "disclosure-review-v1":
+        from .disclosure_review import DisclosureReviewer
+        return DisclosureReviewer(engine)
+    if variant == "interaction-review-v1":
+        from .interaction_review import InteractionReviewer
+        return InteractionReviewer(engine)
+    if variant == "interaction-guard-v1":
+        from .interaction_guard import GuardedInteractionReviewer
+        return GuardedInteractionReviewer(engine)
     raise ValueError("Unsupported EVA_CONSULTATION_VARIANT")
