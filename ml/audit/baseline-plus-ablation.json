@@ -1,0 +1,44 @@
+{
+  "full": {
+    "n": 6,
+    "correct": 6,
+    "automatic": 6,
+    "correct_with_required_evidence": 6,
+    "supplemental_calls": 4
+  },
+  "without_score": {
+    "n": 6,
+    "correct": 4,
+    "automatic": 6,
+    "correct_with_required_evidence": 4,
+    "supplemental_calls": 4
+  },
+  "without_sentinel": {
+    "n": 6,
+    "correct": 5,
+    "automatic": 6,
+    "correct_with_required_evidence": 5,
+    "supplemental_calls": 3
+  },
+  "without_policy": {
+    "n": 6,
+    "correct": 3,
+    "automatic": 6,
+    "correct_with_required_evidence": 3,
+    "supplemental_calls": 0
+  },
+  "without_trace": {
+    "n": 6,
+    "correct": 3,
+    "automatic": 6,
+    "correct_with_required_evidence": 3,
+    "supplemental_calls": 0
+  },
+  "disabled": {
+    "n": 6,
+    "correct": 3,
+    "automatic": 6,
+    "correct_with_required_evidence": 3,
+    "supplemental_calls": 0
+  }
+}

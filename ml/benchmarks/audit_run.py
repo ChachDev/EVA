@@ -1,5 +1,6 @@
 """Run on the same local llama.cpp worker. Store individual outputs ONLY in ignored data/."""
 import argparse
+import csv
 import subprocess
 import hashlib
 import json
@@ -19,7 +20,11 @@ def inputs(args):
         for c,k,v in cases():
             yield c,{k:v}
         return
-    reference = json.loads(args.reference.read_text(encoding="utf-8-sig"))
+    if args.reference.suffix.lower()==".csv":
+        with args.reference.open(encoding="utf-8-sig",newline="") as source_file:
+            reference=[{"chat":r["Чат"],"criterion":r["Критерий"],"gold":r["Разметка"]} for r in csv.DictReader(source_file)]
+    else:
+        reference=json.loads(args.reference.read_text(encoding="utf-8-sig"))
     source = json.loads(args.dev.read_text(encoding="utf-8-sig"))["data"]["records"]
     ids = ([r["conversation_id"] for r in source if r["channel"]=="voice call"] if args.voices else dict.fromkeys(x["chat"] for x in reference))
     for cid in ids:
@@ -56,7 +61,7 @@ def main():
     parser.add_argument("--port",type=int,required=True)
     parser.add_argument("--file-order",action="store_true",help="Historical diagnostic: do not normalize like backend storage")
     parser.add_argument("--variant",required=True)
-    parser.add_argument("--profile",choices=["rubric-v1","events-v2","source-events"],default="rubric-v1")
+    parser.add_argument("--profile",choices=["rubric-v1","events-v2","source-events","baseline-plus"],default="rubric-v1")
     parser.add_argument("--pairs",action="store_true")
     parser.add_argument("--voices",action="store_true",help="Technical pilot only, no human reference for these calls")
     parser.add_argument("--ablation",action="store_true",help="Fixed six paired examples across three languages")
