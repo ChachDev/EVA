@@ -6,7 +6,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 
 from eva_ml.engine import EngineError
-from eva_ml.issai import ISSAIProvider, InvalidDecision, contract_row, digest, object_schema, string_enum, table_for
+from eva_ml.issai import ISSAIProvider, InvalidDecision, contract_row, digest, object_schema, string_enum, table_for, original_messages
 
 
 VERSION = "consultation-v1.1"
@@ -55,7 +55,7 @@ class ConsultationV11Provider(ISSAIProvider):
         return result
 
     def _check_fact(self, question, conversation):
-        messages = conversation["messages"]
+        messages = original_messages(conversation)
         operator = {m["id"]:m["text"] for m in messages if m["speaker"] == "operator"}
         if not operator:
             return None

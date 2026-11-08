@@ -3,6 +3,8 @@ import {
   AlertTriangle, ArrowRight, Check, ChevronDown, Clock, FileText,
   GitPullRequest, Headphones, Info, MessageSquare, Minus, ShieldCheck,
 } from "lucide-react";
+import AuditReview from './AuditReview';
+import official from '../../contracts/examples/checklist.json' with {type:'json'};
 import type { Checklist, Conversation, Evaluation, EvaluationResponse, ReviewCase } from "./api/types";
 import { useI18n } from "./i18n";
 import { translate, formatNumber } from "./i18n-core";
@@ -21,13 +23,13 @@ export type LiveDetailProps = {
 
 type Criterion = Checklist["criteria"][number];
 type Result = EvaluationResponse["criteria"][number];
-const speakers = { operator: "Оператор", client: "Клиент", system: "Система", bot: "Бот" };
+const speakers = { operator: "Оператор", client: "Клиент", system: "Система", bot: "Бот", unknown: "Роль неизвестна" };
 const evidenceKinds = {
   message: "Основание", missing_action: "Участок ожидаемого действия",
   not_applicable: "Основание неприменимости", uncertain: "Контекст для ручной проверки",
 };
 const messageAnchor = (conversationId: string, messageId: string) => `live-message-${encodeURIComponent(conversationId)}-${encodeURIComponent(messageId)}`;
-const timeLabel = (value: string) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value) ? value.slice(11, 19) : value;
+const timeLabel = (value: string | null) => value === null ? "Время не указано" : /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value) ? value.slice(11, 19) : value;
 
 function resultLabel(result: Result | undefined, criterion: Criterion): string {
   if (!result) return translate("Не оценён");
@@ -73,6 +75,12 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
   const results = new Map(resultRows.map(result => [result.criterion_id, result]));
   const contributions = new Map(scoring?.criteria.map(result => [result.criterion_id, result]) ?? []);
   const messages = new Map(conversation.messages.map(message => [message.id, message]));
+  function speakerLabel(message:Conversation['messages'][number]) {
+    const target=conversation.source?.target_operator_id;
+    if(message.speaker==='operator' && target && message.speaker_id!==target)
+      return message.speaker_id?'Другой оператор · '+message.speaker_id:'Оператор не определён';
+    return speakers[message.speaker]+(message.speaker_id?' · '+message.speaker_id:'');
+  }
   const highlighted = new Set(highlight);
   const total = scoring?.status === "complete" ? scoring.total : null;
   const savedAudio = audioLink(conversation.audio_url);
@@ -190,7 +198,18 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
               </span><ChevronDown className={open ? "rotated" : ""} aria-hidden="true" />
             </button>
             {open && <div className="criterion-detail">
-              <p>{row?.reason ?? criterion.instruction}</p>
+              <p><strong>Правило · v{checklist?.version}</strong> {criterion.instruction}</p>
+              <p>{row?.reason}</p>
+              {!pending && !na && !positive && official.criteria.some(r=>r.id===criterion.id && r.instruction===criterion.instruction && r.type===criterion.type) && !!row?.evidence.some(e=>e.message_ids.length>0) && <p><strong>Что попробовать:</strong> {({
+                contact:'В первом ответе поздоровайтесь и представьтесь.',
+                needs:'Спросите, на каком шаге возникает затруднение, и используйте ответ клиента.',
+                identity:'Перед обсуждением защищённых сведений проверьте подтверждённое событие идентификации.',
+                consultation:'Перечислите вопросы клиента и дайте ответ или проверяемый следующий шаг по каждому.',
+                empathy:'Назовите конкретное неудобство клиента и объясните, чем можете помочь.',
+                dialogue:'Объясните шаги по порядку, затем уточните, какая часть осталась непонятной.',
+                closing:'Подведите итог, предложите дальнейшую помощь и попрощайтесь.',
+                gross_errors:'Разберите отмеченную реплику с проверяющим и согласуйте безопасную формулировку.',
+              } as Record<string,string>)[criterion.id]??'Сверьте действие и процитированную реплику с правилом.'}</p>}
               {row?.evidence.map((entry, index) => <div key={index}>
                 <p className="muted">{t(evidenceKinds[entry.kind])}</p>
                 {entry.message_ids.map(id => {

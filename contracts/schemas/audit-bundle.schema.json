@@ -1,0 +1,566 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eva.local/schemas/audit-bundle.schema.json",
+  "type": "object",
+  "properties": {
+    "response": {
+      "$ref": "https://eva.local/schemas/evaluation-response.schema.json"
+    },
+    "audit": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "target_operator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "versions": {
+          "type": "object",
+          "required": [
+            "model",
+            "prompt",
+            "code",
+            "baseline_variant",
+            "components",
+            "checklist",
+            "rules",
+            "transcript"
+          ]
+        },
+        "source": {
+          "type": "object"
+        },
+        "language": {
+          "enum": [
+            "RU",
+            "KZ",
+            "EN"
+          ]
+        },
+        "criteria": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "decision": {
+                "type": [
+                  "boolean",
+                  "number",
+                  "null"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "scored",
+                  "needs_review"
+                ]
+              },
+              "action": {
+                "type": "string"
+              },
+              "applicability": {
+                "enum": [
+                  "applicable",
+                  "not_applicable",
+                  "unknown"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "utterance_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "quote": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "chars": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "role": {
+                      "enum": [
+                        "operator",
+                        "client",
+                        "system",
+                        "unknown",
+                        "bot",
+                        "other_operator"
+                      ]
+                    },
+                    "speaker_id": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "order": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "timestamp": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0
+                    },
+                    "end": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "utterance_id",
+                    "quote",
+                    "chars",
+                    "role",
+                    "speaker_id",
+                    "order",
+                    "timestamp",
+                    "start",
+                    "end"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "technical": {
+                "enum": [
+                  "valid",
+                  "invalid"
+                ]
+              },
+              "semantic": {
+                "enum": [
+                  "model_assessed",
+                  "requires_review"
+                ]
+              },
+              "uncertainty": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "source": {
+                "const": "model"
+              },
+              "scope": {
+                "type": "object"
+              },
+              "conflict": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "decision",
+              "status",
+              "action",
+              "applicability",
+              "evidence",
+              "technical",
+              "semantic",
+              "uncertainty",
+              "source",
+              "scope"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "sentinel": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "decision": {
+                "type": [
+                  "boolean",
+                  "number",
+                  "null"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "scored",
+                  "needs_review"
+                ]
+              },
+              "action": {
+                "type": "string"
+              },
+              "applicability": {
+                "enum": [
+                  "applicable",
+                  "not_applicable",
+                  "unknown"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "utterance_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "quote": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "chars": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "role": {
+                      "enum": [
+                        "operator",
+                        "client",
+                        "system",
+                        "unknown",
+                        "bot",
+                        "other_operator"
+                      ]
+                    },
+                    "speaker_id": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "order": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "timestamp": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0
+                    },
+                    "end": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "utterance_id",
+                    "quote",
+                    "chars",
+                    "role",
+                    "speaker_id",
+                    "order",
+                    "timestamp",
+                    "start",
+                    "end"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "technical": {
+                "enum": [
+                  "valid",
+                  "invalid"
+                ]
+              },
+              "semantic": {
+                "enum": [
+                  "model_assessed",
+                  "requires_review"
+                ]
+              },
+              "uncertainty": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "source": {
+                "const": "model"
+              },
+              "scope": {
+                "type": "object"
+              },
+              "rule_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "criterion_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "conflict": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "decision",
+              "status",
+              "action",
+              "applicability",
+              "evidence",
+              "technical",
+              "semantic",
+              "uncertainty",
+              "source",
+              "scope",
+              "rule_id",
+              "version",
+              "criterion_id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rules": {
+          "type": "object"
+        },
+        "calls": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "tokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "run_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "cache_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cache_hit": {
+          "type": "boolean"
+        },
+        "long_input": {
+          "type": "object",
+          "required": [
+            "message_count",
+            "checked",
+            "unread",
+            "cross_fragment_review",
+            "calls"
+          ],
+          "properties": {
+            "message_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "checked": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "first",
+                  "last",
+                  "candidates"
+                ]
+              }
+            },
+            "unread": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "cross_fragment_review": {
+              "const": true
+            },
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "question_map": {
+          "type":"object","additionalProperties":false,"required":["items","scope","applied"],
+          "properties":{
+            "applied":{"type":"array","uniqueItems":true,"items":{"enum":["consultation","dialogue"]}},
+            "scope":{"$ref":"#/properties/audit/properties/criteria/additionalProperties/properties/scope"},
+            "items":{"type":"array","minItems":1,"maxItems":6,"items":{
+              "type":"object","additionalProperties":false,"required":["question","answer","status"],
+              "properties":{
+                "question":{"$ref":"#/properties/audit/properties/criteria/additionalProperties/properties/evidence/items"},
+                "answer":{"anyOf":[{"type":"null"},{"$ref":"#/properties/audit/properties/criteria/additionalProperties/properties/evidence/items"}]},
+                "status":{"enum":["answered","open","unknown"]}
+              }
+            }}
+          }
+        },
+        "stage_usage": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "seconds",
+              "calls",
+              "tokens"
+            ],
+            "properties": {
+              "seconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "calls": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "tokens": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "verification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "baseline",
+            "state",
+            "requested",
+            "checks"
+          ],
+          "properties": {
+            "baseline": {
+              "$ref": "https://eva.local/schemas/evaluation-response.schema.json"
+            },
+            "state": {
+              "enum": [
+                "not_needed",
+                "ok",
+                "partial",
+                "unavailable"
+              ]
+            },
+            "requested": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "checks": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "outcome",
+                  "reason"
+                ],
+                "properties": {
+                  "outcome": {
+                    "enum": [
+                      "retained",
+                      "corroborated",
+                      "amended"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "suggested": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "version",
+        "target_operator",
+        "versions",
+        "source",
+        "language",
+        "criteria",
+        "sentinel",
+        "rules",
+        "calls",
+        "tokens",
+        "seconds",
+        "run_id",
+        "cache_key",
+        "cache_hit"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "response",
+    "audit"
+  ],
+  "additionalProperties": false
+}

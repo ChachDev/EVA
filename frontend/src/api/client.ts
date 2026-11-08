@@ -61,7 +61,7 @@ function jsonBody(payload: unknown): string {
 export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
   const baseUrl = (options.baseUrl ?? (environment.VITE_API_URL || DEFAULT_API_URL)).replace(/\/+$/, '');
   const fetcher = options.fetch ?? globalThis.fetch.bind(globalThis);
-  const timeoutMs = options.timeoutMs ?? 30_000;
+  const timeoutMs = options.timeoutMs ?? Number(environment.VITE_API_TIMEOUT_MS || 30_000);
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('API timeout must be positive.');
 
   async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -73,6 +73,22 @@ export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
       });
       if (!response.ok) {
         let message = errorMessages[response.status] ?? 'Не удалось выполнить запрос. Проверьте состояние сервиса.';
+        if (response.status===409 && path.startsWith('/api/v1/batches/') && path.endsWith('/results')) {
+          const failures:Record<string,string>={
+            'Not an organizer DEV or PROD group.':'Для сдачи нужен набор организаторов DEV или PROD.',
+            'Batch still has unfinished items.':'Дождитесь завершения всех заданий.',
+            'Dataset manifest or original sources are incomplete.':'Есть лишние, пропущенные или повторные ID, либо нет исходного транскрипта.',
+            'Unexpected number of organizer chats or calls.':'Ожидается DEV: 60 чатов и 5 звонков; PROD: 10 чатов.',
+            'Not the verified Freedom checklist.':'Версия чек-листа отличается от подтверждённых правил Freedom.',
+            'Result belongs to a different source or checklist.':'Снимок оценки не соответствует источнику или чек-листу.',
+            'Only recorded real local model results may be exported.':'Обнаружен демонстрационный или неподтверждённый результат.',
+            'Source turn order or text changed.':'Порядок или текст реплик не совпадает с оригиналом.',
+            'Stored score differs from recalculation.':'Итоговый балл не прошёл пересчёт.',
+            'Missing rationale or evidence.':'У оценки отсутствует основание или ссылка на реплику.',
+            'No actual model identity is available for this run.':'Нет подтверждённого имени фактически использованной модели.',
+          };
+          try {const body=await response.json();message=Object.hasOwn(failures,body?.detail)?failures[body.detail]:'Выгрузка не прошла проверку.'} catch { /* fixed fallback */ }
+        }
         if (response.status === 422) {
           // Only this fixed public code affects the UI; upstream body text is never shown.
           try {
@@ -120,6 +136,14 @@ export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
   }
 
   return {
+    batches:{
+      groups:()=>request('/api/v1/batch-groups'),list:()=>request('/api/v1/batches'),
+      get:id=>request('/api/v1/batches/'+pathId(id)),
+      start:(group,c)=>post('/api/v1/batches',{group_id:group,checklist_id:c.id,checklist_version:c.version}),
+      retry:id=>post('/api/v1/batches/'+pathId(id)+'/retry',{}),results:id=>request('/api/v1/batches/'+pathId(id)+'/results'),
+      quality:id=>request('/api/v1/batches/'+pathId(id)+'/quality'),
+      blind:id=>request('/api/v1/blind/'+pathId(id)),label:(id,reviewer,answers)=>post('/api/v1/blind/'+pathId(id),{reviewer,answers}),
+    },
     health: () => request('/health'),
     getChecklists: () => request('/api/v1/checklists'),
     publishChecklist: (id, payload) => post('/api/v1/checklists/' + pathId(id) + '/versions', payload),
@@ -127,6 +151,8 @@ export function createHttpApi(options: HttpApiOptions = {}): CqaApi {
     getConversation: id => request('/api/v1/conversations/' + pathId(id)),
     createConversation: payload => post('/api/v1/conversations', payload),
     evaluate: payload => post('/api/v1/evaluations', payload),
+    auditExport: id => request('/api/v1/evaluations/'+pathId(id)+'/audit'),
+    deriveVersion: (id,version) => post('/api/v1/evaluations/'+pathId(id)+'/versions/'+version,{}),
     getEvaluationPage,
     getEvaluations: async conversationId => {
       const items: Evaluation[] = [];

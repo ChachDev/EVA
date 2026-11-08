@@ -6,7 +6,7 @@ from uuid import uuid4
 import asyncio
 
 from alembic.util.exc import CommandError
-from fastapi import FastAPI, HTTPException
+from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.concurrency import run_in_threadpool
@@ -15,6 +15,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.responses import JSONResponse
 
+from . import audit as audit_api
+from . import batches
 from .config import Settings
 from .contracts import ContractError, Contracts
 from .ml_client import MLClient, MLContextLimitExceeded, MLInvalidResponse, MLUnavailable
@@ -43,12 +45,16 @@ def create_app(settings: Settings | None = None,
     settings = settings or Settings()
     contracts = Contracts(settings.contracts_dir)
     store = EvaluationStore(settings.effective_database_url)
+    batch_store = batches.BatchStore(store,settings.batch_revision)
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         try:
             try:
                 await run_in_threadpool(store.initialize)
+                await run_in_threadpool(batch_store.initialize)
+                if settings.audit_mode != "baseline":
+                    await run_in_threadpool(store.initialize_audit)
                 if settings.seed_demo:
                     await run_in_threadpool(store.seed_checklist, contracts.example("checklist"))
                     await run_in_threadpool(store.import_conversations, "synthetic-demo", [contracts.example("conversation")])
@@ -58,18 +64,25 @@ def create_app(settings: Settings | None = None,
                 base_url=settings.ml_url, timeout=httpx.Timeout(settings.ml_timeout_seconds),
                 trust_env=False, follow_redirects=False,
             ) as client:
-                application.state.evaluate = evaluator or MLClient(
-                    client, max_response_bytes=settings.ml_max_response_bytes,
-                ).evaluate
+                transport = MLClient(client, max_response_bytes=settings.ml_max_response_bytes)
+                application.state.evaluate = evaluator or transport.evaluate
+                application.state.audit_evaluate = transport.audit
+                application.state.audit_shadow = transport.audit_shadow
                 application.state.ml_slots = asyncio.Semaphore(settings.ml_max_concurrency)
                 application.state.evaluation_requests = asyncio.Queue(
                     maxsize=settings.ml_max_concurrency + settings.evaluation_queue_capacity,
                 )
                 worker = (asyncio.create_task(run_transcription_worker(application.state.media, settings))
                           if start_workers and settings.asr_url else None)
+                batch_worker = (asyncio.create_task(batches.run_worker(batch_store,settings,batch_eval))
+                                if start_workers and settings.batch_worker else None)
                 try:
                     yield
                 finally:
+                    if batch_worker is not None:
+                        batch_worker.cancel()
+                        with suppress(asyncio.CancelledError):
+                            await batch_worker
                     if worker is not None:
                         worker.cancel()
                         with suppress(asyncio.CancelledError):
@@ -113,18 +126,36 @@ def create_app(settings: Settings | None = None,
         return store.list_conversations()
 
     @application.post("/api/v1/evaluations", status_code=201)
-    async def create_evaluation(body: CreateEvaluation):
+    async def create_evaluation(body: CreateEvaluation, background_tasks: BackgroundTasks):
         try:
             application.state.evaluation_requests.put_nowait(None)
         except asyncio.QueueFull:
             raise HTTPException(503, "Evaluation capacity is full. Please retry later.",
                                 headers={"Retry-After": "5"}) from None
         try:
-            return await evaluate_and_store(body)
+            return await evaluate_and_store(body, background_tasks)
         finally:
             application.state.evaluation_requests.get_nowait()
 
-    async def evaluate_and_store(body: CreateEvaluation):
+    async def shadow(record_id, request, baseline):
+        sidecar = {"mode":"shadow"}
+        try:
+            async with asyncio.timeout(settings.ml_timeout_seconds):
+                async with application.state.ml_slots:
+                    bundle = audit_api.checked(contracts, request, await application.state.audit_shadow(request,baseline))
+                    verification=bundle["audit"].get("verification")
+                    if verification is not None and verification["baseline"]!=baseline:
+                        raise MLInvalidResponse("Verification used a different primary result.")
+            sidecar.update(status="completed", candidate=bundle, scoring=score(request,bundle["response"]))
+        except (MLInvalidResponse, MLUnavailable, TimeoutError, MLContextLimitExceeded):
+            sidecar.update(status="failed",reason="Candidate unavailable or invalid.")
+        await run_in_threadpool(store.save_shadow,record_id,sidecar)
+
+    async def batch_eval(claim,tasks):
+        body=CreateEvaluation(conversation_id=claim["cid"],checklist_id=claim["checklist_id"],checklist_version=claim["version"])
+        return await evaluate_and_store(body,tasks,claim)
+
+    async def evaluate_and_store(body: CreateEvaluation, background_tasks: BackgroundTasks, claim=None):
         contracts.validate("evaluation-create", body.model_dump())
         conversation = await run_in_threadpool(store.get_conversation, body.conversation_id)
         checklist = await run_in_threadpool(store.get_checklist, body.checklist_id, body.checklist_version)
@@ -144,7 +175,15 @@ def create_app(settings: Settings | None = None,
             # closed throughout inference and preserve the exact input for later review.
             async with asyncio.timeout(settings.ml_timeout_seconds):
                 async with application.state.ml_slots:
-                    original = await application.state.evaluate(deepcopy(request))
+                    companion = None
+                    if settings.audit_mode == "experiment":
+                        bundle = audit_api.checked(contracts,request,await application.state.audit_evaluate(deepcopy(request)))
+                        original = bundle["response"]
+                        companion = {"mode":"experiment","candidate":bundle}
+                    else:
+                        original = await application.state.evaluate(deepcopy(request))
+                        if settings.audit_mode == "shadow":
+                            companion = {"mode":"shadow","status":"pending"}
             contracts.validate_result(request, original)
         except MLContextLimitExceeded:
             return JSONResponse(status_code=422, content={
@@ -158,17 +197,24 @@ def create_app(settings: Settings | None = None,
         scoring = score(request, original)
         contracts.validate("score-summary", scoring)
         record = {
-            "id": str(uuid4()),
+            "id": claim["id"] if claim else str(uuid4()),
             "status": "completed" if scoring["status"] == "complete" else "needs_review",
             "created_at": datetime.now(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z"),
             "original": original,
             "scoring": scoring,
         }
         contracts.validate("evaluation-record", record)
-        await run_in_threadpool(store.create, record, request_snapshot=request)
+        if claim:
+            await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion,batch_claim=claim)
+        else:
+            await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion)
+        if settings.audit_mode == "shadow":
+            background_tasks.add_task(shadow,record["id"],request,original)
         return record
 
     install_workflow_routes(application, contracts, store, settings)
+    batches.install(application,batch_store,settings,contracts)
+    audit_api.install(application,contracts,store,settings)
     install_media_routes(application, contracts, store, settings)
 
     @application.get("/api/v1/evaluations/{evaluation_id}")

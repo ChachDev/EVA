@@ -1,0 +1,556 @@
+{
+  "format": "eva.review.v1",
+  "evaluation_id": "demo-eval-001",
+  "review": {
+    "evaluation_id": "demo-eval-001",
+    "revision": 0,
+    "review_status": "pending",
+    "snapshot_available": true,
+    "original": {
+      "id": "demo-eval-001",
+      "status": "completed",
+      "created_at": "2026-11-07T00:00:00Z",
+      "original": {
+        "schema_version": "1.0.0",
+        "conversation_id": "demo-ru-001",
+        "checklist_id": "freedom-cqa",
+        "checklist_version": 1,
+        "provider": "fixture",
+        "model": "human-authored-demo",
+        "criteria": [
+          {
+            "criterion_id": "contact",
+            "status": "scored",
+            "value": true,
+            "reason": "Приветствие и представление в первом ответе.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "needs",
+            "status": "scored",
+            "value": null,
+            "reason": "Общий вопрос уже сформулирован полностью.",
+            "evidence": [
+              {
+                "kind": "not_applicable",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "identity",
+            "status": "scored",
+            "value": null,
+            "reason": "Запрос об общих тарифах не требует проверки личности.",
+            "evidence": [
+              {
+                "kind": "not_applicable",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "consultation",
+            "status": "scored",
+            "value": 20,
+            "reason": "В учебном примере указан следующий шаг; это демонстрационная ручная разметка, не проверка реальных тарифов.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "empathy",
+            "status": "scored",
+            "value": true,
+            "reason": "Ответ вежливый, недовольства в переписке нет.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "dialogue",
+            "status": "scored",
+            "value": 10,
+            "reason": "Ответы последовательны, явного ожидания нет.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "closing",
+            "status": "scored",
+            "value": true,
+            "reason": "Предложена дальнейшая помощь и есть прощание.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0004"
+                ]
+              }
+            ]
+          },
+          {
+            "criterion_id": "gross_errors",
+            "status": "scored",
+            "value": false,
+            "reason": "В учебном примере ни одно из трёх нарушений не отмечено.",
+            "evidence": [
+              {
+                "kind": "message",
+                "message_ids": [
+                  "m0001",
+                  "m0002",
+                  "m0003",
+                  "m0004"
+                ]
+              }
+            ]
+          }
+        ],
+        "warnings": [
+          "Синтетический пример с ручной разметкой. Не результат работы ML и не DEV-набор организаторов."
+        ]
+      },
+      "scoring": {
+        "status": "complete",
+        "total": 100,
+        "applicable_weight": 65,
+        "has_gross_error": false,
+        "sections": [
+          {
+            "section_id": "opening",
+            "score": 100
+          },
+          {
+            "section_id": "resolution",
+            "score": 100
+          },
+          {
+            "section_id": "communication",
+            "score": 100
+          },
+          {
+            "section_id": "violations",
+            "score": null
+          }
+        ],
+        "criteria": [
+          {
+            "criterion_id": "contact",
+            "points": 15.38,
+            "effective_weight": 15.38
+          },
+          {
+            "criterion_id": "needs",
+            "points": null,
+            "effective_weight": null
+          },
+          {
+            "criterion_id": "identity",
+            "points": null,
+            "effective_weight": null
+          },
+          {
+            "criterion_id": "consultation",
+            "points": 30.77,
+            "effective_weight": 30.77
+          },
+          {
+            "criterion_id": "empathy",
+            "points": 23.08,
+            "effective_weight": 23.08
+          },
+          {
+            "criterion_id": "dialogue",
+            "points": 23.08,
+            "effective_weight": 23.08
+          },
+          {
+            "criterion_id": "closing",
+            "points": 7.69,
+            "effective_weight": 7.69
+          },
+          {
+            "criterion_id": "gross_errors",
+            "points": 0,
+            "effective_weight": 0
+          }
+        ]
+      }
+    },
+    "final": {
+      "criteria": [
+        {
+          "criterion_id": "contact",
+          "status": "scored",
+          "value": true,
+          "reason": "Приветствие и представление в первом ответе.",
+          "evidence": [
+            {
+              "kind": "message",
+              "message_ids": [
+                "m0001",
+                "m0002"
+              ]
+            }
+          ]
+        },
+        {
+          "criterion_id": "needs",
+          "status": "scored",
+          "value": null,
+          "reason": "Общий вопрос уже сформулирован полностью.",
+          "evidence": [
+            {
+              "kind": "not_applicable",
+              "message_ids": [
+                "m0001",
+                "m0002"
+              ]
+            }
+          ]
+        },
+        {
+          "criterion_id": "identity",
+          "status": "scored",
+          "value": null,
+          "reason": "Запрос об общих тарифах не требует проверки личности.",
+          "evidence": [
+            {
+              "kind": "not_applicable",
+              "message_ids": [
+                "m0001",
+                "m0002"
+              ]
+            }
+          ]
+        },
+        {
+          "criterion_id": "consultation",
+          "status": "scored",
+          "value": 20,
+          "reason": "В учебном примере указан следующий шаг; это демонстрационная ручная разметка, не проверка реальных тарифов.",
+          "evidence": [
+            {
+              "kind": "message",
+              "message_ids": [
+                "m0001",
+                "m0002"
+              ]
+            }
+          ]
+        },
+        {
+          "criterion_id": "empathy",
+          "status": "scored",
+          "value": true,
+          "reason": "Ответ вежливый, недовольства в переписке нет.",
+          "evidence": [
+            {
+              "kind": "message",
+              "message_ids": [
+                "m0001",
+                "m0002"
+              ]
+            }
+          ]
+        },
+        {
+          "criterion_id": "dialogue",
+          "status": "scored",
+          "value": 10,
+          "reason": "Ответы последовательны, явного ожидания нет.",
+          "evidence": [
+            {
+              "kind": "message",
+              "message_ids": [
+                "m0001",
+                "m0002"
+              ]
+            }
+          ]
+        },
+        {
+          "criterion_id": "closing",
+          "status": "scored",
+          "value": true,
+          "reason": "Предложена дальнейшая помощь и есть прощание.",
+          "evidence": [
+            {
+              "kind": "message",
+              "message_ids": [
+                "m0004"
+              ]
+            }
+          ]
+        },
+        {
+          "criterion_id": "gross_errors",
+          "status": "scored",
+          "value": false,
+          "reason": "В учебном примере ни одно из трёх нарушений не отмечено.",
+          "evidence": [
+            {
+              "kind": "message",
+              "message_ids": [
+                "m0001",
+                "m0002",
+                "m0003",
+                "m0004"
+              ]
+            }
+          ]
+        }
+      ],
+      "scoring": {
+        "status": "complete",
+        "total": 100,
+        "applicable_weight": 65,
+        "has_gross_error": false,
+        "sections": [
+          {
+            "section_id": "opening",
+            "score": 100
+          },
+          {
+            "section_id": "resolution",
+            "score": 100
+          },
+          {
+            "section_id": "communication",
+            "score": 100
+          },
+          {
+            "section_id": "violations",
+            "score": null
+          }
+        ],
+        "criteria": [
+          {
+            "criterion_id": "contact",
+            "points": 15.38,
+            "effective_weight": 15.38
+          },
+          {
+            "criterion_id": "needs",
+            "points": null,
+            "effective_weight": null
+          },
+          {
+            "criterion_id": "identity",
+            "points": null,
+            "effective_weight": null
+          },
+          {
+            "criterion_id": "consultation",
+            "points": 30.77,
+            "effective_weight": 30.77
+          },
+          {
+            "criterion_id": "empathy",
+            "points": 23.08,
+            "effective_weight": 23.08
+          },
+          {
+            "criterion_id": "dialogue",
+            "points": 23.08,
+            "effective_weight": 23.08
+          },
+          {
+            "criterion_id": "closing",
+            "points": 7.69,
+            "effective_weight": 7.69
+          },
+          {
+            "criterion_id": "gross_errors",
+            "points": 0,
+            "effective_weight": 0
+          }
+        ]
+      }
+    },
+    "appeals": [],
+    "decisions": []
+  },
+  "snapshot": {
+    "schema_version": "1.0.0",
+    "conversation": {
+      "id": "demo-ru-001",
+      "channel": "agent_chat",
+      "language": "RU",
+      "messages": [
+        {
+          "id": "m0001",
+          "speaker": "client",
+          "text": "Здравствуйте! Где посмотреть общие тарифы?",
+          "timestamp": "00:00",
+          "offset_seconds": 0
+        },
+        {
+          "id": "m0002",
+          "speaker": "operator",
+          "text": "Здравствуйте! Меня зовут Алия. Общие тарифы доступны на официальном сайте в разделе «Тарифы».",
+          "timestamp": "00:20",
+          "offset_seconds": 20
+        },
+        {
+          "id": "m0003",
+          "speaker": "client",
+          "text": "Спасибо, нашёл.",
+          "timestamp": "00:35",
+          "offset_seconds": 35
+        },
+        {
+          "id": "m0004",
+          "speaker": "operator",
+          "text": "Рада помочь! Если появятся вопросы, обращайтесь. До свидания!",
+          "timestamp": "00:40",
+          "offset_seconds": 40
+        }
+      ],
+      "audio_url": null
+    },
+    "checklist": {
+      "id": "freedom-cqa",
+      "version": 1,
+      "name": "Качество чатов · Freedom Broker",
+      "criteria": [
+        {
+          "id": "contact",
+          "title": "Установление контакта",
+          "instruction": "Оператор поздоровался на языке клиента и представился в первом ответе.",
+          "section_id": "opening",
+          "type": "boolean",
+          "weight": 10,
+          "allow_na": false,
+          "na_condition": null,
+          "scale": []
+        },
+        {
+          "id": "needs",
+          "title": "Выявление потребности",
+          "instruction": "Оператор учёл известные детали и уточнил недостающее до ответа.",
+          "section_id": "opening",
+          "type": "boolean",
+          "weight": 15,
+          "allow_na": true,
+          "na_condition": "Данных для ответа хватало с самого начала.",
+          "scale": []
+        },
+        {
+          "id": "identity",
+          "title": "Идентификация",
+          "instruction": "Проверка личности подтверждена до раскрытия данных или защищённого действия.",
+          "section_id": "resolution",
+          "type": "boolean",
+          "weight": 20,
+          "allow_na": true,
+          "na_condition": "Запрос не требовал идентификации.",
+          "scale": []
+        },
+        {
+          "id": "consultation",
+          "title": "Корректная и полная консультация",
+          "instruction": "20: все существенные вопросы закрыты или дан корректный следующий шаг; 15: основной вопрос решён, пропущена второстепенная деталь; 10: существенный вопрос открыт; 5: общая подсказка без понятного действия; 0: ответа по существу нет или ключевая рекомендация ошибочна.",
+          "section_id": "resolution",
+          "type": "scale",
+          "weight": 20,
+          "allow_na": true,
+          "na_condition": "Чат закончился до того, как клиент сформулировал запрос.",
+          "scale": [
+            0,
+            5,
+            10,
+            15,
+            20
+          ]
+        },
+        {
+          "id": "empathy",
+          "title": "Эмпатия и клиентоориентированность",
+          "instruction": "Оператор вежлив; если клиент недоволен или описывает неудобство, реагирует на конкретную проблему.",
+          "section_id": "communication",
+          "type": "boolean",
+          "weight": 15,
+          "allow_na": false,
+          "na_condition": null,
+          "scale": []
+        },
+        {
+          "id": "dialogue",
+          "title": "Управление диалогом, скорость и грамотность",
+          "instruction": "10: ясно и связно, при явном ожидании оператор предупредил; 7: один заметный сбой; 4: клиент переспрашивает из-за формулировок или порядка; 0: бессвязность или противоречия мешают пониманию. Порог первой реакции 3 минуты, теги и вложения не оцениваются.",
+          "section_id": "communication",
+          "type": "scale",
+          "weight": 15,
+          "allow_na": false,
+          "na_condition": null,
+          "scale": [
+            0,
+            4,
+            7,
+            10
+          ]
+        },
+        {
+          "id": "closing",
+          "title": "Завершение",
+          "instruction": "Оператор подвёл итог или предложил дальнейшую помощь и попрощался.",
+          "section_id": "communication",
+          "type": "boolean",
+          "weight": 5,
+          "allow_na": true,
+          "na_condition": "Чат оборвался до возможности завершения.",
+          "scale": []
+        },
+        {
+          "id": "gross_errors",
+          "title": "Грубые ошибки",
+          "instruction": "Есть оскорбление клиента, предложение платной услуги в обход компании или раскрытие конфиденциальной информации. Достаточно самого предложения личной платной услуги.",
+          "section_id": "violations",
+          "type": "flag",
+          "weight": 0,
+          "allow_na": false,
+          "na_condition": null,
+          "scale": []
+        }
+      ]
+    }
+  },
+  "audit": null,
+  "history": [],
+  "can_derive": false
+}

@@ -1,0 +1,2260 @@
+{
+  "human": {
+    "n": 15,
+    "baseline": {
+      "groups": {
+        "all": {
+          "n": 120,
+          "correct": 89,
+          "automatic": 117,
+          "false_na": 7,
+          "missed_na": 7,
+          "positives": 2,
+          "tp": 2,
+          "tn": 13,
+          "accuracy_all": 0.7417,
+          "accuracy_resolved": 0.7607,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang/RU": {
+          "n": 40,
+          "correct": 23,
+          "automatic": 40,
+          "false_na": 5,
+          "missed_na": 2,
+          "positives": 1,
+          "tp": 1,
+          "tn": 4,
+          "accuracy_all": 0.575,
+          "accuracy_resolved": 0.575,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "criterion/contact": {
+          "n": 15,
+          "correct": 14,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.9333,
+          "accuracy_resolved": 0.9333
+        },
+        "lang-criterion/RU/contact": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "criterion/needs": {
+          "n": 15,
+          "correct": 9,
+          "automatic": 15,
+          "false_na": 3,
+          "missed_na": 2,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "lang-criterion/RU/needs": {
+          "n": 5,
+          "correct": 2,
+          "automatic": 5,
+          "false_na": 2,
+          "missed_na": 0,
+          "accuracy_all": 0.4,
+          "accuracy_resolved": 0.4
+        },
+        "criterion/identity": {
+          "n": 15,
+          "correct": 10,
+          "automatic": 13,
+          "false_na": 0,
+          "missed_na": 5,
+          "accuracy_all": 0.6667,
+          "accuracy_resolved": 0.7692
+        },
+        "lang-criterion/RU/identity": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 2,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "criterion/consultation": {
+          "n": 15,
+          "correct": 10,
+          "automatic": 14,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.6667,
+          "accuracy_resolved": 0.7143
+        },
+        "lang-criterion/RU/consultation": {
+          "n": 5,
+          "correct": 2,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.4,
+          "accuracy_resolved": 0.4
+        },
+        "criterion/empathy": {
+          "n": 15,
+          "correct": 13,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8667,
+          "accuracy_resolved": 0.8667
+        },
+        "lang-criterion/RU/empathy": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "criterion/dialogue": {
+          "n": 15,
+          "correct": 8,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.5333,
+          "accuracy_resolved": 0.5333
+        },
+        "lang-criterion/RU/dialogue": {
+          "n": 5,
+          "correct": 1,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.2,
+          "accuracy_resolved": 0.2
+        },
+        "criterion/closing": {
+          "n": 15,
+          "correct": 10,
+          "automatic": 15,
+          "false_na": 4,
+          "missed_na": 0,
+          "accuracy_all": 0.6667,
+          "accuracy_resolved": 0.6667
+        },
+        "lang-criterion/RU/closing": {
+          "n": 5,
+          "correct": 2,
+          "automatic": 5,
+          "false_na": 3,
+          "missed_na": 0,
+          "accuracy_all": 0.4,
+          "accuracy_resolved": 0.4
+        },
+        "criterion/gross_errors": {
+          "n": 15,
+          "correct": 15,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 13,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang-criterion/RU/gross_errors": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 1,
+          "tp": 1,
+          "tn": 4,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "violation/unspecified": {
+          "n": 15,
+          "correct": 15,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 13,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang/KZ": {
+          "n": 40,
+          "correct": 35,
+          "automatic": 38,
+          "false_na": 0,
+          "missed_na": 3,
+          "tn": 5,
+          "accuracy_all": 0.875,
+          "accuracy_resolved": 0.9211,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang-criterion/KZ/contact": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/needs": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 2,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "lang-criterion/KZ/identity": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/consultation": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/empathy": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/dialogue": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "lang-criterion/KZ/closing": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/gross_errors": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 5,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/EN": {
+          "n": 40,
+          "correct": 31,
+          "automatic": 39,
+          "false_na": 2,
+          "missed_na": 2,
+          "tn": 4,
+          "positives": 1,
+          "tp": 1,
+          "accuracy_all": 0.775,
+          "accuracy_resolved": 0.7949,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang-criterion/EN/contact": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/needs": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 1,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "lang-criterion/EN/identity": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 2,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/EN/consultation": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "lang-criterion/EN/empathy": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "lang-criterion/EN/dialogue": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "lang-criterion/EN/closing": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 1,
+          "missed_na": 0,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "lang-criterion/EN/gross_errors": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 4,
+          "positives": 1,
+          "tp": 1,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "technical": {
+        "references": 254,
+        "invalid_ids": 0
+      },
+      "numeric": 12,
+      "mae": 11.401,
+      "seconds_median": 7.85,
+      "seconds_p95": 12.96,
+      "calls": 20,
+      "tokens": 42957,
+      "gpu_mib_after_max": 6910,
+      "resolved_all_rows": 117,
+      "complete_scores": 12
+    },
+    "verified": {
+      "groups": {
+        "all": {
+          "n": 120,
+          "correct": 89,
+          "automatic": 117,
+          "false_na": 7,
+          "missed_na": 7,
+          "positives": 2,
+          "tp": 2,
+          "tn": 13,
+          "accuracy_all": 0.7417,
+          "accuracy_resolved": 0.7607,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang/RU": {
+          "n": 40,
+          "correct": 23,
+          "automatic": 40,
+          "false_na": 5,
+          "missed_na": 2,
+          "positives": 1,
+          "tp": 1,
+          "tn": 4,
+          "accuracy_all": 0.575,
+          "accuracy_resolved": 0.575,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "criterion/contact": {
+          "n": 15,
+          "correct": 14,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.9333,
+          "accuracy_resolved": 0.9333
+        },
+        "lang-criterion/RU/contact": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "criterion/needs": {
+          "n": 15,
+          "correct": 9,
+          "automatic": 15,
+          "false_na": 3,
+          "missed_na": 2,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "lang-criterion/RU/needs": {
+          "n": 5,
+          "correct": 2,
+          "automatic": 5,
+          "false_na": 2,
+          "missed_na": 0,
+          "accuracy_all": 0.4,
+          "accuracy_resolved": 0.4
+        },
+        "criterion/identity": {
+          "n": 15,
+          "correct": 10,
+          "automatic": 13,
+          "false_na": 0,
+          "missed_na": 5,
+          "accuracy_all": 0.6667,
+          "accuracy_resolved": 0.7692
+        },
+        "lang-criterion/RU/identity": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 2,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "criterion/consultation": {
+          "n": 15,
+          "correct": 10,
+          "automatic": 14,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.6667,
+          "accuracy_resolved": 0.7143
+        },
+        "lang-criterion/RU/consultation": {
+          "n": 5,
+          "correct": 2,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.4,
+          "accuracy_resolved": 0.4
+        },
+        "criterion/empathy": {
+          "n": 15,
+          "correct": 13,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8667,
+          "accuracy_resolved": 0.8667
+        },
+        "lang-criterion/RU/empathy": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "criterion/dialogue": {
+          "n": 15,
+          "correct": 8,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.5333,
+          "accuracy_resolved": 0.5333
+        },
+        "lang-criterion/RU/dialogue": {
+          "n": 5,
+          "correct": 1,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.2,
+          "accuracy_resolved": 0.2
+        },
+        "criterion/closing": {
+          "n": 15,
+          "correct": 10,
+          "automatic": 15,
+          "false_na": 4,
+          "missed_na": 0,
+          "accuracy_all": 0.6667,
+          "accuracy_resolved": 0.6667
+        },
+        "lang-criterion/RU/closing": {
+          "n": 5,
+          "correct": 2,
+          "automatic": 5,
+          "false_na": 3,
+          "missed_na": 0,
+          "accuracy_all": 0.4,
+          "accuracy_resolved": 0.4
+        },
+        "criterion/gross_errors": {
+          "n": 15,
+          "correct": 15,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 13,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang-criterion/RU/gross_errors": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 1,
+          "tp": 1,
+          "tn": 4,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "violation/unspecified": {
+          "n": 15,
+          "correct": 15,
+          "automatic": 15,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 13,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang/KZ": {
+          "n": 40,
+          "correct": 35,
+          "automatic": 38,
+          "false_na": 0,
+          "missed_na": 3,
+          "tn": 5,
+          "accuracy_all": 0.875,
+          "accuracy_resolved": 0.9211,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang-criterion/KZ/contact": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/needs": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 2,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "lang-criterion/KZ/identity": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/consultation": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/empathy": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/dialogue": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "lang-criterion/KZ/closing": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/gross_errors": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 5,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/EN": {
+          "n": 40,
+          "correct": 31,
+          "automatic": 39,
+          "false_na": 2,
+          "missed_na": 2,
+          "tn": 4,
+          "positives": 1,
+          "tp": 1,
+          "accuracy_all": 0.775,
+          "accuracy_resolved": 0.7949,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang-criterion/EN/contact": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/needs": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 1,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "lang-criterion/EN/identity": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 2,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/EN/consultation": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "lang-criterion/EN/empathy": {
+          "n": 5,
+          "correct": 4,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.8,
+          "accuracy_resolved": 0.8
+        },
+        "lang-criterion/EN/dialogue": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "lang-criterion/EN/closing": {
+          "n": 5,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 1,
+          "missed_na": 0,
+          "accuracy_all": 0.6,
+          "accuracy_resolved": 0.6
+        },
+        "lang-criterion/EN/gross_errors": {
+          "n": 5,
+          "correct": 5,
+          "automatic": 5,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 4,
+          "positives": 1,
+          "tp": 1,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "technical": {
+        "references": 254,
+        "invalid_ids": 0
+      },
+      "numeric": 12,
+      "mae": 11.401,
+      "seconds_median": 9.76,
+      "seconds_p95": 13.43,
+      "calls": 26,
+      "tokens": 49133,
+      "gpu_mib_after_max": 6910,
+      "resolved_all_rows": 117,
+      "complete_scores": 12
+    },
+    "historical_control": {
+      "conversations": 15,
+      "same_response": 15,
+      "total_rows": 120,
+      "same_label": 120,
+      "same_evidence": 120
+    },
+    "fixed": {},
+    "regressed": {},
+    "common_numeric": 12,
+    "common_mae": [
+      11.401,
+      11.401
+    ],
+    "supplemental_states": {
+      "ok": 6,
+      "not_needed": 9
+    },
+    "checks": {
+      "gross_errors": {
+        "retained": 2
+      },
+      "contact": {
+        "corroborated": 3
+      },
+      "needs": {
+        "retained": 1
+      },
+      "identity": {
+        "retained": 2
+      },
+      "consultation": {
+        "retained": 1
+      }
+    },
+    "extra_calls": 6,
+    "extra_seconds": 27.12
+  },
+  "pilot": {
+    "n": 12,
+    "baseline": {
+      "groups": {
+        "all": {
+          "n": 96,
+          "correct": 78,
+          "automatic": 93,
+          "false_na": 4,
+          "missed_na": 6,
+          "tn": 12,
+          "accuracy_all": 0.8125,
+          "accuracy_resolved": 0.8387,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/RU": {
+          "n": 32,
+          "correct": 23,
+          "automatic": 30,
+          "false_na": 2,
+          "missed_na": 3,
+          "tn": 4,
+          "accuracy_all": 0.7188,
+          "accuracy_resolved": 0.7667,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "criterion/contact": {
+          "n": 12,
+          "correct": 12,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/RU/contact": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "criterion/needs": {
+          "n": 12,
+          "correct": 6,
+          "automatic": 12,
+          "false_na": 3,
+          "missed_na": 3,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "lang-criterion/RU/needs": {
+          "n": 4,
+          "correct": 1,
+          "automatic": 4,
+          "false_na": 2,
+          "missed_na": 1,
+          "accuracy_all": 0.25,
+          "accuracy_resolved": 0.25
+        },
+        "criterion/identity": {
+          "n": 12,
+          "correct": 11,
+          "automatic": 11,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.9167,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/RU/identity": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "criterion/consultation": {
+          "n": 12,
+          "correct": 10,
+          "automatic": 11,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.8333,
+          "accuracy_resolved": 0.9091
+        },
+        "lang-criterion/RU/consultation": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.6667
+        },
+        "criterion/empathy": {
+          "n": 12,
+          "correct": 11,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.9167,
+          "accuracy_resolved": 0.9167
+        },
+        "lang-criterion/RU/empathy": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "criterion/dialogue": {
+          "n": 12,
+          "correct": 9,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/RU/dialogue": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "criterion/closing": {
+          "n": 12,
+          "correct": 7,
+          "automatic": 11,
+          "false_na": 1,
+          "missed_na": 1,
+          "accuracy_all": 0.5833,
+          "accuracy_resolved": 0.6364
+        },
+        "lang-criterion/RU/closing": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.6667
+        },
+        "criterion/gross_errors": {
+          "n": 12,
+          "correct": 12,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 12,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang-criterion/RU/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 4,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "violation/unspecified": {
+          "n": 12,
+          "correct": 12,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 12,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/KZ": {
+          "n": 32,
+          "correct": 25,
+          "automatic": 31,
+          "false_na": 2,
+          "missed_na": 2,
+          "tn": 4,
+          "accuracy_all": 0.7812,
+          "accuracy_resolved": 0.8065,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang-criterion/KZ/contact": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/needs": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 4,
+          "false_na": 1,
+          "missed_na": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "lang-criterion/KZ/identity": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/consultation": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/empathy": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/KZ/dialogue": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/KZ/closing": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 4,
+          "false_na": 1,
+          "missed_na": 0,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "lang-criterion/KZ/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 4,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/EN": {
+          "n": 32,
+          "correct": 30,
+          "automatic": 32,
+          "false_na": 0,
+          "missed_na": 1,
+          "tn": 4,
+          "accuracy_all": 0.9375,
+          "accuracy_resolved": 0.9375,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang-criterion/EN/contact": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/needs": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/EN/identity": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/consultation": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/empathy": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/dialogue": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/closing": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/EN/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 4,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        }
+      },
+      "technical": {
+        "references": 196,
+        "invalid_ids": 0
+      },
+      "numeric": 10,
+      "mae": 8.393,
+      "seconds_median": 7.68,
+      "seconds_p95": 12.89,
+      "calls": 18,
+      "tokens": 40652,
+      "gpu_mib_after_max": 6994,
+      "resolved_all_rows": 93,
+      "complete_scores": 10
+    },
+    "verified": {
+      "groups": {
+        "all": {
+          "n": 96,
+          "correct": 78,
+          "automatic": 93,
+          "false_na": 4,
+          "missed_na": 6,
+          "tn": 12,
+          "accuracy_all": 0.8125,
+          "accuracy_resolved": 0.8387,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/RU": {
+          "n": 32,
+          "correct": 23,
+          "automatic": 30,
+          "false_na": 2,
+          "missed_na": 3,
+          "tn": 4,
+          "accuracy_all": 0.7188,
+          "accuracy_resolved": 0.7667,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "criterion/contact": {
+          "n": 12,
+          "correct": 12,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/RU/contact": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "criterion/needs": {
+          "n": 12,
+          "correct": 6,
+          "automatic": 12,
+          "false_na": 3,
+          "missed_na": 3,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "lang-criterion/RU/needs": {
+          "n": 4,
+          "correct": 1,
+          "automatic": 4,
+          "false_na": 2,
+          "missed_na": 1,
+          "accuracy_all": 0.25,
+          "accuracy_resolved": 0.25
+        },
+        "criterion/identity": {
+          "n": 12,
+          "correct": 11,
+          "automatic": 11,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.9167,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/RU/identity": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "criterion/consultation": {
+          "n": 12,
+          "correct": 10,
+          "automatic": 11,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.8333,
+          "accuracy_resolved": 0.9091
+        },
+        "lang-criterion/RU/consultation": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.6667
+        },
+        "criterion/empathy": {
+          "n": 12,
+          "correct": 11,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.9167,
+          "accuracy_resolved": 0.9167
+        },
+        "lang-criterion/RU/empathy": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "criterion/dialogue": {
+          "n": 12,
+          "correct": 9,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/RU/dialogue": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "criterion/closing": {
+          "n": 12,
+          "correct": 7,
+          "automatic": 11,
+          "false_na": 1,
+          "missed_na": 1,
+          "accuracy_all": 0.5833,
+          "accuracy_resolved": 0.6364
+        },
+        "lang-criterion/RU/closing": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.6667
+        },
+        "criterion/gross_errors": {
+          "n": 12,
+          "correct": 12,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 12,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang-criterion/RU/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 4,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "violation/unspecified": {
+          "n": 12,
+          "correct": 12,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 12,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/KZ": {
+          "n": 32,
+          "correct": 25,
+          "automatic": 31,
+          "false_na": 2,
+          "missed_na": 2,
+          "tn": 4,
+          "accuracy_all": 0.7812,
+          "accuracy_resolved": 0.8065,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang-criterion/KZ/contact": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/needs": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 4,
+          "false_na": 1,
+          "missed_na": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "lang-criterion/KZ/identity": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/consultation": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/empathy": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/KZ/dialogue": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/KZ/closing": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 4,
+          "false_na": 1,
+          "missed_na": 0,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "lang-criterion/KZ/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 4,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/EN": {
+          "n": 32,
+          "correct": 30,
+          "automatic": 32,
+          "false_na": 0,
+          "missed_na": 1,
+          "tn": 4,
+          "accuracy_all": 0.9375,
+          "accuracy_resolved": 0.9375,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang-criterion/EN/contact": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/needs": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 1,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/EN/identity": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/consultation": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/empathy": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/dialogue": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/closing": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.75
+        },
+        "lang-criterion/EN/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 4,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        }
+      },
+      "technical": {
+        "references": 196,
+        "invalid_ids": 0
+      },
+      "numeric": 10,
+      "mae": 8.393,
+      "seconds_median": 10.74,
+      "seconds_p95": 14.39,
+      "calls": 22,
+      "tokens": 45063,
+      "gpu_mib_after_max": 6994,
+      "resolved_all_rows": 93,
+      "complete_scores": 10
+    },
+    "historical_control": {
+      "conversations": 12,
+      "same_response": 0,
+      "total_rows": 96,
+      "same_label": 96,
+      "same_evidence": 96
+    },
+    "fixed": {},
+    "regressed": {},
+    "common_numeric": 10,
+    "common_mae": [
+      8.393,
+      8.393
+    ],
+    "supplemental_states": {
+      "ok": 4,
+      "not_needed": 8
+    },
+    "checks": {
+      "contact": {
+        "corroborated": 2
+      },
+      "consultation": {
+        "retained": 1
+      },
+      "needs": {
+        "retained": 2
+      },
+      "identity": {
+        "retained": 1
+      }
+    },
+    "extra_calls": 4,
+    "extra_seconds": 15.55
+  },
+  "pairs": {
+    "n": 18,
+    "baseline": {
+      "groups": {
+        "all": {
+          "n": 18,
+          "correct": 10,
+          "automatic": 17,
+          "false_na": 4,
+          "missed_na": 0,
+          "positives": 6,
+          "tp": 5,
+          "tn": 4,
+          "fp": 1,
+          "fn": 1,
+          "accuracy_all": 0.5556,
+          "accuracy_resolved": 0.5882,
+          "precision": 0.8333,
+          "recall": 0.8333,
+          "f1": 0.8333
+        },
+        "lang/RU": {
+          "n": 6,
+          "correct": 4,
+          "automatic": 6,
+          "false_na": 2,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 2,
+          "accuracy_all": 0.6667,
+          "accuracy_resolved": 0.6667,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "criterion/identity": {
+          "n": 6,
+          "correct": 1,
+          "automatic": 6,
+          "false_na": 4,
+          "missed_na": 0,
+          "accuracy_all": 0.1667,
+          "accuracy_resolved": 0.1667
+        },
+        "lang-criterion/RU/identity": {
+          "n": 2,
+          "correct": 0,
+          "automatic": 2,
+          "false_na": 2,
+          "missed_na": 0,
+          "accuracy_all": 0.0,
+          "accuracy_resolved": 0.0
+        },
+        "criterion/gross_errors": {
+          "n": 12,
+          "correct": 9,
+          "automatic": 11,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 6,
+          "tp": 5,
+          "tn": 4,
+          "fp": 1,
+          "fn": 1,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 0.8182,
+          "precision": 0.8333,
+          "recall": 0.8333,
+          "f1": 0.8333
+        },
+        "lang-criterion/RU/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 2,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "violation/private-offer": {
+          "n": 3,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 3,
+          "tp": 3,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "violation/private-refusal": {
+          "n": 3,
+          "correct": 1,
+          "automatic": 2,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 1,
+          "fp": 1,
+          "accuracy_all": 0.3333,
+          "accuracy_resolved": 0.5,
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0
+        },
+        "violation/disclose": {
+          "n": 3,
+          "correct": 2,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 3,
+          "tp": 2,
+          "fn": 1,
+          "accuracy_all": 0.6667,
+          "accuracy_resolved": 0.6667,
+          "precision": 1.0,
+          "recall": 0.6667,
+          "f1": 0.8
+        },
+        "violation/refuse": {
+          "n": 3,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 3,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/KZ": {
+          "n": 6,
+          "correct": 3,
+          "automatic": 6,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 1,
+          "fp": 1,
+          "fn": 1,
+          "tn": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5
+        },
+        "lang-criterion/KZ/identity": {
+          "n": 2,
+          "correct": 1,
+          "automatic": 2,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5
+        },
+        "lang-criterion/KZ/gross_errors": {
+          "n": 4,
+          "correct": 2,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 1,
+          "fp": 1,
+          "fn": 1,
+          "tn": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5
+        },
+        "lang/EN": {
+          "n": 6,
+          "correct": 3,
+          "automatic": 5,
+          "false_na": 2,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 1,
+          "accuracy_all": 0.5,
+          "accuracy_resolved": 0.6,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang-criterion/EN/identity": {
+          "n": 2,
+          "correct": 0,
+          "automatic": 2,
+          "false_na": 2,
+          "missed_na": 0,
+          "accuracy_all": 0.0,
+          "accuracy_resolved": 0.0
+        },
+        "lang-criterion/EN/gross_errors": {
+          "n": 4,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 1,
+          "accuracy_all": 0.75,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "technical": {
+        "references": 224,
+        "invalid_ids": 0
+      },
+      "numeric": 0,
+      "mae": null,
+      "seconds_median": 6.51,
+      "seconds_p95": 10.27,
+      "calls": 19,
+      "tokens": 35352,
+      "gpu_mib_after_max": 7025,
+      "resolved_all_rows": 125,
+      "complete_scores": 11
+    },
+    "verified": {
+      "groups": {
+        "all": {
+          "n": 18,
+          "correct": 18,
+          "automatic": 18,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 6,
+          "tp": 6,
+          "tn": 6,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang/RU": {
+          "n": 6,
+          "correct": 6,
+          "automatic": 6,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 2,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "criterion/identity": {
+          "n": 6,
+          "correct": 6,
+          "automatic": 6,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/RU/identity": {
+          "n": 2,
+          "correct": 2,
+          "automatic": 2,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "criterion/gross_errors": {
+          "n": 12,
+          "correct": 12,
+          "automatic": 12,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 6,
+          "tp": 6,
+          "tn": 6,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang-criterion/RU/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 2,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "violation/private-offer": {
+          "n": 3,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 3,
+          "tp": 3,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "violation/private-refusal": {
+          "n": 3,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 3,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "violation/disclose": {
+          "n": 3,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 3,
+          "tp": 3,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "violation/refuse": {
+          "n": 3,
+          "correct": 3,
+          "automatic": 3,
+          "false_na": 0,
+          "missed_na": 0,
+          "tn": 3,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": null,
+          "recall": null,
+          "f1": null
+        },
+        "lang/KZ": {
+          "n": 6,
+          "correct": 6,
+          "automatic": 6,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 2,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang-criterion/KZ/identity": {
+          "n": 2,
+          "correct": 2,
+          "automatic": 2,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/KZ/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 2,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang/EN": {
+          "n": 6,
+          "correct": 6,
+          "automatic": 6,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 2,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "lang-criterion/EN/identity": {
+          "n": 2,
+          "correct": 2,
+          "automatic": 2,
+          "false_na": 0,
+          "missed_na": 0,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0
+        },
+        "lang-criterion/EN/gross_errors": {
+          "n": 4,
+          "correct": 4,
+          "automatic": 4,
+          "false_na": 0,
+          "missed_na": 0,
+          "positives": 2,
+          "tp": 2,
+          "tn": 2,
+          "accuracy_all": 1.0,
+          "accuracy_resolved": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "technical": {
+        "references": 225,
+        "invalid_ids": 0
+      },
+      "numeric": 0,
+      "mae": null,
+      "seconds_median": 12.72,
+      "seconds_p95": 19.42,
+      "calls": 31,
+      "tokens": 46208,
+      "gpu_mib_after_max": 7025,
+      "resolved_all_rows": 128,
+      "complete_scores": 11
+    },
+    "historical_control": {
+      "conversations": 18,
+      "same_response": 18,
+      "total_rows": 144,
+      "same_label": 144,
+      "same_evidence": 144
+    },
+    "fixed": {
+      "identity": 5,
+      "gross_errors": 3
+    },
+    "regressed": {},
+    "common_numeric": 0,
+    "common_mae": [],
+    "supplemental_states": {
+      "not_needed": 6,
+      "ok": 12
+    },
+    "checks": {
+      "identity": {
+        "amended": 5,
+        "retained": 5,
+        "corroborated": 1
+      },
+      "consultation": {
+        "amended": 2,
+        "retained": 1
+      },
+      "gross_errors": {
+        "corroborated": 8,
+        "retained": 1,
+        "amended": 3
+      }
+    },
+    "extra_calls": 12,
+    "extra_seconds": 92.22,
+    "required_anchors": [
+      {
+        "n": 18,
+        "correct_label_and_required_acts": 9
+      },
+      {
+        "n": 18,
+        "correct_label_and_required_acts": 18
+      }
+    ]
+  },
+  "voice": {
+    "n": 5,
+    "baseline": {
+      "groups": {},
+      "technical": {
+        "references": 129,
+        "invalid_ids": 0
+      },
+      "numeric": 0,
+      "mae": null,
+      "seconds_median": 10.94,
+      "seconds_p95": 14.0,
+      "calls": 6,
+      "tokens": 43066,
+      "gpu_mib_after_max": 6978,
+      "resolved_all_rows": 39,
+      "complete_scores": 4
+    },
+    "verified": {
+      "groups": {},
+      "technical": {
+        "references": 129,
+        "invalid_ids": 0
+      },
+      "numeric": 0,
+      "mae": null,
+      "seconds_median": 10.94,
+      "seconds_p95": 19.98,
+      "calls": 7,
+      "tokens": 46092,
+      "gpu_mib_after_max": 6978,
+      "resolved_all_rows": 39,
+      "complete_scores": 4
+    },
+    "historical_control": {
+      "conversations": 5,
+      "same_response": 5,
+      "total_rows": 40,
+      "same_label": 40,
+      "same_evidence": 40
+    },
+    "fixed": {},
+    "regressed": {},
+    "common_numeric": 0,
+    "common_mae": [],
+    "supplemental_states": {
+      "ok": 1,
+      "not_needed": 4
+    },
+    "checks": {
+      "consultation": {
+        "retained": 1
+      }
+    },
+    "extra_calls": 1,
+    "extra_seconds": 5.98
+  },
+  "manifest": {
+    "model": "Qwen3.5-9B-Kazakh.Q5_K_M",
+    "model_revision": {
+      "declared": "sha256:4c0beeaa5d24765d791fc6c0fee9b4a30b5e563d18dd6830c61b9993faf8e0b6",
+      "local_file": {
+        "name": "Qwen3.5-9B-Kazakh.Q5_K_M.gguf",
+        "bytes": 6566423936,
+        "mtime_ns": 1794051085260451400
+      },
+      "served_alias": "Qwen3.5-9B-Kazakh.Q5_K_M"
+    },
+    "baseline_variant": "e1513760d1b33bd529b1467bfc549249d3aed441db8aea17e28a1410109414f6",
+    "profile": "baseline-plus",
+    "prompt": "49910766bada601028007902797f1a4d15a11dabb444627ab0b2809cea953764",
+    "code": "5f747e8d2bfa4aca6b076d6129db4d205181521691a23538beb2ecbc08747358",
+    "policy_version": "freedom-1.0",
+    "generation": {
+      "seed": 42,
+      "temperature": 0,
+      "thinking": false
+    },
+    "components": [
+      "policy",
+      "score",
+      "sentinel",
+      "trace"
+    ],
+    "checklist": "7c5f6793a57ce278bb9e27bc224786c7cb10c5d2a78a1ac301673df6ae0dbfc7",
+    "rules": {
+      "contact": "362055e7ed977c5899d04afba745164be11f3084a76faecd0613f3df90388ae1",
+      "needs": "dda6e5462441588c866fe352947bb67042d41c3e04cf904f2ccc4490955211a8",
+      "identity": "1d014e48fd599df1eaba4f22a5864944856a5df178b7ae87cb4dbbaa68d4766c",
+      "consultation": "16cc5555972b0a1ab60c7f3d123527aec63fae67658553fc64447e56f1ea284b",
+      "empathy": "a36baa396247b972fcf24795369af670bc920da6ae85c3c810bb8a3c8ba7b99a",
+      "dialogue": "3211d1430bad13e6072c1380a684f2831f551847c18837a440a80dbfaf88a0ee",
+      "closing": "ceb002ba5c16ce1c8e6fd5dae0a107f884d13c4405812c13fb34886a581e5b49",
+      "gross_errors": "f64788d7611c00671e8734fce5376dc6a38c2811482984bf7de1a3a9229baa66"
+    }
+  }
+}

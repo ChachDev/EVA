@@ -85,7 +85,7 @@ for (const input of [
   });
 }
 
-for (const role of ['unknown', 'agent', '', ' ', '__proto__', 'constructor', 'toString', 1, true, null]) {
+for (const role of ['agent', '', ' ', '__proto__', 'constructor', 'toString', 1, true, null]) {
   test('unknown role cannot become a canonical speaker: ' + JSON.stringify(role), () => {
     assert.throws(() => parseJson([message({ speaker: role })]));
   });
@@ -93,7 +93,7 @@ for (const role of ['unknown', 'agent', '', ' ', '__proto__', 'constructor', 'to
 
 for (const [name, row] of [
   ['speaker', { timestamp: '00:00', text: 'Synthetic.' }],
-  ['timestamp', { speaker: 'client', text: 'Synthetic.' }],
+
   ['text', { timestamp: '00:00', speaker: 'client' }],
 ]) {
   test('missing required ' + name + ' is rejected rather than invented', () => {
@@ -107,7 +107,7 @@ for (const row of [null, 1, false, 'Synthetic.', []]) {
   });
 }
 
-for (const timestamp of ['', ' ', null, 1, true, '0'.repeat(129)]) {
+for (const timestamp of ['', ' ', 1, true, '0'.repeat(129)]) {
   test('missing, wrongly typed or oversized timestamp is rejected: ' + JSON.stringify(timestamp), () => {
     assert.throws(() => parseJson([message({ timestamp })]));
   });
@@ -144,6 +144,12 @@ test('10001 messages are rejected rather than truncated', () => {
   assert.throws(() => parseJson(Array.from({ length: 10_001 }, () => message())));
 });
 
+test('keeps an unknown speaker, mixed language and explicitly absent time', () => {
+  const row=message({timestamp:null,speaker:'unknown',speaker_id:'B',language:'mixed'});
+  assert.deepEqual(parseJson([row]),[row]);
+  assert.deepEqual(parseJson([{speaker:'client',text:'Synthetic.'}]),[{speaker:'client',text:'Synthetic.',timestamp:null}]);
+});
+
 test('an invalid later message rejects the whole transcript', () => {
-  assert.throws(() => parseJson([message(), message({ speaker: 'unknown' }), message()]));
+  assert.throws(() => parseJson([message(), message({ speaker: 'unmapped' }), message()]));
 });

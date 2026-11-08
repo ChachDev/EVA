@@ -1,0 +1,161 @@
+{
+  "response": {
+    "schema_version": "1.0.0",
+    "conversation_id": "demo-ru-001",
+    "checklist_id": "freedom-cqa",
+    "checklist_version": 1,
+    "provider": "fixture",
+    "model": "human-authored-demo",
+    "criteria": [
+      {
+        "criterion_id": "contact",
+        "status": "scored",
+        "value": true,
+        "reason": "Приветствие и представление в первом ответе.",
+        "evidence": [
+          {
+            "kind": "message",
+            "message_ids": [
+              "m0001",
+              "m0002"
+            ]
+          }
+        ]
+      },
+      {
+        "criterion_id": "needs",
+        "status": "scored",
+        "value": null,
+        "reason": "Общий вопрос уже сформулирован полностью.",
+        "evidence": [
+          {
+            "kind": "not_applicable",
+            "message_ids": [
+              "m0001",
+              "m0002"
+            ]
+          }
+        ]
+      },
+      {
+        "criterion_id": "identity",
+        "status": "scored",
+        "value": null,
+        "reason": "Запрос об общих тарифах не требует проверки личности.",
+        "evidence": [
+          {
+            "kind": "not_applicable",
+            "message_ids": [
+              "m0001",
+              "m0002"
+            ]
+          }
+        ]
+      },
+      {
+        "criterion_id": "consultation",
+        "status": "scored",
+        "value": 20,
+        "reason": "В учебном примере указан следующий шаг; это демонстрационная ручная разметка, не проверка реальных тарифов.",
+        "evidence": [
+          {
+            "kind": "message",
+            "message_ids": [
+              "m0001",
+              "m0002"
+            ]
+          }
+        ]
+      },
+      {
+        "criterion_id": "empathy",
+        "status": "scored",
+        "value": true,
+        "reason": "Ответ вежливый, недовольства в переписке нет.",
+        "evidence": [
+          {
+            "kind": "message",
+            "message_ids": [
+              "m0001",
+              "m0002"
+            ]
+          }
+        ]
+      },
+      {
+        "criterion_id": "dialogue",
+        "status": "scored",
+        "value": 10,
+        "reason": "Ответы последовательны, явного ожидания нет.",
+        "evidence": [
+          {
+            "kind": "message",
+            "message_ids": [
+              "m0001",
+              "m0002"
+            ]
+          }
+        ]
+      },
+      {
+        "criterion_id": "closing",
+        "status": "scored",
+        "value": true,
+        "reason": "Предложена дальнейшая помощь и есть прощание.",
+        "evidence": [
+          {
+            "kind": "message",
+            "message_ids": [
+              "m0004"
+            ]
+          }
+        ]
+      },
+      {
+        "criterion_id": "gross_errors",
+        "status": "scored",
+        "value": false,
+        "reason": "В учебном примере ни одно из трёх нарушений не отмечено.",
+        "evidence": [
+          {
+            "kind": "message",
+            "message_ids": [
+              "m0001",
+              "m0002",
+              "m0003",
+              "m0004"
+            ]
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      "Синтетический пример с ручной разметкой. Не результат работы ML и не DEV-набор организаторов."
+    ]
+  },
+  "audit": {
+    "version": 1,
+    "target_operator": null,
+    "versions": {
+      "model": "human-authored-demo",
+      "prompt": "fixture",
+      "code": "fixture",
+      "baseline_variant": "fixture",
+      "components": [],
+      "checklist": "7c5f6793a57ce278bb9e27bc224786c7cb10c5d2a78a1ac301673df6ae0dbfc7",
+      "rules": {},
+      "transcript": "0df606ac8800e727ea6f533855f073b16d35011126291f755cc6632d44b720f5"
+    },
+    "source": {},
+    "language": "RU",
+    "criteria": {},
+    "sentinel": [],
+    "rules": {},
+    "calls": 0,
+    "tokens": 0,
+    "seconds": 0,
+    "run_id": "4d5a33a4-0481-4cb0-aa73-8b582bb3fba8",
+    "cache_key": "synthetic-fixture",
+    "cache_hit": false
+  }
+}

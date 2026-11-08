@@ -9,6 +9,7 @@ import { WorkspaceTable, WorkspaceAppeals, WorkspaceHelp, WorkspaceSearch, Works
 import LiveOverview from './LiveOverview';
 import { hasOpenAppeal } from './workspace-analytics';
 import LiveDetail from './LiveDetail';
+import BatchPanel from './BatchPanel';
 import { ImportDialog, ChecklistEditor, AppealDialog, AudioDialog } from './LiveForms';
 import { displayTime } from './server-input';
 

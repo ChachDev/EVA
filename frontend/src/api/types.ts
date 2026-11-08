@@ -1,15 +1,21 @@
 // Wire types mirror contracts/schemas/. Scores and review outcomes come from Backend.
 export type Language = 'RU' | 'KZ' | 'EN';
 export type Channel = 'agent_chat' | 'voice_call';
-export type Speaker = 'client' | 'operator' | 'bot' | 'system';
+export type Speaker = 'client' | 'operator' | 'bot' | 'system' | 'unknown';
 export type TranscriptRole = 'client' | 'operator';
 
 export interface Message {
   id: string;
   speaker: Speaker;
   text: string;
-  timestamp: string;
+  timestamp: string | null;
   offset_seconds: number | null;
+  speaker_id?: string;
+  event?: 'identity_verified';
+  translation?: {language:string;text:string};
+  end_seconds?: number | null;
+  language?: Language | 'mixed' | 'unknown';
+  quality?: string;
 }
 
 export interface Conversation {
@@ -18,19 +24,22 @@ export interface Conversation {
   language: Language;
   messages: Message[];
   audio_url: string | null;
+  source?: {target_operator_id?: string; complete_start?: boolean; complete_end?: boolean; gaps?: boolean};
 }
 
 export interface ConversationCreate {
   operation_id: string;
   channel: Channel;
   language: Language;
-  messages: Array<Pick<Message, 'timestamp' | 'speaker' | 'text'>>;
+  messages: Array<Omit<Message,'id' | 'offset_seconds'> & {offset_seconds?:number|null}>;
+  source?: Conversation['source'];
 }
 
 export interface Criterion {
   id: string;
   title: string;
   instruction: string;
+  depends_on?: string[];
   section_id: string | null;
   type: 'boolean' | 'scale' | 'flag';
   weight: number;
@@ -227,7 +236,41 @@ export interface BackendHealth {
   schema_version?: '1.0.0';
 }
 
+export interface AuditDetail {
+  decision: boolean | number | null; status: string; action: string; uncertainty: string | null;
+  technical: 'valid'|'invalid'; semantic: 'model_assessed'|'requires_review'; conflict?:string|null;
+  scope:{first:string;last:string;stage:string;complete_start:boolean|null;complete_end:boolean|null;gaps:boolean};
+  evidence: Array<{utterance_id:string; quote:string; start:number|null}>;
+}
+export interface AuditExport {
+  format:string; evaluation_id:string; review:ReviewCase; can_derive?:boolean;
+  snapshot:EvaluationSnapshot|null;
+  audit: null | {mode:string; status?:string; scoring?:ScoreSummary; parent?:string; removed?:string[];
+    changes?:Record<string,{fields:string[]; evaluate:boolean; differences?:Record<string,{from:unknown;to:unknown}>;before_decision?:CriterionResult|null;after_decision?:CriterionResult}>;
+    from_version?:number;to_version?:number;review_projection?:{parent_revision:number;scoring:ScoreSummary};
+    candidate?:{response:EvaluationResponse; audit:{criteria:Record<string,AuditDetail>;
+      question_map?:{scope:{first:string;last:string};items:Array<{status:'answered'|'open'|'unknown';question:AuditDetail['evidence'][number];answer:AuditDetail['evidence'][number]|null}>};
+      sentinel:Array<AuditDetail & {rule_id:string}>; rules:Record<string,{instruction:string}>;
+      verification?:{baseline:EvaluationResponse;state:string;requested:string[];checks:Record<string,{outcome:string;reason:string;suggested?:boolean}>}}}};
+}
+export interface Batch {
+  id:string;group_id:string;checklist_id:string;version:number;mode:string;revision:string;counts:Record<string,number>;
+  items:Array<{id:string;cid:string;state:string;attempt:number;error:string|null}>;
+}
+export interface Quality {
+  total:number;labeled:number;submissions:number;rows:Array<{language:string;criterion:string;matched?:number;denominator?:number;
+    false_na?:number;missed_na?:number;unresolved?:number;false_accusations?:number;missed_positive?:number}>;
+}
 export interface CqaApi {
+  batches?:{
+    groups():Promise<string[]>;list():Promise<string[]>;get(id:string):Promise<Batch>;
+    start(group:string,check:Checklist):Promise<Batch>;retry(id:string):Promise<Batch>;results(id:string):Promise<unknown>;
+    blind(id:string):Promise<{conversation:Conversation;checklist:Checklist}>;
+    label(id:string,reviewer:string,answers:Record<string,unknown>):Promise<{rows:Array<{criterion:string;human:unknown;auto:unknown}>}>;
+    quality(id:string):Promise<Quality>;
+  };
+  auditExport?(id:string): Promise<AuditExport>;
+  deriveVersion?(id:string, version:number): Promise<Evaluation>;
   health(): Promise<BackendHealth>;
   getChecklists(): Promise<Checklist[]>;
   publishChecklist(id: string, payload: ChecklistPublish): Promise<Checklist>;

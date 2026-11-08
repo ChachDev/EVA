@@ -7,6 +7,8 @@ import re
 
 import httpx
 
+from .contracts import fingerprint
+
 
 DEFAULT_MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 MAX_ERROR_RESPONSE_BYTES = 4096
@@ -105,6 +107,13 @@ class MLClient:
                 raise MLContextLimitExceeded("Conversation and checklist exceed the local model context.")
             raise MLInvalidResponse("ML returned an unexpected HTTP status.")
         return result
+
+    async def audit_shadow(self, request: dict, baseline: dict) -> dict:
+        return await self._request_json("POST","/v1/verify",{"request":request,"baseline":baseline,
+                                                             "request_hash":fingerprint(request)})
+
+    async def audit(self, request: dict) -> dict:
+        return await self._request_json("POST", "/v1/audit", request)
 
     async def evaluate(self, request: dict) -> dict:
         return await self._request_json("POST", "/v1/evaluate", request)

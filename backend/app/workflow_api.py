@@ -48,7 +48,9 @@ def install_workflow_routes(application: FastAPI, contracts: Contracts,
                 "transcript": body["messages"], "audio_url": None,
             }],
         }}
-        normalized = await run_in_threadpool(normalize_dataset, envelope, contracts)
+        normalized = await run_in_threadpool(normalize_dataset, envelope, contracts, manual=True)
+        if "source" in body:
+            normalized.conversations[0]["source"] = body["source"]
         try:
             await run_in_threadpool(store.import_conversations, normalized.group_id,
                                     normalized.conversations, raw_records=normalized.raw_records)

@@ -24,6 +24,9 @@ export function ImportDialog({ onClose, onSaved }: { onClose: () => void; onSave
   const fileNameId = useId();
   const [language, setLanguage] = useState<Conversation['language']>('RU');
   const [channel, setChannel] = useState<Conversation['channel']>('agent_chat');
+  const [operator,setOperator]=useState('');
+  const [lostStart,setLostStart]=useState(false);
+  const [lostEnd,setLostEnd]=useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const operation = useOperation();
@@ -33,7 +36,10 @@ export function ImportDialog({ onClose, onSaved }: { onClose: () => void; onSave
     e.preventDefault(); if (busy) return;
     setError(''); setBusy(true);
     try {
-      const payload = { channel, language, messages: parseTranscript(text, channel) };
+      const envelope = text.trim().startsWith('{') ? JSON.parse(text) : null;
+      const source={...envelope?.source,...(operator.trim()?{target_operator_id:operator.trim()}:{}),
+        ...(lostStart?{complete_start:false}:{}),...(lostEnd?{complete_end:false}:{})};
+      const payload = { channel, language, messages: parseTranscript(text, channel), ...(Object.keys(source).length?{source}:{}) };
       const request: ConversationCreate = { ...payload, operation_id: operation(payload) };
       onSaved(await api.createConversation(request));
     } catch (error) { setError(errorText(error)); } finally { setBusy(false); }
