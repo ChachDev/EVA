@@ -1,5 +1,6 @@
 """Validate canonical, read-only JSON Schemas and cross-document invariants."""
 
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -11,6 +12,11 @@ from referencing import Registry, Resource
 
 class ContractError(ValueError):
     pass
+
+
+def fingerprint(value: Any) -> str:
+    document = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(document.encode()).hexdigest()
 
 
 def _finite_numbers(value: Any) -> None:

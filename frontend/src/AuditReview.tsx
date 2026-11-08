@@ -8,6 +8,8 @@ const display=(v: unknown)=>v===null?'—':v===true?'Да':v===false?'Нет':St
 
 const answer=(row:CriterionResult|undefined|null)=>!row?'—':row.status==='needs_review'?'Нужна проверка':row.value===null?'N/A':display(row.value);
 
+const checklistName=(data:AuditExport,key:string)=>data.snapshot?.checklist.criteria.find(r=>r.id===key)?.title ?? key;
+
 export default function AuditReview({evaluation,review,jump}:{evaluation:Evaluation;review:ReviewCase;jump:(ids:string[])=>void}) {
   const [data,setData]=useState<AuditExport|null>(null);
   const [error,setError]=useState('');
@@ -50,6 +52,18 @@ export default function AuditReview({evaluation,review,jump}:{evaluation:Evaluat
           return <p key={d.id}><strong>{criterion}</strong> · {answer(original)} → {answer(d.override ?? original)} · {d.reviewer_id} · {d.created_at} · {d.reason}</p>;
         })}
         {companion?.mode==='shadow' && <p>Параллельное сравнение · {companion.status} <button onClick={()=>setRefresh(n=>n+1)}>Обновить</button></p>}
+        {candidate?.audit.verification && <details open><summary>Перепроверка исходной оценки</summary>
+          {companion?.mode==='shadow' && companion.scoring && <p>Итог после перепроверки · {companion.scoring.total===null?'Нужна проверка':display(companion.scoring.total)}. Действующая оценка хранится отдельно.</p>}
+          {candidate.audit.verification.state==='unavailable' && <p>Дополнительный вызов недоступен. Сохранена исходная оценка.</p>}
+          {candidate.audit.verification.state==='partial' && <p>Часть проверок не дала допустимого ответа.</p>}
+          {!Object.keys(candidate.audit.verification.checks).length && <p>Оснований для дополнительной проверки не найдено.</p>}
+          {Object.entries(candidate.audit.verification.checks).map(([key,check])=>{
+            const before=candidate.audit.verification!.baseline.criteria.find(r=>r.criterion_id===key);
+            const after=candidate.response.criteria.find(r=>r.criterion_id===key);
+            return <div key={key}><p><strong>{checklistName(data,key)}</strong> · {answer(before)} → {answer(after)} · {check.reason}
+              {check.suggested!==undefined && <> Предложение для сверки: {display(check.suggested)}.</>}</p>
+              {check.outcome!=='retained' && candidate.audit.criteria[key]?.evidence.map(e=><button className="evidence-link" key={e.utterance_id} onClick={()=>jump([e.utterance_id])}>{e.utterance_id} · «{e.quote}»</button>)}</div>;
+          })}</details>}
         {candidate && <><h3>EVA Sentinel · нарушения</h3><p>Флаги этого автоматического запуска. Действующий итог учитывает решения проверяющего.</p>
           {candidate.audit.sentinel.map(f=><div key={f.rule_id}><strong>{names[f.rule_id] ?? f.rule_id}</strong> · {f.status==='needs_review'?'Нужна проверка':display(f.decision)}
             <p>{f.uncertainty ?? f.action}</p>{f.evidence.map((e,i)=><button className="evidence-link" key={i} onClick={()=>jump([e.utterance_id])}>{e.utterance_id} · «{e.quote}»</button>)}</div>)}

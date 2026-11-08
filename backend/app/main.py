@@ -64,6 +64,7 @@ def create_app(settings: Settings | None = None,
                 transport = MLClient(client, max_response_bytes=settings.ml_max_response_bytes)
                 application.state.evaluate = evaluator or transport.evaluate
                 application.state.audit_evaluate = transport.audit
+                application.state.audit_shadow = transport.audit_shadow
                 application.state.ml_slots = asyncio.Semaphore(settings.ml_max_concurrency)
                 application.state.evaluation_requests = asyncio.Queue(
                     maxsize=settings.ml_max_concurrency + settings.evaluation_queue_capacity,
@@ -127,12 +128,15 @@ def create_app(settings: Settings | None = None,
         finally:
             application.state.evaluation_requests.get_nowait()
 
-    async def shadow(record_id, request):
+    async def shadow(record_id, request, baseline):
         sidecar = {"mode":"shadow"}
         try:
             async with asyncio.timeout(settings.ml_timeout_seconds):
                 async with application.state.ml_slots:
-                    bundle = audit_api.checked(contracts, request, await application.state.audit_evaluate(request))
+                    bundle = audit_api.checked(contracts, request, await application.state.audit_shadow(request,baseline))
+                    verification=bundle["audit"].get("verification")
+                    if verification is not None and verification["baseline"]!=baseline:
+                        raise MLInvalidResponse("Verification used a different primary result.")
             sidecar.update(status="completed", candidate=bundle, scoring=score(request,bundle["response"]))
         except (MLInvalidResponse, MLUnavailable, TimeoutError, MLContextLimitExceeded):
             sidecar.update(status="failed",reason="Candidate unavailable or invalid.")
@@ -189,7 +193,7 @@ def create_app(settings: Settings | None = None,
         contracts.validate("evaluation-record", record)
         await run_in_threadpool(store.create, record, request_snapshot=request, audit=companion)
         if settings.audit_mode == "shadow":
-            background_tasks.add_task(shadow,record["id"],request)
+            background_tasks.add_task(shadow,record["id"],request,original)
         return record
 
     install_workflow_routes(application, contracts, store, settings)

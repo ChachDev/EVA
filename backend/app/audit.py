@@ -1,23 +1,53 @@
 """EVA Review export, version comparison and audit evidence boundary."""
 import asyncio
 from copy import deepcopy
-import hashlib
-import json
 from datetime import datetime, timezone
 from uuid import NAMESPACE_URL, uuid5
 
 from fastapi import Body, HTTPException
 from fastapi.concurrency import run_in_threadpool
 
-from .contracts import ContractError
+from .contracts import ContractError, fingerprint
 from .ml_client import MLInvalidResponse, MLUnavailable
 from .scoring import score
 from .storage import StorageConflict
 
 
-def fingerprint(value):
-    document=json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(",",":"))
-    return hashlib.sha256(document.encode()).hexdigest()
+def validate_verification(contracts, request, response, audit):
+    verification = audit.get("verification")
+    if audit["versions"].get("profile") != "baseline-plus":
+        if verification is not None:
+            raise ValueError("Unexpected baseline verification.")
+        return
+    if not verification:
+        raise ValueError("Missing baseline verification.")
+    base = verification["baseline"]
+    contracts.validate_result(request, base)
+    if (base["model"], base["provider"]) != (response["model"], response["provider"]):
+        raise ValueError("Baseline and verifier use different providers.")
+    checks = verification["checks"]
+    decisions = {row["criterion_id"]: row for row in response["criteria"]}
+    if not checks.keys() <= decisions.keys():
+        raise ValueError("Unknown verified criterion.")
+    for old in base["criteria"]:
+        key = old["criterion_id"]
+        new = decisions[key]
+        outcome = checks.get(key, {}).get("outcome", "retained")
+        if outcome == "retained":
+            if old != new:
+                raise ValueError("Unverified criterion was changed.")
+            continue
+        same = old["status"] == new["status"] and old["value"] == new["value"]
+        if same != (outcome == "corroborated"):
+            raise ValueError("Verification outcome contradicts the decision.")
+        old_ids = {i for e in old["evidence"] for i in e["message_ids"]}
+        new_ids = {i for e in new["evidence"] for i in e["message_ids"]}
+        if same and (old["reason"] != new["reason"] or not old_ids <= new_ids):
+            raise ValueError("Corroboration discarded original evidence.")
+        evidence = audit["criteria"].get(key, {}).get("evidence", [])
+        if not same and (not evidence or new_ids != {e["utterance_id"] for e in evidence}
+                         or not any(e["role"] == "operator" for e in evidence)):
+            raise ValueError("Amendment requires matching evidence about the target operator.")
 
 
 def checked(contracts, request, bundle):
@@ -32,6 +62,7 @@ def checked(contracts, request, bundle):
                 or audit["target_operator"]!=request["conversation"].get("source",{}).get("target_operator_id")):
             raise ValueError("Audit belongs to a different source or configuration.")
         decisions={r["criterion_id"]:r for r in response["criteria"]}
+        validate_verification(contracts, request, response, audit)
         for key,detail in audit["criteria"].items():
             if key not in decisions or detail["status"]!=decisions[key]["status"] or detail["decision"]!=decisions[key]["value"]:
                 raise ValueError("The explanation contradicts the decision.")

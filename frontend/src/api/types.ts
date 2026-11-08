@@ -245,11 +245,12 @@ export interface AuditDetail {
 export interface AuditExport {
   format:string; evaluation_id:string; review:ReviewCase; can_derive?:boolean;
   snapshot:EvaluationSnapshot|null;
-  audit: null | {mode:string; status?:string; parent?:string; removed?:string[];
+  audit: null | {mode:string; status?:string; scoring?:ScoreSummary; parent?:string; removed?:string[];
     changes?:Record<string,{fields:string[]; evaluate:boolean; differences?:Record<string,{from:unknown;to:unknown}>;before_decision?:CriterionResult|null;after_decision?:CriterionResult}>;
     from_version?:number;to_version?:number;review_projection?:{parent_revision:number;scoring:ScoreSummary};
     candidate?:{response:EvaluationResponse; audit:{criteria:Record<string,AuditDetail>;
-      sentinel:Array<AuditDetail & {rule_id:string}>; rules:Record<string,{instruction:string}>}}};
+      sentinel:Array<AuditDetail & {rule_id:string}>; rules:Record<string,{instruction:string}>;
+      verification?:{baseline:EvaluationResponse;state:string;requested:string[];checks:Record<string,{outcome:string;reason:string;suggested?:boolean}>}}}};
 }
 export interface CqaApi {
   auditExport?(id:string): Promise<AuditExport>;

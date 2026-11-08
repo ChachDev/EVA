@@ -465,6 +465,63 @@
               }
             }
           }
+        },
+        "verification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "baseline",
+            "state",
+            "requested",
+            "checks"
+          ],
+          "properties": {
+            "baseline": {
+              "$ref": "https://eva.local/schemas/evaluation-response.schema.json"
+            },
+            "state": {
+              "enum": [
+                "not_needed",
+                "ok",
+                "partial",
+                "unavailable"
+              ]
+            },
+            "requested": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "checks": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "outcome",
+                  "reason"
+                ],
+                "properties": {
+                  "outcome": {
+                    "enum": [
+                      "retained",
+                      "corroborated",
+                      "amended"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "suggested": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
         }
       },
       "required": [

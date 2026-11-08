@@ -80,9 +80,9 @@ def test_reweight_selective_recheck_and_rollback_keep_original(tmp_path,run_data
 def test_failed_shadow_preserves_baseline(tmp_path,run_data,request_data):
     _,base=run_data
     app=create_app(Settings(database_path=tmp_path/"shadow.sqlite",seed_demo=True,audit_mode="shadow"),base,start_workers=False)
-    async def unavailable(_): raise MLUnavailable()
+    async def unavailable(_req,_base): raise MLUnavailable()
     with TestClient(app) as cli:
-        app.state.audit_evaluate=unavailable
+        app.state.audit_shadow=unavailable
         rec=cli.post("/api/v1/evaluations",json={"conversation_id":request_data["conversation"]["id"],"checklist_id":"freedom-cqa",
                                                 "checklist_version":1}).json()
         detail=cli.get("/api/v1/evaluations/"+rec["id"]+"/audit").json()
