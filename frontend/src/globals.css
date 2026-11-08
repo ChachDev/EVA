@@ -1016,6 +1016,10 @@
   gap: 11px;
   max-width: 280px
 }
+#eva-root .topic-link > span:last-child {
+  flex: 1;
+  min-width: 0
+}
 #eva-root .topic-link strong {
   display: block;
   font-size: 11px;
@@ -1039,6 +1043,7 @@
 #eva-root .channel-icon {
   width: 33px;
   height: 33px;
+  flex-shrink: 0;
   border-radius: 8px;
   background: #f0f5ed;
   display: grid;
