@@ -23,9 +23,13 @@
 | Frontend → Backend | `GET /api/v1/audio-assets/{id}/content` | Байты локального файла, Range 206/416 |
 | Frontend → Backend | `POST /api/v1/transcriptions` | `transcription-create` → `transcription-job`, 202 |
 | Frontend → Backend | `GET /api/v1/transcriptions/{id}` | `transcription-job` |
+| Frontend → Backend | `GET /api/v1/transcriptions?offset=0&limit=20` | Список заданий, время, статус, имя файла и `has_more` |
+| Frontend → Backend | `GET /api/v1/transcriptions/{id}/export` | Скачиваемый JSON по `conversation-create` без `operation_id`. Импорт назначает новый ID операции. |
+| Frontend → Backend | `DELETE /api/v1/conversations/{id}` или `/api/v1/evaluations/{id}` | 204 после удаления записи и связанной истории |
+| Frontend → Backend | `DELETE /api/v1/checklists/{id}/versions/{version}` | 204 после скрытия версии из выбора, снимки прежних оценок сохранены |
 | Frontend → Backend | `POST /api/v1/transcriptions/{id}/review` | `transcription-review` → `transcription-job` |
 | Backend → ML | `POST /v1/evaluate` | `evaluation-request` → `evaluation-response` |
-| Backend → локальный ASR | `POST /v1/transcribe` | Multipart audio → `transcription-result`; провайдер пока отсутствует |
+| Backend → локальный ASR | `POST /v1/transcribe` | Multipart audio → `transcription-result`, локальный Whisper |
 | Локальные сервисы | `GET /health` | Диагностика процесса; не подтверждает качество модели |
 
 Канонические форматы в `schemas/`, синтетические примеры в `examples/`. `evaluation-request.json` объединяет пример чек-листа и разговора. `evaluation-record.json` — пример сохранённой оценки. Демо размечено вручную, `provider=fixture`; ответы работающей заглушки имеют `provider=stub` и нуждаются в проверке.
@@ -46,9 +50,9 @@
 
 Upload принимает raw `audio/wav` (также `audio/x-wav`), `audio/mpeg`, `audio/flac`, `audio/ogg`, отдельный лимит по умолчанию 25 MiB. Остальные JSON-тела ограничены 1 MiB. Имена клиента не используются как пути, повтор UUID `Idempotency-Key` с другим MIME/содержимым даёт 409. `duration_seconds` может быть null для сжатых форматов; проверка сигнатуры не гарантирует успешное декодирование. Внешние ссылки аудио не скачиваются автоматически.
 
-ASR выключен, пока не задан `ASR_URL` с plain HTTP loopback origin. Без ASR_URL `POST /api/v1/transcriptions` возвращает 503, сохраняя ранее загруженный asset. Текущий ML не реализует `/v1/transcribe`; транспорт и очередь Backend не подтверждают наличие распознавания.
+Backend включает обработку аудио при заданном `ASR_URL` с HTTP-адресом loopback. Без него `POST /api/v1/transcriptions` возвращает 503, и загруженный файл остаётся доступен. Сервис `ml/eva_asr` реализует `/v1/transcribe`, а `ml/eva_ml` оценивает полученный диалог.
 
-Wire-контракт будущего локального ASR: `POST /v1/transcribe`, multipart file-поле `file` с каноническим MIME и полями `language` (`RU|KZ|EN`), `audio_sha256`. Ответ 200 с JSON `transcription-result`, связанный с теми же SHA-256 и языком. Provider/model — короткие идентификаторы без URL, runtime отклоняет stub/mock/fixture/demo/unconfigured. Сегменты содержат speaker (`client|operator|unknown`), текст и конечные смещения `0 <= start_seconds < end_seconds <= 3600`; начала не убывают, при известной длительности конец не выходит за неё с допуском 0.05 с. До 10000 сегментов, 65536 символов в одном и 1 млн в сумме. Ответ ограничен 2 MiB; redirects, environment proxies и compressed response отключены. Таймаут по умолчанию 300 секунд.
+Контракт локального ASR: `POST /v1/transcribe`, multipart file-поле `file` с каноническим MIME и полями `language` (`RU|KZ|EN`), `audio_sha256`. Ответ 200 с JSON `transcription-result`, связанный с теми же SHA-256 и языком. Provider/model — короткие идентификаторы без URL, runtime отклоняет stub/mock/fixture/demo/unconfigured. Сегменты содержат speaker (`client|operator|unknown`), текст и конечные смещения `0 <= start_seconds < end_seconds <= 3600`; начала не убывают, при известной длительности конец не выходит за неё с допуском 0.05 с. До 10000 сегментов, 65536 символов в одном и 1 млн в сумме. Ответ ограничен 2 MiB; redirects, environment proxies и compressed response отключены. Таймаут по умолчанию 300 секунд.
 
 Job проходит queued → running → completed/needs_review/failed. Один worker на backend process получает DB lease; глобальная backlog ограничена 100 queued/running. Истёкшая lease становится failed/interrupted при сканировании, автоматического retry нет. При любом unknown conversation ещё не создаётся. Проверяющий отправляет `transcription-review` с UUID operation_id и ролями client/operator для **всех** сегментов в исходном порядке; после подтверждения появляется voice_call conversation с offset_seconds. Ошибка провайдера не создаёт фиктивный транскрипт или оценку.
 

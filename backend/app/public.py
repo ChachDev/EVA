@@ -5,8 +5,9 @@ import hmac
 import os
 import secrets
 import shutil
+import sqlite3
 import time
-from contextlib import AsyncExitStack, asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager, closing, suppress
 from dataclasses import dataclass
 from pathlib import Path
 from collections import deque
@@ -70,6 +71,18 @@ def accepts_write(path, size):
     return used + size <= WORKSPACE_BYTES and shutil.disk_usage(path).free > 512 * 1024 * 1024
 
 
+def unfinished_workspaces(root):
+    pending = []
+    for path in root.glob("*/workspace.sqlite"):
+        with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True)) as db:
+            for table, state in (("transcription_jobs", "status"), ("eva_batch_items", "state")):
+                if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
+                    if db.execute(f"SELECT 1 FROM {table} WHERE {state} IN ('queued','running') LIMIT 1").fetchone():
+                        pending.append(path.parent.name)
+                        break
+    return pending
+
+
 class Workspaces:
     def __init__(self, root, dist, ml_url, asr_url):
         self.root = root
@@ -91,6 +104,16 @@ class Workspaces:
             if len(signature) == 64 and signature.isascii() and hmac.compare_digest(self.sign(value), signature):
                 return value
         return None
+
+    async def recover(self, pending):
+        while pending:
+            identifier = pending.pop(0)
+            visitor = await self.open(identifier, "recovery")
+            if visitor:
+                visitor.active -= 1
+            else:
+                pending.append(identifier)
+                await asyncio.sleep(5)
 
     async def open(self, identifier, source):
         async with self.lock:
@@ -192,9 +215,14 @@ def public_app(root=None, dist=None, ml_url=None, asr_url=None):
     async def lifespan(app):
         gateway.root.mkdir(parents=True, exist_ok=True)
         gateway.key = signing_key(gateway.root)
+        pending = await run_in_threadpool(unfinished_workspaces, gateway.root)
+        recovery = asyncio.create_task(gateway.recover(pending))
         try:
             yield
         finally:
+            recovery.cancel()
+            with suppress(asyncio.CancelledError):
+                await recovery
             for visitor in gateway.visitors.values():
                 await visitor.stack.aclose()
     return Starlette(routes=[Mount("/", app=gateway)], lifespan=lifespan)

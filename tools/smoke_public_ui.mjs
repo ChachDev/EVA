@@ -22,6 +22,9 @@ try {
   await button('Скачать JSON').waitFor({timeout:150000});
   const jobUrl = page.url();
   await button('История распознавания').click();
+  const historyDownload = page.waitForEvent('download');
+  await page.getByRole('link',{name:'Скачать JSON'}).click();
+  assert.ok((await historyDownload).suggestedFilename().endsWith('.json'));
   await page.getByRole('button',{name:new RegExp(basename(wav).replaceAll('.', '\\.'))}).click();
   assert.equal(page.url(),jobUrl);
   const downloadReady = page.waitForEvent('download');

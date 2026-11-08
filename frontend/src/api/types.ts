@@ -295,6 +295,7 @@ export interface CqaApi {
   getTranscription(id: string): Promise<TranscriptionJob>;
   transcriptionHistory(offset: number): Promise<{items: TranscriptionSummary[]; has_more: boolean}>;
   exportTranscript(id: string): Promise<TranscriptDownload>;
+  transcriptDownloadUrl(id: string): string;
   deleteConversation(id: string): Promise<void>;
   deleteEvaluation(id: string): Promise<void>;
   deleteChecklist(id: string, version: number): Promise<void>;

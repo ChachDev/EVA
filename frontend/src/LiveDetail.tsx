@@ -4,6 +4,7 @@ import {
   GitPullRequest, Headphones, Info, MessageSquare, Minus, ShieldCheck,
 } from "lucide-react";
 import AuditReview from './AuditReview';
+import { auditNotices } from './audit-notices';
 import official from '../../contracts/examples/checklist.json' with {type:'json'};
 import type { Checklist, Conversation, Evaluation, EvaluationResponse, ReviewCase } from "./api/types";
 import { useI18n } from "./i18n";
@@ -88,6 +89,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
   const savedAudio = audioLink(conversation.audio_url);
   const legacy = currentReview?.snapshot_available === false;
   const source = currentEvaluation?.original;
+  const notices = auditNotices(source?.warnings);
   const stateLabel = busy ? "Выполняется оценка" : !currentEvaluation ? "Без оценки" : !currentReview ? "Текущий результат недоступен"
     : scoring?.status === "needs_review" ? "Нужна ручная проверка"
       : scoring?.status === "not_calculable" ? "Нет применимых критериев" : "Оценка получена";
@@ -132,7 +134,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
         <p>{!currentEvaluation ? t("Транскрипт сохранён. Автоматическая оценка запускается по кнопке.")
           : scoring?.status === "needs_review" ? t("Неопределённые критерии требуют проверки. Они не исключаются из расчёта как N/A.")
             : scoring?.status === "not_calculable" ? t("Применимого веса нет; сервер не рассчитывает числовой итог.")
-              : t("Итог и вклад каждого критерия рассчитаны сервером.")}</p>
+              : t("Предварительная оценка")}</p>
         <div className="summary-tags">
           {checklist && checklistMatches && <span><ShieldCheck aria-hidden="true" />{checklist.name} · v{checklist.version}</span>}
           {source && !checklistMatches && <span><ShieldCheck aria-hidden="true" />{source.checklist_id} · v{source.checklist_version}</span>}
@@ -144,7 +146,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
         <div><b className="text-amber">{formatNumber(reviewCount)}</b><span>{t("нужна проверка")}</span></div>
       </div>}
     </section>
-    {currentEvaluation && <div className="info-callout"><Info aria-hidden="true" /><span>{t("Результат предварительный. Решение по апелляции не означает утверждение аудита.")}{source?.provider === "stub" && t(" Активна заглушка: качество работы оператора не оценено моделью.")}
+    {(source?.provider === "stub" || source?.provider === "fixture") && <div className="info-callout"><Info aria-hidden="true" /><span>{source?.provider === "stub" && t(" Активна заглушка: качество работы оператора не оценено моделью.")}
       {source?.provider === "fixture" && t(" Это демонстрационная разметка, а не вывод модели.")}
     </span></div>}
     {scoring && <div className={detectedFlags.length ? "info-callout" : "muted"}><span>{t('Грубые нарушения: {status}. Флаг учитывается отдельно от балла.', { status: t(scoring.has_gross_error === null ? "требуется проверка" : scoring.has_gross_error ? "обнаружены" : "не обнаружены") })}</span>
@@ -155,7 +157,7 @@ export default function LiveDetail({ conversation, checklist, evaluation, review
         toggle?.scrollIntoView({ block: "center" });
       }}><AlertTriangle aria-hidden="true" />{c.title}</button>)}
     </div>}
-    {source?.warnings.map((warning, index) => <p className="info-callout" key={index}><Info aria-hidden="true" /><span>{warning}</span></p>)}
+    {notices.length > 0 && <div className="info-callout"><Info aria-hidden="true"/><div>{notices.map(warning => <p key={warning}>{warning}</p>)}</div></div>}
     {legacy && <div className="info-callout"><Info aria-hidden="true" /><span>{t("У этой исторической оценки нет снимка входных данных. Просмотр доступен, пересмотр недоступен.")}</span></div>}
     {currentReview && currentReview.decisions.length > 0 && <div className="review-banner"><ShieldCheck aria-hidden="true" /><span>
       {t('Есть сохранённые решения по апелляциям. Исходный итог:')} <b>{formatNumber(currentReview.original.scoring.total)}</b> → {t('текущий:')} <b>{formatNumber(total)}</b>.

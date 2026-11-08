@@ -24,7 +24,9 @@ export default function AudioHistory({open,revision}: {open: (id:string) => void
       page.items.length ? <ul className="audio-history">{page.items.map(item =>
         <li key={item.id}><button className="button secondary" onClick={() => open(item.id)}>
           <strong>{item.display_name || item.id}</strong><span>{displayTime(item.created_at)} · {item.language} · {t(states[item.status])}</span>
-        </button></li>)}</ul> : <p>{t('Записей пока нет')}</p>}
+        </button>{(item.status === 'needs_review' || item.status === 'completed') &&
+          <a className="button secondary small" download href={api.transcriptDownloadUrl(item.id)}>{t('Скачать JSON')}</a>}
+        </li>)}</ul> : <p>{t('Записей пока нет')}</p>}
     <div className="live-controls">{offset > 0 && <button className="button secondary" onClick={() => setOffset(offset - 20)}>{t('Назад')}</button>}
       {page?.has_more && <button className="button secondary" onClick={() => setOffset(offset + 20)}>{t('Далее')}</button>}</div>
   </section>;
